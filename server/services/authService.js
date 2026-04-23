@@ -9,7 +9,17 @@ import bcrypt from "bcryptjs";
  */
 
 export const registerUser = async (payload) => {
-    const { first_name, last_name, middle_name, date_of_birth, contact_number, email, username, password, role } = payload;
+    const {
+        first_name,
+        last_name,
+        middle_name = null,
+        date_of_birth = null,
+        contact_number = null,
+        email = null,
+        username,
+        password,
+        role = 'Nurse'
+    } = payload;
 
     // 1. Check if user already exists
     // Pattern: SELECT * FROM table WHERE column = ?
@@ -29,12 +39,11 @@ export const registerUser = async (payload) => {
     // 3. Create new user
     const [result] = await db.execute(
         "INSERT INTO user (first_name, last_name, middle_name, date_of_birth, contact_number, email, username, password_hash, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [first_name, last_name, middle_name, date_of_birth, contact_number, email, username, hashedPassword, role || 'Nurse']
+        [first_name, last_name, middle_name, date_of_birth, contact_number, email, username, hashedPassword, role]
     );
 
     return {
-        message: "User created successfully",
-        user: {
+        data: {
             user_id: result.insertId,
             first_name,
             last_name,
@@ -43,7 +52,7 @@ export const registerUser = async (payload) => {
             contact_number,
             email,
             username,
-            role: role || 'Nurse'
+            role
         }
     };
 };
@@ -67,8 +76,11 @@ export const loginUser = async (username, password) => {
     }
 
     return {
-        user_id: user.user_id,
-        username: user.username,
-        role: user.role
+        data: {
+            user_id: user.user_id,
+            username: user.username,
+            role: user.role
+        }
     };
 };
+
