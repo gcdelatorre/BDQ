@@ -84,3 +84,14 @@ export const loginUser = async (username, password) => {
     };
 };
 
+export const getAllUser = async () => {
+    const [users] = await db.execute(
+        "SELECT * FROM user WHERE account_status = 'Active'"
+    );
+
+    if (users.length < 1) {
+        throw { status: 400, message: "No active users found" }
+    }
+
+    return users;
+};
