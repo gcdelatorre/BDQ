@@ -13,7 +13,7 @@ router.post("/login", authController.login);
 // GET /api/auth/get-all-users (Protected: Admin only)
 router.get("/get-all-users", protect, restrictTo("Admin"), authController.getAllUser);
 
-// GET /api/auth/logout
-router.get("/logout", authController.logout);
+// POST /api/auth/logout
+router.post("/logout", authController.logout);
 
 export default router;

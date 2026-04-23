@@ -65,12 +65,19 @@ export const getAllUser = async (req, res) => {
     }
 };
 
-export const logout = (req, res) => {
-    req.session.destroy((err) => { // destroying the session when logout
-        if (err) {
-            return res.status(500).json({ message: "Could not log out" });
-        }
-        res.clearCookie("connect.sid");
-        res.status(200).json({ message: "Logged out successfully" });
-    });
+export const logout = async (req, res) => {
+    try {
+        req.session.destroy((err) => { // destroying the session when logout
+            if (err) {
+                return res.status(500).json({ message: "Could not log out" });
+            }
+            res.clearCookie("connect.sid");
+            res.status(200).json({ message: "Logged out successfully" });
+        });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        });
+    }
 };
