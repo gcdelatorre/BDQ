@@ -14,8 +14,8 @@ export const register = async (req, res) => {
         });
     } catch (error) {
         console.error("Registration Error:", error);
-        res.status(error.status || 500).json({ 
-            message: error.message || "Internal Server Error" 
+        res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
         });
     }
 };
@@ -23,22 +23,54 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { username, password } = req.body;
-        
+
         if (!username || !password) {
             return res.status(400).json({ message: "Username and password are required" });
         }
 
         const result = await authService.loginUser(username, password);
-        
-        // Note: In a real app, you would generate a JWT token here.
+
+        // Save user info to session that will be use for protected routes or for the middlewares
+        req.session.user = {
+            user_id: result.data.user_id,
+            username: result.data.username,
+            role: result.data.role // used for restricTo mmiddleware so only admin can perform this route
+        };
+
         res.status(200).json({
             message: "Login successful",
-            user: result
+            data: result.data
         });
     } catch (error) {
         console.error("Login Error:", error);
-        res.status(error.status || 500).json({ 
-            message: error.message || "Internal Server Error" 
+        res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
         });
     }
+};
+
+// for displaying list of users in the management page
+export const getAllUser = async (req, res) => {
+    try {
+        const users = await authService.getAllUser();
+        res.status(200).json({
+            message: "All users fetched successfully",
+            data: users
+        });
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        });
+    }
+};
+
+export const logout = (req, res) => {
+    req.session.destroy((err) => { // destroying the session when logout
+        if (err) {
+            return res.status(500).json({ message: "Could not log out" });
+        }
+        res.clearCookie("connect.sid");
+        res.status(200).json({ message: "Logged out successfully" });
+    });
 };

@@ -3,11 +3,24 @@ import express from "express";
 import cors from "cors";
 import db from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import session from "express-session";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || "barangay_health_secret_key",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
+    }
+}));
 
 // Routes
 app.use("/api/auth", authRoutes);
