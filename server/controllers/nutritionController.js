@@ -1,0 +1,43 @@
+import * as nutritionService from "../services/nutritionService.js";
+import { log } from "../utils/logger.js";
+
+/**
+ * Controller to record a new nutritional assessment
+ */
+export const recordAssessment = async (req, res) => {
+    try {
+        // Inject user ID from session
+        const payload = { ...req.body, assessed_by_user_id: req.session.user.user_id };
+
+        const result = await nutritionService.addNutritionalAssessment(payload);
+
+        // Audit Log
+        await log(req, "CREATE", "nutritional_assessment", result.assessment_id, `Recorded ${payload.nutritional_status} status for child ID ${payload.child_id}`);
+
+        res.status(201).json({
+            message: "Nutritional assessment saved successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Nutrition Record Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
+/**
+ * Controller to get nutrition history for a child
+ */
+export const getChildNutritionHistory = async (req, res) => {
+    try {
+        const { child_id } = req.params;
+        const result = await nutritionService.getNutritionHistoryByChild(child_id);
+
+        res.status(200).json({
+            message: "Nutritional history fetched successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Fetch Nutrition History Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
