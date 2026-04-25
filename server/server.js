@@ -11,6 +11,7 @@ import immunizationRoutes from "./routes/immunizationRoutes.js";
 import maternalRoutes from "./routes/maternalRoutes.js";
 import nutritionRoutes from "./routes/nutritionRoutes.js";
 import supplementRoutes from "./routes/supplementRoutes.js";
+import breastfeedingRoutes from "./routes/breastfeedingRoutes.js";
 import session from "express-session";
 
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/immunization", immunizationRoutes);
 app.use("/api/maternal", maternalRoutes);
 app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/supplement", supplementRoutes);
+app.use("/api/breastfeeding", breastfeedingRoutes);
 
 app.get("/", (req, res) => {
     res.send("BDQ System API is running...");
