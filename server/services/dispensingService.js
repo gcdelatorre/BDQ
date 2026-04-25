@@ -8,7 +8,7 @@ export const dispenseMedicine = async (payload) => {
     const { user_id, child_id, notes = null, items } = payload;
     // items should be an array: [{ medicine_id, quantity, dosage, duration, remarks }]
 
-    // We start a transaction so if one step fails, the database reverts everything
+    // We MUST get a single connection from the pool to perform a Transaction
     const connection = await db.getConnection();
     await connection.beginTransaction();
 
@@ -25,7 +25,6 @@ export const dispenseMedicine = async (payload) => {
             const { medicine_id, quantity, dosage, duration, remarks = null } = item;
 
             // 3. Subtract stock from Inventory (FEFO logic - First Expired First Out)
-            // We get batches for this medicine, ordered by expiration date
             const [batches] = await connection.execute(
                 "SELECT * FROM inventory WHERE medicine_id = ? AND quantity_in_stock > 0 ORDER BY expiration_date ASC",
                 [medicine_id]
@@ -58,13 +57,16 @@ export const dispenseMedicine = async (payload) => {
             );
         }
 
+        // If everything is successful, we commit all changes at once
         await connection.commit();
         return { transaction_id: transactionId, ...payload };
 
     } catch (error) {
+        // If ANY step fails, we undo everything
         await connection.rollback();
         throw error;
     } finally {
+        // Always release the connection back to the pool
         connection.release();
     }
 };
