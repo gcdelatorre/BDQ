@@ -7,6 +7,7 @@ import patientRoutes from "./routes/patientRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
 import medicineRoutes from "./routes/medicineRoutes.js";
 import dispensingRoutes from "./routes/dispensingRoutes.js";
+import immunizationRoutes from "./routes/immunizationRoutes.js";
 import session from "express-session";
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/patient", patientRoutes);
 app.use("/api/audit", auditRoutes);
 app.use("/api/medicine", medicineRoutes);
 app.use("/api/dispensing", dispensingRoutes);
+app.use("/api/immunization", immunizationRoutes);
 
 app.get("/", (req, res) => {
     res.send("BDQ System API is running...");
