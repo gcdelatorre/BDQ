@@ -1,0 +1,16 @@
+import * as auditService from "../services/auditService.js";
+
+export const getAllAuditLogs = async (req, res) => {
+    try {
+        const result = await auditService.getAllAuditLogs();
+        return res.status(200).json({
+            message: "Audit logs fetched successfully!",
+            data: result
+        })
+    } catch (error) {
+        console.log("Failed to fetch audit logs", error);
+        return res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        })
+    }
+}
