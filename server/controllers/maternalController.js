@@ -8,7 +8,7 @@ export const saveMaternalRecord = async (req, res) => {
     try {
         const result = await maternalService.upsertMaternalImmunization(req.body);
 
-        // Audit Log
+        // Audit Log - explicitly using session user ID
         await log(req, "UPDATE", "maternal_immunization", req.body.child_id, `Updated maternal immunization record for child ID ${req.body.child_id}`);
 
         res.status(200).json({
