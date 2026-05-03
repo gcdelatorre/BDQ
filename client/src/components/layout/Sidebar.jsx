@@ -47,7 +47,7 @@ export default function Sidebar() {
       <div className="h-20 flex items-center px-6 my-2">
         <img 
           src={LOGO1} 
-          alt="Meditech Logo" 
+          alt="BDQ Logo" 
           className="h-10 w-auto object-contain" 
         />
       </div>
