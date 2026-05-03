@@ -5,22 +5,32 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
+    const initAuth = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        setUser(response.data);
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    initAuth();
   }, []);
 
   const register = async (payload) => {
-    const data = await authService.register(payload);
-    setUser(data.user);
-    return data;
+    const response = await authService.register(payload);
+    setUser(response.data);
+    return response;
   };
 
   const login = async (payload) => {
-    const data = await authService.login(payload);
-    setUser(data.user);
-    return data;
+    const response = await authService.login(payload);
+    setUser(response.data);
+    return response;
   }
 
   const logout = async () => {
@@ -31,10 +41,11 @@ export const AuthProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     user,
+    loading,
     register,
     login,
-    logout,
-  }), [user, register, login, logout]);
+    logout
+  }), [user, loading, register, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

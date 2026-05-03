@@ -46,7 +46,7 @@ export default function StatCards({ data = defaultKpis }) {
             )}>
               <kpi.icon className="w-6 h-6" />
             </div>
-            <p className="text-[10px] font-bold text-slate-700 uppercase tracking-[0.15em]">{kpi.label}</p>
+            <p className="text-[12px] font-bold text-slate-700 uppercase tracking-[0.15em]">{kpi.label}</p>
           </div>
           <div className="flex items-end justify-between relative z-10">
             <h3 className="text-3xl font-bold text-slate-900 leading-none">{kpi.value}</h3>

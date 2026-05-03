@@ -1,14 +1,15 @@
 import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Pill, 
-  ClipboardList, 
-  History, 
-  BarChart3, 
-  LogOut 
+import {
+  LayoutDashboard,
+  Users,
+  Pill,
+  ClipboardList,
+  History,
+  BarChart3,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuSections = [
   {
@@ -35,6 +36,8 @@ const menuSections = [
 ];
 
 export default function Sidebar() {
+
+  const { logout } = useAuth();
   const location = useLocation();
 
   return (
@@ -63,10 +66,10 @@ export default function Sidebar() {
                     to={item.path}
                     className={cn(
                       "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-[16px]",
-                      isActive 
-                        ? "bg-teal-50/50 text-teal-600 font-semibold" 
+                      isActive
+                        ? "bg-teal-50/50 text-teal-600 font-semibold"
                         : "text-slate-950 hover:bg-slate-50 hover:text-slate-900"
-                    )}  
+                    )}
                   >
                     <item.icon className={cn(
                       "w-5 h-5",
@@ -82,7 +85,9 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-50">
-        <button className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200">
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-slate-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200">
           <LogOut className="w-5 h-5" />
           Logout
         </button>
