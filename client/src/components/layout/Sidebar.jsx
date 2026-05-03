@@ -51,7 +51,7 @@ export default function Sidebar() {
       <nav className="flex-1 px-6 space-y-8 overflow-y-auto">
         {menuSections.map((section) => (
           <div key={section.title} className="space-y-3">
-            <h3 className="text-[10px] uppercase font-bold text-slate-400 tracking-widest px-4">
+            <h3 className="text-[11px] uppercase font-bold text-slate-700 tracking-widest px-4">
               {section.title}
             </h3>
             <div className="space-y-1">
@@ -62,15 +62,15 @@ export default function Sidebar() {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-sm",
+                      "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-[16px]",
                       isActive 
                         ? "bg-teal-50/50 text-teal-600 font-semibold" 
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-                    )}
+                        : "text-slate-950 hover:bg-slate-50 hover:text-slate-900"
+                    )}  
                   >
                     <item.icon className={cn(
-                      "w-4 h-4",
-                      isActive ? "text-teal-600" : "text-slate-400 group-hover:text-slate-600"
+                      "w-5 h-5",
+                      isActive ? "text-teal-700" : "text-slate-500 group-hover:text-teal-600"
                     )} />
                     {item.label}
                   </Link>

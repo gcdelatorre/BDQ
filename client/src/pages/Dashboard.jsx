@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const kpis = [
   { label: "Total Patients", value: "148", trend: "+12%", up: true, icon: Pill, color: "blue" },
   { label: "Active Prescriptions", value: "28", trend: "+5%", up: false, icon: ClipboardList, color: "teal" },
-  { label: "Expiring Soon", value: "12", trend: "+2%", up: true, icon: Calendar, color: "amber" },
+  { label: "Low Stock Items", value: "12", trend: "+2%", up: true, icon: AlertCircle, color: "amber" },
 ];
 
 const containerVariants = {
