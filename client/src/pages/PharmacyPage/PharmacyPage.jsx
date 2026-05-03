@@ -130,14 +130,6 @@ export default function PharmacyPage() {
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Pharmacy Dispensing</h1>
           <p className="text-slate-500 font-medium text-sm mt-1">Dispense medication and manage dispensing records.</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white border border-slate-100 p-1 rounded-xl shadow-sm flex items-center">
-             <button className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg font-bold text-[11px] tracking-wider uppercase border border-teal-100 transition-all">
-              <ClockCounterClockwise size={18} weight="bold" />
-              Dispensing Logs
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Standard Search Card */}
@@ -163,7 +155,7 @@ export default function PharmacyPage() {
         <div className="lg:col-span-8 space-y-8">
           
           {/* Patient Selection Card */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 space-y-6">
             <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest">
               <UsersThree size={18} weight="duotone" className="text-teal-600" />
               1. Recipient Selection
@@ -215,7 +207,7 @@ export default function PharmacyPage() {
           </div>
 
           {/* Medicine Selection Grid */}
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest">
                 <Pill size={18} weight="duotone" className="text-teal-600" />
@@ -267,7 +259,7 @@ export default function PharmacyPage() {
 
         {/* Right Column */}
         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-          <div className="bg-slate-900 rounded-3xl shadow-2xl p-8 space-y-8 text-white relative overflow-hidden border border-slate-800">
+          <div className="bg-slate-900 rounded-2xl shadow-2xl p-8 space-y-8 text-white relative overflow-hidden border border-slate-800">
             <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/20 rounded-full -mr-16 -mt-16 blur-3xl" />
             
             <div className="flex items-center gap-3 relative z-10">
@@ -360,7 +352,7 @@ export default function PharmacyPage() {
             </div>
           </div>
 
-          <div className="bg-blue-50/50 border border-blue-100 p-6 rounded-3xl flex gap-4 shadow-sm">
+          <div className="bg-blue-50/50 border border-blue-100 p-6 rounded-2xl flex gap-4 shadow-sm">
             <Info size={24} weight="duotone" className="text-blue-500 shrink-0" />
             <p className="text-[11px] text-blue-700 font-bold leading-relaxed">
               STOCK VALIDATION: Finalizing will automatically deduct quantities from the earliest medicine batches in stock.

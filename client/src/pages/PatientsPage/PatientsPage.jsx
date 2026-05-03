@@ -140,7 +140,7 @@ export default function PatientsPage() {
         </button>
       </div>
 
-      <div className="bg-white p-2 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin" />

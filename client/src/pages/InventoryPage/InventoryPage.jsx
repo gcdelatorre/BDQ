@@ -136,7 +136,7 @@ export default function InventoryPage() {
 
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center shadow-sm shrink-0 border border-teal-100">
             <Archive size={24} weight="duotone" />
           </div>
@@ -146,7 +146,7 @@ export default function InventoryPage() {
           </div>
         </div>
         <div className={cn(
-          "bg-white p-6 rounded-3xl border shadow-sm flex items-center gap-5 transition-colors",
+          "bg-white p-6 rounded-2xl border shadow-sm flex items-center gap-5 transition-colors",
           lowStockCount > 0 ? "border-amber-100 bg-amber-50/10" : "border-slate-100"
         )}>
           <div className={cn(
@@ -160,7 +160,7 @@ export default function InventoryPage() {
             <h3 className="text-xl font-black text-slate-900 leading-tight">{lowStockCount}</h3>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-purple-50 border border-purple-100 text-purple-600 rounded-xl flex items-center justify-center shadow-sm shrink-0">
             <TrendUp size={24} weight="duotone" />
           </div>
@@ -190,7 +190,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white p-2 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -291,7 +291,7 @@ export default function InventoryPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100"
+              className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
             >
               <div className="p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -406,7 +406,7 @@ export default function InventoryPage() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden border border-slate-100"
+              className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
             >
               <div className="p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                 <div className="flex items-center gap-4">

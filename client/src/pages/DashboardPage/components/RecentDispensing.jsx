@@ -15,7 +15,7 @@ export default function RecentDispensing({ transactions = [] }) {
   return (
     <motion.div 
       variants={itemVariants}
-      className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden"
+      className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
     >
       <div className="p-8 border-b border-slate-50 flex items-center justify-between">
         <h4 className="font-bold text-slate-900 tracking-tight">Recent Dispensing</h4>

@@ -14,7 +14,7 @@ export default function RecentActivities({ logs = [] }) {
   return (
     <motion.div 
       variants={itemVariants}
-      className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden"
+      className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden"
     >
       <div className="p-8 border-b border-slate-50 flex items-center gap-3">
         <Clock size={20} weight="bold" className="text-teal-600" />
