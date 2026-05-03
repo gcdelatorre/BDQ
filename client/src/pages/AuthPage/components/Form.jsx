@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Lock, User, Loader2 } from "lucide-react";
+import { Lock, User, CircleNotch } from "@phosphor-icons/react";
 
 export default function LoginForm() {
     const [payload, setPayload] = useState({ username: "", password: "" });
@@ -34,49 +34,62 @@ export default function LoginForm() {
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-xs font-bold border border-red-100 animate-shake">
+                <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl animate-shake">
                     {error}
                 </div>
             )}
 
-            <div className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-4">Username</label>
-                <div className="relative group">
-                    <User className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
-                    <input
-                        type="text"
-                        name="username"
-                        value={payload.username}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent focus:bg-white focus:border-teal-100 focus:ring-4 focus:ring-teal-50 rounded-2xl text-sm transition-all outline-none"
-                        placeholder="Enter your username"
-                    />
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 ml-1">Username</label>
+                    <div className="relative group">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors">
+                            <User size={20} />
+                        </div>
+                        <input
+                            type="text"
+                            name="username"
+                            value={payload.username}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all"
+                            placeholder="Enter your username"
+                            required
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-4">Password</label>
-                <div className="relative group">
-                    <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
-                    <input
-                        type="password"
-                        name="password"
-                        value={payload.password}
-                        onChange={handleChange}
-                        required
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent focus:bg-white focus:border-teal-100 focus:ring-4 focus:ring-teal-50 rounded-2xl text-sm transition-all outline-none"
-                        placeholder="••••••••"
-                    />
+                <div className="space-y-2">
+                    <label className="text-sm font-semibold text-slate-700 ml-1">Password</label>
+                    <div className="relative group">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors">
+                            <Lock size={20} />
+                        </div>
+                        <input
+                            type="password"
+                            name="password"
+                            value={payload.password}
+                            onChange={handleChange}
+                            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 outline-none transition-all"
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
                 </div>
             </div>
 
             <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-teal-600 hover:bg-teal-700 text-white rounded-2xl font-bold shadow-lg shadow-teal-200 transition-all flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:hover:scale-100"
+                className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg shadow-slate-200 hover:bg-slate-800 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-                {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign In to Dashboard"}
+                {isSubmitting ? (
+                    <>
+                        <CircleNotch size={20} className="animate-spin" />
+                        Signing in...
+                    </>
+                ) : (
+                    "Sign In to Portal"
+                )}
             </button>
         </form>
     );

@@ -1,63 +1,57 @@
 import { motion } from "framer-motion";
-import { Pill, AlertCircle, ClipboardList, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { UsersThree, WarningCircle, ClipboardText, TrendUp } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 100 }
-  }
+  hidden: { y: 10, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.4 } }
 };
 
-const defaultKpis = [
-  { label: "Total Patients", value: "148", trend: "+12%", up: true, icon: Pill, color: "blue" },
-  { label: "Active Prescriptions", value: "28", trend: "+5%", up: false, icon: ClipboardList, color: "teal" },
-  { label: "Low Stock Items", value: "12", trend: "+2%", up: true, icon: AlertCircle, color: "amber" },
+const kpis = [
+  { label: "Total Patients", value: "1,284", icon: UsersThree, color: "teal", trend: "+12%" },
+  { label: "Active Prescriptions", value: "42", icon: ClipboardText, color: "blue", trend: "+5%" },
+  { label: "Stock Alerts", value: "08", icon: WarningCircle, color: "amber", trend: "-2%" },
 ];
 
-export default function StatCards({ data = defaultKpis }) {
+export default function StatCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {data.map((kpi) => (
-        <motion.div 
-          key={kpi.label} 
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {kpis.map((kpi) => (
+        <motion.div
+          key={kpi.label}
           variants={itemVariants}
-          whileHover={{ y: -5, transition: { duration: 0.2 } }}
-          className="group bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden"
+          className="bg-white border border-slate-100 p-7 rounded-[2rem] shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden"
         >
-          {/* Soft Background Glow */}
-          <div className={cn(
-            "absolute -right-4 -top-4 w-24 h-24 blur-3xl opacity-20 transition-opacity group-hover:opacity-40",
-            kpi.color === "teal" && "bg-teal-500",
-            kpi.color === "amber" && "bg-amber-500",
-            kpi.color === "blue" && "bg-blue-500",
-            kpi.color === "purple" && "bg-purple-500",
-          )}></div>
+          <div className="flex items-start justify-between relative z-10">
+            <div>
+              <p className="text-slate-400 text-[11px] font-bold uppercase tracking-[0.15em] mb-4">{kpi.label}</p>
+              <h3 className="text-4xl font-bold text-slate-900 tracking-tighter mb-2">{kpi.value}</h3>
+              <div className={cn(
+                "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full",
+                kpi.color === "teal" && "text-teal-600 bg-teal-50",
+                kpi.color === "blue" && "text-blue-600 bg-blue-50",
+                kpi.color === "amber" && "text-amber-600 bg-amber-50",
+              )}>
+                <TrendUp className="w-3 h-3" /> {kpi.trend}
+              </div>
+            </div>
 
-          <div className="flex items-center gap-4 mb-4">
             <div className={cn(
-              "w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
+              "w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 duration-300",
               kpi.color === "teal" && "bg-teal-50 text-teal-600",
-              kpi.color === "amber" && "bg-amber-50 text-amber-600",
               kpi.color === "blue" && "bg-blue-50 text-blue-600",
-              kpi.color === "purple" && "bg-purple-50 text-purple-600",
+              kpi.color === "amber" && "bg-amber-50 text-amber-600",
             )}>
-              <kpi.icon className="w-6 h-6" />
-            </div>
-            <p className="text-[12px] font-bold text-slate-700 uppercase tracking-[0.15em]">{kpi.label}</p>
-          </div>
-          <div className="flex items-end justify-between relative z-10">
-            <h3 className="text-3xl font-bold text-slate-900 leading-none">{kpi.value}</h3>
-            <div className={cn(
-              "flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full",
-              kpi.up ? "text-emerald-700 bg-emerald-50" : "text-amber-700 bg-amber-50"
-            )}>
-              {kpi.up ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
-              {kpi.trend}
+              <kpi.icon weight="duotone" size={32} />
             </div>
           </div>
+
+          <div className={cn(
+            "absolute bottom-0 left-0 w-full h-1",
+            kpi.color === "teal" && "bg-teal-500/10",
+            kpi.color === "blue" && "bg-blue-500/10",
+            kpi.color === "amber" && "bg-amber-500/10",
+          )} />
         </motion.div>
       ))}
     </div>
