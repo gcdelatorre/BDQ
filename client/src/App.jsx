@@ -3,6 +3,9 @@ import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/DashboardPage/Dashboard";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/AuthPage/Login"; 
+import PatientsPage from "./pages/PatientsPage/PatientsPage";
+import PatientProfile from "./pages/PatientsPage/PatientProfile";
+import { Toaster } from "sonner";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -24,6 +27,7 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
+        <Toaster position="top-center" richColors closeButton />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route 
@@ -33,7 +37,8 @@ export default function App() {
                 <Layout>
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/patients" element={<div>Patient Directory Page</div>} />
+                    <Route path="/patients" element={<PatientsPage />} />
+                    <Route path="/patients/:id" element={<PatientProfile />} />
                     <Route path="/pharmacy" element={<div>Pharmacy Dispensing Page</div>} />
                     <Route path="/inventory" element={<div>Inventory Management Page</div>} />
                     <Route path="/reports" element={<div>Reports Page</div>} />

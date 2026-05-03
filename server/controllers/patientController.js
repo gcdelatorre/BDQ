@@ -37,3 +37,19 @@ export const getAllPatient = async (req, res) => {
         })
     }
 }
+
+export const getPatientById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await patientService.getPatientById(id);
+        return res.status(200).json({
+            message: "Patient fetched successfully!",
+            data: result
+        })
+    } catch (error) {
+        console.log("Failed to fetch patient", error);
+        return res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        })
+    }
+}

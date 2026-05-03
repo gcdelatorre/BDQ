@@ -93,3 +93,16 @@ export const getAllPatient = async () => {
 
     return rows;
 }
+
+export const getPatientById = async (id) => {
+    const [rows] = await db.execute(
+        "SELECT * FROM child_patient WHERE child_id = ?",
+        [id]
+    );
+
+    if (rows.length < 1) {
+        throw { status: 404, message: "Patient not found" }
+    }
+
+    return rows[0];
+}

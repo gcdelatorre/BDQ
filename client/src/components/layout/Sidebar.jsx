@@ -44,7 +44,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-screen bg-white border-r border-slate-100 flex flex-col fixed left-0 top-0 z-50">
       {/* Branding Area */}
-      <div className="h-20 flex items-center px-8 my-2">
+      <div className="h-20 flex items-center px-6 my-2">
         <img 
           src={LOGO1} 
           alt="Meditech Logo" 

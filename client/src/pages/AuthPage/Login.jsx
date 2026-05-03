@@ -13,10 +13,10 @@ export default function Login() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md p-8 bg-white/70 backdrop-blur-xl border border-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50"
+        className="w-full max-w-md p-10 bg-white border border-slate-100 rounded-3xl shadow-xl shadow-slate-200/40"
       >
         <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-teal-600 rounded-3xl flex items-center justify-center text-white text-2xl font-black mx-auto mb-6 shadow-xl shadow-teal-200">
+          <div className="w-16 h-16 bg-teal-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black mx-auto mb-6 shadow-md">
             BDQ
           </div>
           <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Health Portal</h2>

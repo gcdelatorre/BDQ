@@ -10,4 +10,7 @@ router.post("/register-child", protect, restrictTo("Admin", "Nurse", "Midwife"),
 // GET /api/patient/get-all-patient (Protected: Admin, Nurse, Midwife)
 router.get("/get-all-patient", protect, restrictTo("Admin", "Nurse", "Midwife"), patientController.getAllPatient);
 
+// GET /api/patient/:id (Protected: Admin, Nurse, Midwife)
+router.get("/:id", protect, restrictTo("Admin", "Nurse", "Midwife"), patientController.getPatientById);
+
 export default router;
