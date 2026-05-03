@@ -7,16 +7,18 @@ const itemVariants = {
   visible: { y: 0, opacity: 1, transition: { duration: 0.4 } }
 };
 
-const kpis = [
-  { label: "Total Patients", value: "1,284", icon: UsersThree, color: "teal", trend: "+12%" },
-  { label: "Active Prescriptions", value: "42", icon: ClipboardText, color: "blue", trend: "+5%" },
-  { label: "Stock Alerts", value: "08", icon: WarningCircle, color: "amber", trend: "-2%" },
+const kpis = (stats) => [
+  { label: "Total Patients", value: stats.totalPatients.toLocaleString(), icon: UsersThree, color: "teal", trend: "Live" },
+  { label: "Total Transactions", value: stats.activePrescriptions.toLocaleString(), icon: ClipboardText, color: "blue", trend: "History" },
+  { label: "Stock Alerts", value: stats.lowStockCount.toString().padStart(2, '0'), icon: WarningCircle, color: "amber", trend: "Low Stock" },
 ];
 
-export default function StatCards() {
+export default function StatCards({ stats }) {
+  const currentKpis = kpis(stats || { totalPatients: 0, activePrescriptions: 0, lowStockCount: 0 });
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {kpis.map((kpi) => (
+      {currentKpis.map((kpi) => (
         <motion.div
           key={kpi.label}
           variants={itemVariants}

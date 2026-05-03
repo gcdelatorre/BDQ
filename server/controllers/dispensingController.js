@@ -39,3 +39,20 @@ export const getHistory = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Fetch dispensing history for a specific child
+ */
+export const getHistoryByChild = async (req, res) => {
+    try {
+        const { childId } = req.params;
+        const result = await dispensingService.getHistoryByChild(childId);
+        res.status(200).json({
+            message: "Child dispensing history fetched successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Fetch Child History Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

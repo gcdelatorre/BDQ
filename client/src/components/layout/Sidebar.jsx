@@ -53,10 +53,10 @@ export default function Sidebar() {
       </div>
 
       {/* Grouped Navigation */}
-      <nav className="flex-1 px-4 overflow-y-auto space-y-6">
+      <nav className="flex-1 px-4 overflow-y-auto space-y-6 mt-4">
         {menuGroups.map((group) => (
           <div key={group.title} className="space-y-1">
-            <p className="px-4 text-[11px] font-bold text-slate-600 uppercase tracking-widest mb-2">
+            <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
               {group.title}
             </p>
             {group.items.map((item) => {
@@ -66,21 +66,26 @@ export default function Sidebar() {
                   key={item.path}
                   to={item.path}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group",
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group",
                     isActive 
-                      ? "bg-teal-50/50 text-teal-600 font-semibold" 
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                      ? "bg-teal-50 border border-teal-100/50 text-teal-600 font-bold shadow-sm" 
+                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 border border-transparent"
                   )}
                 >
                   <item.icon 
-                    size={24} 
-                    weight={isActive ? "duotone" : "regular"}
+                    size={22} 
+                    weight={isActive ? "duotone" : "bold"}
                     className={cn(
                       "transition-all",
                       isActive ? "text-teal-600" : "text-slate-400 group-hover:text-teal-600"
                     )}
                   />
-                  <span className="text-[15px] group-hover:text-teal-600">{item.label}</span>
+                  <span className={cn(
+                    "text-[14px] transition-colors",
+                    isActive ? "text-teal-700" : "group-hover:text-slate-900"
+                  )}>
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}

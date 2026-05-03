@@ -5,6 +5,9 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/AuthPage/Login"; 
 import PatientsPage from "./pages/PatientsPage/PatientsPage";
 import PatientProfile from "./pages/PatientsPage/PatientProfile";
+import PharmacyPage from "./pages/PharmacyPage/PharmacyPage";
+import InventoryPage from "./pages/InventoryPage/InventoryPage";
+import AuditLogsPage from "./pages/AuditLogsPage/AuditLogsPage";
 import { Toaster } from "sonner";
 
 const ProtectedRoute = ({ children }) => {
@@ -39,10 +42,10 @@ export default function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/patients" element={<PatientsPage />} />
                     <Route path="/patients/:id" element={<PatientProfile />} />
-                    <Route path="/pharmacy" element={<div>Pharmacy Dispensing Page</div>} />
-                    <Route path="/inventory" element={<div>Inventory Management Page</div>} />
+                    <Route path="/pharmacy" element={<PharmacyPage />} />
+                    <Route path="/inventory" element={<InventoryPage />} />
                     <Route path="/reports" element={<div>Reports Page</div>} />
-                    <Route path="/audit" element={<div>Audit Logs Page</div>} />
+                    <Route path="/audit" element={<AuditLogsPage />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

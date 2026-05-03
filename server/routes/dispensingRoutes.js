@@ -10,4 +10,7 @@ router.post("/new", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensing
 // GET /api/dispensing/history (Admin, Nurse, Midwife)
 router.get("/history", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensingController.getHistory);
 
+// GET /api/dispensing/history/:childId (Admin, Nurse, Midwife)
+router.get("/history/:childId", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensingController.getHistoryByChild);
+
 export default router;

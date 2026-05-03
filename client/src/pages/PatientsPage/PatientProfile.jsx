@@ -28,6 +28,7 @@ import NutritionalTab from "./components/NutritionalTab";
 import SupplementationTab from "./components/SupplementationTab";
 import BreastfeedingTab from "./components/BreastfeedingTab";
 import MaternalImmunizationTab from "./components/MaternalImmunizationTab";
+import DispensingLogsTab from "./components/DispensingLogsTab";
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -337,6 +338,10 @@ export default function PatientProfile() {
 
             {activeTab === "breastfeeding" && (
               <BreastfeedingTab childId={id} />
+            )}
+
+            {activeTab === "dispensing" && (
+              <DispensingLogsTab childId={id} />
             )}
 
             {activeTab !== "summary" && 
