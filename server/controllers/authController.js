@@ -5,6 +5,28 @@ import * as authService from "../services/authService.js";
  * Services handle Business Logic & Database queries.
  */
 
+export const getCurrentUser = async (req, res) => {
+    try {
+        const { user_id } = req.session.user
+        const user = await authService.getCurrentUser(user_id)
+        res.status(200).json({
+            message: "Current user fetched successfully",
+            data: {
+                user_id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                username: user.username,
+                role: user.role
+            }
+        })
+    } catch (error) {
+        console.error("Error fetching current user:", error)
+        res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        })
+    }
+}
+
 export const register = async (req, res) => {
     try {
         const result = await authService.registerUser(req.body);

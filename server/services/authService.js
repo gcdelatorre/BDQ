@@ -8,6 +8,19 @@ import bcrypt from "bcryptjs";
  * 3. Use result.insertId to get the new ID after creation.
  */
 
+export const getCurrentUser = async (user_id) => {
+    const [users] = await db.execute(
+        "SELECT * FROM user WHERE user_id = ?",
+        [user_id]
+    );
+
+    if (!users[0]) {
+        throw { status: 404, message: "User not found" }
+    }
+
+    return users[0];
+};
+
 export const registerUser = async (payload) => {
     const {
         first_name,
