@@ -102,7 +102,7 @@ export default function PatientProfile() {
           onClick={() => navigate("/patients")}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group"
         >
-          <div className="w-8 h-8 bg-white border border-slate-200 rounded-xl flex items-center justify-center group-hover:border-slate-300 shadow-sm">
+          <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center group-hover:border-slate-300 shadow-sm">
             <ArrowLeft size={18} weight="bold" />
           </div>
           Back to Directory
@@ -119,7 +119,7 @@ export default function PatientProfile() {
       </div>
 
       {/* Hero Section - Cleaned Redundancy */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 relative overflow-hidden">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-teal-50/30 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
         
         <div className="flex flex-col md:flex-row gap-8 items-start md:items-center relative z-10">
@@ -197,7 +197,7 @@ export default function PatientProfile() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Family & Birth */}
                 <div className="lg:col-span-1 space-y-8">
-                  <div className="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                  <div className="bg-white p-7 rounded-2xl border border-slate-100 shadow-sm space-y-6">
                     <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest">
                       <GenderFemale size={18} weight="duotone" className="text-teal-600" />
                       Family Information
@@ -214,7 +214,7 @@ export default function PatientProfile() {
                     </div>
                   </div>
 
-                  <div className="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+                  <div className="bg-white p-7 rounded-2xl border border-slate-100 shadow-sm space-y-6">
                     <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest">
                       <Baby size={18} weight="duotone" className="text-teal-600" />
                       Birth Records
@@ -240,7 +240,7 @@ export default function PatientProfile() {
 
                 {/* Right Column: Health Timeline & Certifications */}
                 <div className="lg:col-span-2 space-y-8">
-                  <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                  <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
                     <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest mb-8">
                       <Drop size={18} weight="duotone" className="text-teal-600" />
                       Nutritional Milestones
@@ -275,7 +275,7 @@ export default function PatientProfile() {
                     </div>
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                  <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
                     <h3 className="flex items-center gap-2 font-bold text-slate-400 text-[11px] uppercase tracking-widest mb-8">
                       <CheckCircle size={18} weight="duotone" className="text-teal-600" />
                       Certification Status
@@ -304,7 +304,7 @@ export default function PatientProfile() {
                     </div>
                   </div>
 
-                  <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
+                  <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-6 opacity-[0.02]">
                       <Notebook size={140} weight="bold" />
                     </div>
@@ -350,7 +350,7 @@ export default function PatientProfile() {
              activeTab !== "nutrition" && 
              activeTab !== "supplement" && 
              activeTab !== "breastfeeding" && (
-              <div className="bg-white rounded-3xl border border-slate-100 shadow-sm min-h-[400px] flex flex-col items-center justify-center text-center p-12">
+              <div className="bg-white rounded-2xl border border-slate-100 shadow-sm min-h-[400px] flex flex-col items-center justify-center text-center p-12">
                 <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center mb-6">
                   {activeTab === "dispensing" && <ClipboardText size={32} weight="duotone" />}
                 </div>

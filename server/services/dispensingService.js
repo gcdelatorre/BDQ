@@ -30,7 +30,7 @@ export const dispenseMedicine = async (payload) => {
                 [medicine_id]
             );
 
-            let remainingToDispense = quantity;
+            let remainingToDispense = quantity_dispensed;
 
             for (const batch of batches) {
                 if (remainingToDispense <= 0) break;

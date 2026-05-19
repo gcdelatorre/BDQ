@@ -79,7 +79,7 @@ export default function AuditLogsPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center border border-teal-100 shadow-sm">
             <Pulse size={24} weight="duotone" />
           </div>
@@ -88,7 +88,7 @@ export default function AuditLogsPage() {
             <h3 className="text-xl font-black text-slate-900 leading-none">{logs.length}</h3>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center border border-blue-100 shadow-sm">
             <Calendar size={24} weight="duotone" />
           </div>
@@ -99,7 +99,7 @@ export default function AuditLogsPage() {
             </h3>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center border border-purple-100 shadow-sm">
             <ShieldCheck size={24} weight="duotone" />
           </div>
@@ -108,7 +108,7 @@ export default function AuditLogsPage() {
             <h3 className="text-xl font-black text-slate-900 leading-none text-emerald-600">Active</h3>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-5">
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center border border-amber-100 shadow-sm">
             <UserCircle size={24} weight="duotone" />
           </div>
@@ -150,7 +150,7 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Table Container */}
-      <div className="bg-white p-2 rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
