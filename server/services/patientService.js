@@ -11,6 +11,7 @@ export const registerChild = async (payload) => {
         sex,
         date_of_birth,
         mother_complete_name,
+        contact_number = null,
         complete_address,
         se_status,
         length_at_birth_cm,
@@ -32,7 +33,7 @@ export const registerChild = async (payload) => {
     }
 
     const [result] = await db.execute(
-        "INSERT INTO child_patient (`registered_by_user_id`, `date_of_registration`, `family_serial_number`, `first_name`, `middle_initial`, `last_name`, `sex`, `date_of_birth`, `mother_complete_name`, `complete_address`, `se_status`, `length_at_birth_cm`, `weight_at_birth_kg`, `birth_weight_status`, `initiated_breastfeeding_date`, `exclusively_breastfed_6_months`, `intro_complementary_foods`, `remarks`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO child_patient (`registered_by_user_id`, `date_of_registration`, `family_serial_number`, `first_name`, `middle_initial`, `last_name`, `sex`, `date_of_birth`, `mother_complete_name`, `contact_number`, `complete_address`, `se_status`, `length_at_birth_cm`, `weight_at_birth_kg`, `birth_weight_status`, `initiated_breastfeeding_date`, `exclusively_breastfed_6_months`, `intro_complementary_foods`, `remarks`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
             registered_by_user_id,
             date_of_registration,
@@ -43,6 +44,7 @@ export const registerChild = async (payload) => {
             sex,
             date_of_birth,
             mother_complete_name,
+            contact_number,
             complete_address,
             se_status,
             length_at_birth_cm,

@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS `child_patient` (
   `date_of_birth`                     DATE               NOT NULL,
   `mother_complete_name`              VARCHAR(100)       NOT NULL,
   `complete_address`                  VARCHAR(100)       NOT NULL,
+  `contact_number`                    VARCHAR(20)        DEFAULT NULL,
   `se_status`                         ENUM('NHTS','Non-NHTS') NOT NULL,
   `length_at_birth_cm`               DECIMAL(5,2)       NOT NULL,
   `weight_at_birth_kg`               DECIMAL(5,2)       NOT NULL,
@@ -207,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `medicine` (
   `medicine_id`        BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT,
   `medicine_name`      VARCHAR(100)       NOT NULL,
   `generic_name`       VARCHAR(100)       NOT NULL,
-  `medicine_category`  ENUM('Tablet','Syrup','Capsule','Injection') NOT NULL,
+  `medicine_category`  ENUM('Tablet','Syrup','Capsule','Injection','Nebule','Sachet','Drops','Ointment') NOT NULL,
   `unit_of_measure`    VARCHAR(20)        NOT NULL,
   `description`        VARCHAR(255)       DEFAULT NULL,
   `reorder_level`      SMALLINT UNSIGNED  NOT NULL DEFAULT 0,  -- 0–1000, triggers low stock alert

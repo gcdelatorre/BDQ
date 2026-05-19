@@ -79,26 +79,28 @@ export default function Dashboard() {
       variants={containerVariants}
       className="space-y-10 pb-10"
     >
-      <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">BDQ Health Portal</h2>
-        <p className="text-slate-500 text-sm font-medium">Real-time pediatric monitoring and healthcare management</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Welcome back, Admin! 👋</h2>
+          <p className="text-slate-500 text-sm font-medium mt-1">Here is what's happening in the barangay health center today.</p>
+        </div>
       </div>
 
       {/* KPI Row */}
       <StatCards stats={stats} />
 
-      {/* Middle Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <RecentDispensing transactions={history} />
-        <StockAlerts alerts={alerts} loading={loading} />
-      </div>
-
-      {/* Bottom Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column (Primary Info) */}
+        <div className="lg:col-span-8 space-y-6">
+          <RecentDispensing transactions={history} />
           <RecentActivities logs={logs} />
         </div>
-        <div>
+
+        {/* Right Column (Alerts & Reminders) */}
+        <div className="lg:col-span-4 space-y-6">
+          <StockAlerts alerts={alerts} loading={loading} />
           <UpcomingRecalls recalls={recalls} loading={loading} />
         </div>
       </div>

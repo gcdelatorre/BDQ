@@ -208,6 +208,10 @@ export default function PatientProfile() {
                         <p className="text-slate-900 font-bold mt-1 text-[15px]">{patient.mother_complete_name}</p>
                       </div>
                       <div>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Contact Number</p>
+                        <p className="text-slate-900 font-bold mt-1 text-[15px]">{patient.contact_number || "Not provided"}</p>
+                      </div>
+                      <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Home Address</p>
                         <p className="text-slate-700 font-medium mt-1 leading-relaxed text-sm">{patient.complete_address}</p>
                       </div>

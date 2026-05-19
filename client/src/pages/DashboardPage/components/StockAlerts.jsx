@@ -20,7 +20,7 @@ export default function StockAlerts({ alerts = [] }) {
         <h4 className="font-bold text-slate-900 tracking-tight">Stock Alerts</h4>
         <button className="text-slate-400 hover:text-slate-600 font-bold">•••</button>
       </div>
-      <div className="px-8 py-4 space-y-4">
+      <div className="px-8 py-4 space-y-4 max-h-[350px] overflow-y-auto custom-scrollbar">
         {alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <p className="text-slate-500 font-bold text-sm">No stock alerts</p>

@@ -24,7 +24,7 @@ export default function RecentDispensing({ transactions = [] }) {
           History
         </div>
       </div>
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 max-h-[350px] overflow-y-auto custom-scrollbar">
         {transactions.length === 0 ? (
           <div className="text-slate-500 text-center py-20 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
             <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 shadow-sm border border-slate-100">
@@ -34,7 +34,7 @@ export default function RecentDispensing({ transactions = [] }) {
           </div>
         ) : (
           <div className="space-y-2">
-            {transactions.slice(0, 5).map((tx, idx) => (
+            {transactions.map((tx, idx) => (
               <div key={idx} className="flex items-center justify-between p-3 hover:bg-slate-50/80 rounded-2xl transition-all border border-transparent hover:border-slate-100 group">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center group-hover:bg-teal-50 group-hover:text-teal-600 transition-colors">

@@ -16,6 +16,7 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
     date_of_birth: "",
     date_of_registration: new Date().toISOString().split('T')[0],
     mother_complete_name: "",
+    contact_number: "",
     complete_address: "",
     se_status: "Non-NHTS",
     length_at_birth_cm: "",
@@ -64,6 +65,7 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
         date_of_birth: "",
         date_of_registration: new Date().toISOString().split('T')[0],
         mother_complete_name: "",
+        contact_number: "",
         complete_address: "",
         se_status: "Non-NHTS",
         length_at_birth_cm: "",
@@ -171,10 +173,14 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
               <House size={20} weight="duotone" />
               <h3 className="font-bold text-xs uppercase tracking-widest">Home & Family</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Mother's Full Name</label>
                 <input required name="mother_complete_name" value={formData.mother_complete_name} onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium" placeholder="Full name of mother" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Contact Number</label>
+                <input name="contact_number" value={formData.contact_number} onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium" placeholder="e.g. 09123456789" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Complete Address</label>
