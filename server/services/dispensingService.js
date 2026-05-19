@@ -36,7 +36,7 @@ export const dispenseMedicine = async (payload) => {
                 if (remainingToDispense <= 0) break;
 
                 const takeFromThisBatch = Math.min(batch.quantity_in_stock, remainingToDispense);
-                
+
                 await connection.execute(
                     "UPDATE inventory SET quantity_in_stock = quantity_in_stock - ? WHERE inventory_id = ?",
                     [takeFromThisBatch, batch.inventory_id]

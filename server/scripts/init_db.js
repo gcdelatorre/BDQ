@@ -11,8 +11,7 @@ const initDB = async () => {
     try {
         console.log("🚀 Initializing Database...");
 
-        // 1. Read the schema.sql file (located one level up from /server)
-        const schemaPath = path.join(__dirname, "../../../bdq_schema.sql");
+        const schemaPath = path.join(__dirname, "../../bdq_schema.sql");
         const schemaSql = fs.readFileSync(schemaPath, "utf8");
 
         // 2. Split SQL into individual queries
@@ -66,9 +65,13 @@ const initDB = async () => {
 
         for (const p of patients) {
             await db.execute(
-                `INSERT INTO child_patient (first_name, last_name, sex, date_of_birth, mother_complete_name, complete_address, se_status, registered_by_user_id, date_of_registration, family_serial_number) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?)`,
-                [p[0], p[1], p[2], p[3], p[4], p[5], p[6], adminId, p[7]]
+                `INSERT INTO child_patient (
+                    first_name, last_name, sex, date_of_birth, 
+                    mother_complete_name, complete_address, se_status, 
+                    registered_by_user_id, date_of_registration, family_serial_number,
+                    length_at_birth_cm, weight_at_birth_kg, birth_weight_status
+                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?, ?, ?, ?)`,
+                [p[0], p[1], p[2], p[3], p[4], p[5], p[6], adminId, p[7], 50.0, 3.2, "Normal"]
             );
         }
 

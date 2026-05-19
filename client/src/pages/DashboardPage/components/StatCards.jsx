@@ -15,7 +15,7 @@ const kpis = (stats) => [
 
 export default function StatCards({ stats }) {
   const currentKpis = kpis(stats || { totalPatients: 0, activePrescriptions: 0, lowStockCount: 0 });
-  
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {currentKpis.map((kpi) => (

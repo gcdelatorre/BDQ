@@ -42,7 +42,7 @@ export default function Dashboard() {
       ]);
 
       const lowStockMeds = meds.filter(m => (m.total_stock || 0) <= m.reorder_level);
-      
+
       setStats({
         totalPatients: patients.length,
         activePrescriptions: history.length,
@@ -64,22 +64,22 @@ export default function Dashboard() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
       className="space-y-10 pb-10"
     >
       <div>
-        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Pharmacy Management</h2>
-        <p className="text-slate-500 text-sm font-medium">Real-time inventory and prescription oversight</p>
+        <h2 className="text-3xl font-bold text-slate-900 tracking-tight">BDQ Health Portal</h2>
+        <p className="text-slate-500 text-sm font-medium">Real-time pediatric monitoring and healthcare management</p>
       </div>
 
       {/* KPI Row */}
       <StatCards stats={stats} />
 
       {/* Middle Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <RecentDispensing transactions={history} />
         <StockAlerts alerts={alerts} loading={loading} />
       </div>
