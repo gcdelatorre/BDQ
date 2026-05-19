@@ -15,6 +15,18 @@ const clinicalService = {
     const response = await api.get(`/immunization/child/${childId}`);
     return response.data.data;
   },
+  getVaccineRecallList: async () => {
+    const response = await api.get("/immunization/recall");
+    return response.data.data;
+  },
+  undoVaccineDose: async (recordId) => {
+    const response = await api.delete(`/immunization/record/${recordId}`);
+    return response.data;
+  },
+  changeVaccineDose: async (recordId, data) => {
+    const response = await api.put(`/immunization/record/${recordId}`, data);
+    return response.data;
+  },
 
   // Maternal Immunization
   saveMaternalRecord: async (data) => {

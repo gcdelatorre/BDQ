@@ -41,3 +41,61 @@ export const getChildHistory = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to fetch the next-week and overdue vaccine recall list
+ */
+export const getRecallList = async (req, res) => {
+    try {
+        const result = await immunizationService.calculateRecallSchedule();
+        res.status(200).json({
+            message: "Vaccine recall schedule list calculated successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Get Recall List Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
+/**
+ * Controller to delete/undo an immunization record
+ */
+export const deleteRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await immunizationService.deleteChildImmunizationRecord(record_id);
+
+        // Audit Log
+        await log(req, "DELETE", "child_immunization_record", record_id, `Undid/deleted ${result.vaccine_type} dose #${result.dose_number} for child ID ${result.child_id}`);
+
+        res.status(200).json({
+            message: "Immunization record deleted successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Delete Immunization Record Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
+/**
+ * Controller to update/edit an immunization record
+ */
+export const updateRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await immunizationService.updateChildImmunizationRecord(record_id, req.body);
+
+        // Audit Log
+        await log(req, "UPDATE", "child_immunization_record", record_id, `Updated ${result.vaccine_type} dose #${result.dose_number} for child ID ${result.child_id}`);
+
+        res.status(200).json({
+            message: "Immunization record updated successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Update Immunization Record Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

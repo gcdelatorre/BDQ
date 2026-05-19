@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Syringe, CheckCircle, Clock, Plus, Info, NotePencil } from "@phosphor-icons/react";
+import { Syringe, CheckCircle, Clock, Plus, Info, NotePencil, Trash } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import clinicalService from "@/services/clinicalService";
 import { useToast } from "@/hooks/useToast";
@@ -22,6 +22,12 @@ export default function ImmunizationTab({ childId }) {
   const [isRecording, setIsRecording] = useState(false);
   const [selectedVaccine, setSelectedVaccine] = useState(null);
   const [recordDate, setRecordDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // Edit/Undo States
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [editDate, setEditDate] = useState("");
+  const [editRemarks, setEditRemarks] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchRecords();
@@ -62,8 +68,42 @@ export default function ImmunizationTab({ childId }) {
     }
   };
 
+  const handleUpdateRecord = async () => {
+    if (!selectedRecord) return;
+    try {
+      setIsRecording(true);
+      await clinicalService.changeVaccineDose(selectedRecord.immunization_id, {
+        date_administered: editDate,
+        remarks: editRemarks
+      });
+      toast.success("Record Updated", "Vaccine dose details updated successfully.");
+      setSelectedRecord(null);
+      fetchRecords();
+    } catch (error) {
+      toast.error("Update Failed", error.message);
+    } finally {
+      setIsRecording(false);
+    }
+  };
+
+  const handleDeleteRecord = async () => {
+    if (!selectedRecord) return;
+    try {
+      setIsDeleting(true);
+      await clinicalService.undoVaccineDose(selectedRecord.immunization_id);
+      toast.success("Record Deleted", "Vaccine dose administration record undone.");
+      setSelectedRecord(null);
+      fetchRecords();
+    } catch (error) {
+      toast.error("Deletion Failed", error?.response?.data?.message || error.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getDoseRecord = (type, dose) => {
-    return records.find(r => r.vaccine_type === type && r.dose_number === dose);
+    // Use == for dose_number because mysql2 may return it as string
+    return records.find(r => r.vaccine_type === type && Number(r.dose_number) === Number(dose));
   };
 
   if (loading) return (
@@ -105,11 +145,20 @@ export default function ImmunizationTab({ childId }) {
                 return (
                   <button
                     key={dose}
-                    onClick={() => !record && setSelectedVaccine({ type: vac.type, dose })}
+                    onClick={() => {
+                      if (record) {
+                        setSelectedRecord(record);
+                        setEditDate(new Date(record.date_administered).toISOString().split('T')[0]);
+                        setEditRemarks(record.remarks || "");
+                      } else {
+                        setSelectedVaccine({ type: vac.type, dose });
+                        setRecordDate(new Date().toISOString().split('T')[0]);
+                      }
+                    }}
                     className={cn(
                       "flex-1 min-w-[100px] p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1",
                       record 
-                        ? "bg-emerald-50 border-emerald-100 text-emerald-700" 
+                        ? "bg-emerald-50 border-emerald-100 text-emerald-700 hover:bg-emerald-50/80 hover:border-emerald-300 cursor-pointer" 
                         : "bg-slate-50 border-slate-100 text-slate-400 hover:border-teal-200 hover:bg-white hover:text-teal-600 group"
                     )}
                   >
@@ -178,6 +227,80 @@ export default function ImmunizationTab({ childId }) {
                   className="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm disabled:opacity-50"
                 >
                   {isRecording ? "Saving..." : "Save Record"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Manage Record Modal (Edit/Undo) */}
+      <AnimatePresence>
+        {selectedRecord && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 space-y-6 border border-slate-100"
+            >
+              <div className="text-center space-y-2">
+                <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <NotePencil size={32} weight="duotone" />
+                </div>
+                <h4 className="text-xl font-bold text-slate-900">Manage Record</h4>
+                <p className="text-sm text-slate-500 font-medium">
+                  {selectedRecord.vaccine_type} - Dose {selectedRecord.dose_number}
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Date Administered</label>
+                  <input 
+                    type="date" 
+                    value={editDate}
+                    onChange={(e) => setEditDate(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Remarks (Optional)</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Catch up session, side effects..."
+                    value={editRemarks}
+                    onChange={(e) => setEditRemarks(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium text-slate-700"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setSelectedRecord(null)}
+                    className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleUpdateRecord}
+                    disabled={isRecording}
+                    className="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm disabled:opacity-50"
+                  >
+                    {isRecording ? "Saving..." : "Change Date"}
+                  </button>
+                </div>
+                
+                <button 
+                  onClick={handleDeleteRecord}
+                  disabled={isDeleting}
+                  className="w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 hover:text-rose-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  <Trash size={16} weight="bold" />
+                  {isDeleting ? "Undoing..." : "Undo/Delete Record"}
                 </button>
               </div>
             </motion.div>

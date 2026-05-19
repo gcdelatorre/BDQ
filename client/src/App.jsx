@@ -8,6 +8,7 @@ import PatientProfile from "./pages/PatientsPage/PatientProfile";
 import PharmacyPage from "./pages/PharmacyPage/PharmacyPage";
 import InventoryPage from "./pages/InventoryPage/InventoryPage";
 import AuditLogsPage from "./pages/AuditLogsPage/AuditLogsPage";
+import VaccineRecallPage from "./pages/VaccineRecallPage/VaccineRecallPage";
 import { Toaster } from "sonner";
 
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +47,7 @@ export default function App() {
                     <Route path="/inventory" element={<InventoryPage />} />
                     <Route path="/reports" element={<div>Reports Page</div>} />
                     <Route path="/audit" element={<AuditLogsPage />} />
+                    <Route path="/recall" element={<VaccineRecallPage />} />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

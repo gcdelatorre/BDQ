@@ -3,6 +3,7 @@ import StatCards from "./components/StatCards";
 import RecentDispensing from "./components/RecentDispensing";
 import StockAlerts from "./components/StockAlerts";
 import RecentActivities from "./components/RecentActivities";
+import UpcomingRecalls from "./components/UpcomingRecalls";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -17,6 +18,8 @@ const containerVariants = {
 import { useState, useEffect } from "react";
 import pharmacyService from "@/services/pharmacyService";
 import patientService from "@/services/patientService";
+import auditService from "@/services/auditService";
+import clinicalService from "@/services/clinicalService";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -26,6 +29,8 @@ export default function Dashboard() {
   });
   const [alerts, setAlerts] = useState([]);
   const [history, setHistory] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [recalls, setRecalls] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,10 +40,12 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [meds, patients, history] = await Promise.all([
+      const [meds, patients, history, activities, recallList] = await Promise.all([
         pharmacyService.getAllMedicines(),
         patientService.getAllPatients(),
-        pharmacyService.getDispensingHistory()
+        pharmacyService.getDispensingHistory(),
+        auditService.getAllLogs(),
+        clinicalService.getVaccineRecallList()
       ]);
 
       const lowStockMeds = meds.filter(m => (m.total_stock || 0) <= m.reorder_level);
@@ -50,6 +57,8 @@ export default function Dashboard() {
       });
 
       setHistory(history);
+      setLogs(activities || []);
+      setRecalls(recallList || []);
 
       setAlerts(lowStockMeds.map(m => ({
         type: (m.total_stock || 0) === 0 ? "Out of Stock" : "Low Stock",
@@ -85,7 +94,14 @@ export default function Dashboard() {
       </div>
 
       {/* Bottom Row */}
-      <RecentActivities />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <RecentActivities logs={logs} />
+        </div>
+        <div>
+          <UpcomingRecalls recalls={recalls} loading={loading} />
+        </div>
+      </div>
     </motion.div>
   );
 }

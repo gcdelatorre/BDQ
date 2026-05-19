@@ -10,7 +10,9 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    supportBigNumbers: true,   // Return BIGINT columns as JS number/string
+    bigNumberStrings: true     // Return BIGINT as string (safe for IDs > 2^53)
 });
 
 // Check if the pool can connect

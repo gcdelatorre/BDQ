@@ -7,7 +7,8 @@ import {
   ChartBar, 
   ClockCounterClockwise, 
   SignOut,
-  FirstAid
+  FirstAid,
+  Bell
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -33,6 +34,7 @@ const menuGroups = [
     items: [
       { label: "Reports", path: "/reports", icon: ChartBar },
       { label: "Audit Logs", path: "/audit", icon: ClockCounterClockwise },
+      { label: "Vaccine Recall", path: "/recall", icon: Bell },
     ]
   }
 ];
