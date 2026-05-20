@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, MagnifyingGlass, Funnel } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, Funnel, Copy } from "@phosphor-icons/react";
 import { DataTable } from "@/components/ui/DataTable";
 import patientService from "@/services/patientService";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/useToast";
 
 import RegisterChildModal from "./components/RegisterChildModal";
 
 export default function PatientsPage() {
+  const { toast } = useToast();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,16 +78,28 @@ export default function PatientsPage() {
         </span>
       )
     },
-    { 
-      header: "Status", 
+    {
+      header: "Family Serial Number",
       cell: (row) => (
-        <span className={cn(
-          "inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
-          row.se_status === 'NHTS' ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-600 border-slate-200"
-        )}>
-          <div className={cn("w-1.5 h-1.5 rounded-full", row.se_status === 'NHTS' ? "bg-emerald-500" : "bg-slate-400")} />
-          {row.se_status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-slate-700 font-bold text-sm truncate max-w-35 block">
+            {row.family_serial_number}
+          </span>
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(row.family_serial_number);
+                toast.success("Copied", "Family serial number copied to clipboard.");
+              } catch (error) {
+                toast.error("Copy Failed", "Please copy manually.");
+              }
+            }}
+            className="p-1 rounded-lg text-slate-400 hover:bg-slate-100 hover:text-teal-600 transition-all"
+          >
+            <Copy size={16} weight="bold" />
+          </button>
+        </div>
       )
     },
     {

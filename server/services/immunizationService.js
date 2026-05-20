@@ -42,7 +42,7 @@ export const getChildImmunizationHistory = async (childId) => {
 export const calculateRecallSchedule = async () => {
     // 1. Get all child patients
     const [children] = await db.execute(
-        `SELECT child_id, first_name, last_name, date_of_birth, mother_complete_name, complete_address, family_serial_number 
+        `SELECT child_id, first_name, last_name, date_of_birth, mother_complete_name, complete_address, contact_number, family_serial_number 
          FROM child_patient`
     );
 

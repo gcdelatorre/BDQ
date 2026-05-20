@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `child_patient` (
   `updated_at`                       DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`child_id`),
   KEY `idx_child_name` (`last_name`, `first_name`),
+  KEY `idx_child_fsn` (`family_serial_number`),
   KEY `idx_child_registered_by` (`registered_by_user_id`),
   CONSTRAINT `fk_child_registered_by`
     FOREIGN KEY (`registered_by_user_id`) REFERENCES `user` (`user_id`)

@@ -12,6 +12,7 @@ const seed = async () => {
         await db.execute("SET FOREIGN_KEY_CHECKS = 0");
         await db.execute("TRUNCATE TABLE inventory");
         await db.execute("TRUNCATE TABLE medicine");
+        await db.execute("TRUNCATE TABLE child_immunization_record");
         await db.execute("TRUNCATE TABLE child_patient");
         await db.execute("TRUNCATE TABLE user");
         await db.execute("SET FOREIGN_KEY_CHECKS = 1");
@@ -24,15 +25,35 @@ const seed = async () => {
         );
         const adminId = userResult.insertId;
 
-        // [first, last, sex, dob, mother, address, se_status, fsn, contact]
+        const today = new Date();
+        const formatDate = (date) => date.toISOString().split("T")[0];
+
+        const dobNewborn = new Date(today);
+        dobNewborn.setDate(today.getDate() - 4);
+
+        const dobOneMonth = new Date(today);
+        dobOneMonth.setDate(today.getDate() - 41);
+
+        const dobThreeMonths = new Date(today);
+        dobThreeMonths.setDate(today.getDate() - 100);
+
+        const dobEightMonths = new Date(today);
+        dobEightMonths.setDate(today.getDate() - 267);
+
+        const dobTwelveMonths = new Date(today);
+        dobTwelveMonths.setDate(today.getDate() - 370);
+
         const patients = [
-            ["Juan", "Dela Cruz", "M", "2024-01-15", "Maria Dela Cruz", "Purok 1, Brgy. Sabang", "NHTS", "FSN-2026-101", "09171234501"],
-            ["Elena", "Santos", "F", "2023-11-20", "Grace Santos", "Purok 4, Brgy. Sabang", "Non-NHTS", "FSN-2026-102", "09281234502"],
-            ["Mateo", "Reyes", "M", "2024-03-05", "Liza Reyes", "Purok 2, Brgy. Sabang", "NHTS", "FSN-2026-103", "09391234503"]
+            ["Mia", "Santos", "F", formatDate(dobNewborn), "Anna Santos", "Purok 1, Brgy. Santa Cruz", "NHTS", "0501724029-00001", "09171234501"],
+            ["Noah", "Reyes", "M", formatDate(dobOneMonth), "Grace Reyes", "Purok 4, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00002", "09281234502"],
+            ["Ella", "Cruz", "F", formatDate(dobThreeMonths), "Diana Cruz", "Purok 2, Brgy. Santa Cruz", "NHTS", "0501724029-00003", "09391234503"],
+            ["Aiden", "Lopez", "M", formatDate(dobEightMonths), "Rita Lopez", "Purok 5, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00004", "09401234504"],
+            ["Sofia", "Dela Cruz", "F", formatDate(dobTwelveMonths), "Liza Dela Cruz", "Purok 3, Brgy. Santa Cruz", "NHTS", "0501724029-00005", "09511234505"]
         ];
 
+        const patientIds = [];
         for (const p of patients) {
-            await db.execute(
+            const [res] = await db.execute(
                 `INSERT INTO child_patient (
                     first_name, last_name, sex, date_of_birth,
                     mother_complete_name, complete_address, contact_number, se_status,
@@ -41,7 +62,79 @@ const seed = async () => {
                  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURDATE(), ?, 50.0, 3.2, 'Normal')`,
                 [p[0], p[1], p[2], p[3], p[4], p[5], p[8], p[6], adminId, p[7]]
             );
+            patientIds.push(res.insertId);
         }
+
+        const recordVaccine = async (childId, vaccineType, doseNumber, dateAdministered) => {
+            await db.execute(
+                "INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, ?, ?, ?, ?)",
+                [childId, vaccineType, doseNumber, formatDate(dateAdministered), adminId]
+            );
+        };
+
+        const noahId = patientIds[1];
+        await recordVaccine(noahId, "BCG", 1, dobOneMonth);
+        await recordVaccine(noahId, "HepB", 1, dobOneMonth);
+
+        const ellaId = patientIds[2];
+        const ella6W = new Date(dobThreeMonths);
+        ella6W.setDate(ella6W.getDate() + 42);
+        const ella10W = new Date(dobThreeMonths);
+        ella10W.setDate(ella10W.getDate() + 70);
+
+        await recordVaccine(ellaId, "BCG", 1, dobThreeMonths);
+        await recordVaccine(ellaId, "HepB", 1, dobThreeMonths);
+        await recordVaccine(ellaId, "Pentavalent", 1, ella6W);
+        await recordVaccine(ellaId, "OPV", 1, ella6W);
+        await recordVaccine(ellaId, "PCV", 1, ella6W);
+        await recordVaccine(ellaId, "Pentavalent", 2, ella10W);
+        await recordVaccine(ellaId, "OPV", 2, ella10W);
+        await recordVaccine(ellaId, "PCV", 2, ella10W);
+
+        const aidenId = patientIds[3];
+        const aiden6W = new Date(dobEightMonths);
+        aiden6W.setDate(aiden6W.getDate() + 42);
+        const aiden10W = new Date(dobEightMonths);
+        aiden10W.setDate(aiden10W.getDate() + 70);
+        const aiden14W = new Date(dobEightMonths);
+        aiden14W.setDate(aiden14W.getDate() + 98);
+
+        await recordVaccine(aidenId, "BCG", 1, dobEightMonths);
+        await recordVaccine(aidenId, "HepB", 1, dobEightMonths);
+        await recordVaccine(aidenId, "Pentavalent", 1, aiden6W);
+        await recordVaccine(aidenId, "OPV", 1, aiden6W);
+        await recordVaccine(aidenId, "PCV", 1, aiden6W);
+        await recordVaccine(aidenId, "Pentavalent", 2, aiden10W);
+        await recordVaccine(aidenId, "OPV", 2, aiden10W);
+        await recordVaccine(aidenId, "PCV", 2, aiden10W);
+        await recordVaccine(aidenId, "Pentavalent", 3, aiden14W);
+        await recordVaccine(aidenId, "OPV", 3, aiden14W);
+        await recordVaccine(aidenId, "PCV", 3, aiden14W);
+
+        const sofiaId = patientIds[4];
+        const sofia6W = new Date(dobTwelveMonths);
+        sofia6W.setDate(sofia6W.getDate() + 42);
+        const sofia10W = new Date(dobTwelveMonths);
+        sofia10W.setDate(sofia10W.getDate() + 70);
+        const sofia14W = new Date(dobTwelveMonths);
+        sofia14W.setDate(sofia14W.getDate() + 98);
+        const sofia9M = new Date(dobTwelveMonths);
+        sofia9M.setDate(sofia9M.getDate() + 274);
+
+        await recordVaccine(sofiaId, "BCG", 1, dobTwelveMonths);
+        await recordVaccine(sofiaId, "HepB", 1, dobTwelveMonths);
+        await recordVaccine(sofiaId, "Pentavalent", 1, sofia6W);
+        await recordVaccine(sofiaId, "Pentavalent", 2, sofia10W);
+        await recordVaccine(sofiaId, "Pentavalent", 3, sofia14W);
+        await recordVaccine(sofiaId, "OPV", 1, sofia6W);
+        await recordVaccine(sofiaId, "OPV", 2, sofia10W);
+        await recordVaccine(sofiaId, "OPV", 3, sofia14W);
+        await recordVaccine(sofiaId, "PCV", 1, sofia6W);
+        await recordVaccine(sofiaId, "PCV", 2, sofia10W);
+        await recordVaccine(sofiaId, "PCV", 3, sofia14W);
+        await recordVaccine(sofiaId, "IPV", 1, sofia14W);
+        await recordVaccine(sofiaId, "IPV", 2, sofia9M);
+        await recordVaccine(sofiaId, "MMR", 1, sofia9M);
 
         const meds = [
             ["Paracetamol 500mg", "Paracetamol", "Tablet", "pcs", 50],

@@ -32,7 +32,7 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
 
   const validateForm = () => {
     const requiredFields = [
-      'family_serial_number', 'first_name', 'last_name', 
+      'first_name', 'last_name', 
       'date_of_birth', 'mother_complete_name', 'complete_address',
       'length_at_birth_cm', 'weight_at_birth_kg'
     ];
@@ -117,7 +117,8 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-1 space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Family Serial No.</label>
-                <input required name="family_serial_number" value={formData.family_serial_number} onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium" placeholder="e.g. FSN-123" />
+                <input name="family_serial_number" value={formData.family_serial_number} onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium" placeholder="Leave blank to auto-generate new FSN" />
+                <p className="text-[10px] text-slate-500">Use the same FSN for siblings in one family. New families will get a generated code like 0501724029-00001.</p>
               </div>
               <div className="md:col-span-1 space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Registration Date</label>

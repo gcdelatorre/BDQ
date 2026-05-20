@@ -319,7 +319,7 @@ export default function VaccineRecallPage() {
 
                   {/* Quick Record Action */}
                   <Link
-                    to={`/patients/${group.child_id}?tab=immunization`}
+                    to={`/patients/${group.child_id}?tab=child_imm`}
                     className="mt-6 w-full py-3 bg-slate-900 hover:bg-teal-600 text-white rounded-xl text-sm font-bold shadow-sm transition-all text-center flex justify-center items-center gap-2 active:scale-95"
                   >
                     <Syringe size={16} weight="bold" />

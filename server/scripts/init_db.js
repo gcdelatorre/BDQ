@@ -62,38 +62,33 @@ const initDB = async () => {
         const today = new Date();
         const formatDate = (d) => d.toISOString().split("T")[0];
 
-        // Newborn: 3 days old (At Birth vaccines were 3 days ago -> Overdue)
+        // Newborn: 4 days old (birth vaccines overdue)
         const dobNewborn = new Date(today);
-        dobNewborn.setDate(today.getDate() - 3);
+        dobNewborn.setDate(today.getDate() - 4);
 
-        // Infant: 39 days old (Penta 1, OPV 1, PCV 1 due at 42 days -> Upcoming in 3 days)
-        const dobInfant1 = new Date(today);
-        dobInfant1.setDate(today.getDate() - 39);
+        // Infant: 40 days old (6-week vaccines due in about 2 days)
+        const dobOneMonth = new Date(today);
+        dobOneMonth.setDate(today.getDate() - 40);
 
-        // Infant 2: 68 days old (Penta 2, OPV 2, PCV 2 due at 70 days -> Upcoming in 2 days)
-        const dobInfant2 = new Date(today);
-        dobInfant2.setDate(today.getDate() - 68);
+        // Infant: 81 days old (10-week vaccines overdue)
+        const dobThreeMonths = new Date(today);
+        dobThreeMonths.setDate(today.getDate() - 81);
 
-        // Defaulter: 120 days old (Penta 1/2/3 were due at 42, 70, 98 days -> Severely Overdue/Defaulter)
-        const dobDefaulter = new Date(today);
-        dobDefaulter.setDate(today.getDate() - 120);
+        // 8 months old (9-month vaccines upcoming)
+        const dobEightMonths = new Date(today);
+        dobEightMonths.setDate(today.getDate() - 260);
 
-        // Infant 9m: 270 days old (MMR 1, IPV 2 due at 274 days -> Upcoming in 4 days)
-        const dobInfant9 = new Date(today);
-        dobInfant9.setDate(today.getDate() - 270);
-
-        // Toddler: 360 days old (MMR 2 due at 365 days -> Upcoming in 5 days)
-        const dobToddler = new Date(today);
-        dobToddler.setDate(today.getDate() - 360);
+        // 12 months old (12-month vaccine due and slightly overdue)
+        const dobTwelveMonths = new Date(today);
+        dobTwelveMonths.setDate(today.getDate() - 380);
 
         const patients = [
             // [first, last, sex, dob, mother, address, se_status, fsn, contact]
-            ["Juan", "Newborn", "M", formatDate(dobNewborn), "Maria Newborn", "Purok 1, Brgy. Sabang", "NHTS", "FSN-2026-001", "09171234501"],
-            ["Elena", "Infant", "F", formatDate(dobInfant1), "Grace Infant", "Purok 4, Brgy. Sabang", "Non-NHTS", "FSN-2026-002", "09281234502"],
-            ["Lucas", "TwoMonths", "M", formatDate(dobInfant2), "Diana TwoMonths", "Purok 2, Brgy. Sabang", "NHTS", "FSN-2026-003", "09391234503"],
-            ["Sophia", "Defaulter", "F", formatDate(dobDefaulter), "Rita Defaulter", "Purok 5, Brgy. Sabang", "Non-NHTS", "FSN-2025-088", "09401234504"],
-            ["Mateo", "NineMonths", "M", formatDate(dobInfant9), "Liza NineMonths", "Purok 2, Brgy. Sabang", "NHTS", "FSN-2025-012", "09511234505"],
-            ["Baby", "OneYear", "F", formatDate(dobToddler), "Sarah OneYear", "Purok 3, Brgy. Sabang", "NHTS", "FSN-2025-099", "09621234506"]
+            ["Mia", "Santos", "F", formatDate(dobNewborn), "Anna Santos", "Purok 1, Brgy. Santa Cruz", "NHTS", "0501724029-00001", "09171234501"],
+            ["Noah", "Reyes", "M", formatDate(dobOneMonth), "Grace Reyes", "Purok 4, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00002", "09281234502"],
+            ["Ella", "Cruz", "F", formatDate(dobThreeMonths), "Diana Cruz", "Purok 2, Brgy. Santa Cruz", "NHTS", "0501724029-00003", "09391234503"],
+            ["Aiden", "Lopez", "M", formatDate(dobEightMonths), "Rita Lopez", "Purok 5, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00004", "09401234504"],
+            ["Sofia", "Dela Cruz", "F", formatDate(dobTwelveMonths), "Liza Dela Cruz", "Purok 3, Brgy. Santa Cruz", "NHTS", "0501724029-00005", "09511234505"]
         ];
 
         const patientIds = [];
@@ -111,85 +106,77 @@ const initDB = async () => {
         }
 
         // Seed child immunization history for testing eligibility
-        // Juan (Newborn): Has no vaccines yet (due for BCG 1, HepB 1)
-        
-        // Elena (Infant 1.5m): Already got birth vaccines
-        const elenaId = patientIds[1];
+        // Mia (Newborn): no vaccines yet
+
+        // Noah (1 month): birth vaccines administered
+        const noahId = patientIds[1];
         await db.execute(
             "INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)",
-            [elenaId, formatDate(dobInfant1), adminId]
+            [noahId, formatDate(dobOneMonth), adminId]
         );
         await db.execute(
             "INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)",
-            [elenaId, formatDate(dobInfant1), adminId]
+            [noahId, formatDate(dobOneMonth), adminId]
         );
 
-        // Lucas (Infant 2m): Got Birth + 6 Week vaccines. 10 Week vaccines are due soon.
-        const lucasId = patientIds[2];
-        const dobLucas = dobInfant2;
-        const dateLucasBirth = new Date(dobLucas);
-        const dateLucas6W = new Date(dobLucas); dateLucas6W.setDate(dobLucas.getDate() + 42);
+        // Ella (3 months): birth vaccines and 6-week vaccines completed
+        const ellaId = patientIds[2];
+        const dobElla = dobThreeMonths;
+        const ella6W = new Date(dobElla);
+        ella6W.setDate(dobElla.getDate() + 42);
+        const ella10W = new Date(dobElla);
+        ella10W.setDate(dobElla.getDate() + 70);
 
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [lucasId, formatDate(dateLucasBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [lucasId, formatDate(dateLucasBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [lucasId, formatDate(dateLucas6W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [lucasId, formatDate(dateLucas6W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [lucasId, formatDate(dateLucas6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [ellaId, formatDate(dobElla), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [ellaId, formatDate(dobElla), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [ellaId, formatDate(ella6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [ellaId, formatDate(ella6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [ellaId, formatDate(ella6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 2, ?, ?)", [ellaId, formatDate(ella10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 2, ?, ?)", [ellaId, formatDate(ella10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 2, ?, ?)", [ellaId, formatDate(ella10W), adminId]);
 
-        // Sophia (Defaulter 4m): Got Birth vaccines only. Has ignored 6-week, 10-week, 14-week schedules.
-        const sophiaId = patientIds[3];
-        const dobSophia = dobDefaulter;
-        const dateSophiaBirth = new Date(dobSophia);
+        // Aiden (8 months): has birth vaccines and multiple rounds completed
+        const aidenId = patientIds[3];
+        const dobAiden = dobEightMonths;
+        const aiden6W = new Date(dobAiden); aiden6W.setDate(dobAiden.getDate() + 42);
+        const aiden10W = new Date(dobAiden); aiden10W.setDate(dobAiden.getDate() + 70);
+        const aiden14W = new Date(dobAiden); aiden14W.setDate(dobAiden.getDate() + 98);
 
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [sophiaId, formatDate(dateSophiaBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [sophiaId, formatDate(dateSophiaBirth), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [aidenId, formatDate(dobAiden), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [aidenId, formatDate(dobAiden), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [aidenId, formatDate(aiden6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [aidenId, formatDate(aiden6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [aidenId, formatDate(aiden6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 2, ?, ?)", [aidenId, formatDate(aiden10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 2, ?, ?)", [aidenId, formatDate(aiden10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 2, ?, ?)", [aidenId, formatDate(aiden10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 3, ?, ?)", [aidenId, formatDate(aiden14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 3, ?, ?)", [aidenId, formatDate(aiden14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 3, ?, ?)", [aidenId, formatDate(aiden14W), adminId]);
 
+        // Sofia (12 months): completed birth and primary schedules, due MMR 1 and IPV 2
+        const sofiaId = patientIds[4];
+        const dobSofia = dobTwelveMonths;
+        const sofia6W = new Date(dobSofia); sofia6W.setDate(dobSofia.getDate() + 42);
+        const sofia10W = new Date(dobSofia); sofia10W.setDate(dobSofia.getDate() + 70);
+        const sofia14W = new Date(dobSofia); sofia14W.setDate(dobSofia.getDate() + 98);
+        const sofia9M = new Date(dobSofia); sofia9M.setDate(dobSofia.getDate() + 274);
 
-        // Mateo (Infant 9m): Already got BCG, HepB, Penta 1/2/3, OPV 1/2/3, IPV 1, PCV 1/2/3
-        const mateoId = patientIds[4];
-        const dobMateo = dobInfant9;
-        
-        const dateAtBirth = new Date(dobMateo);
-        const dateAt6Weeks = new Date(dobMateo); dateAt6Weeks.setDate(dobMateo.getDate() + 42);
-        const dateAt10Weeks = new Date(dobMateo); dateAt10Weeks.setDate(dobMateo.getDate() + 70);
-        const dateAt14Weeks = new Date(dobMateo); dateAt14Weeks.setDate(dobMateo.getDate() + 98);
-
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [mateoId, formatDate(dateAtBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [mateoId, formatDate(dateAtBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [mateoId, formatDate(dateAt6Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [mateoId, formatDate(dateAt6Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [mateoId, formatDate(dateAt6Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 2, ?, ?)", [mateoId, formatDate(dateAt10Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 2, ?, ?)", [mateoId, formatDate(dateAt10Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 2, ?, ?)", [mateoId, formatDate(dateAt10Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 3, ?, ?)", [mateoId, formatDate(dateAt14Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 3, ?, ?)", [mateoId, formatDate(dateAt14Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'IPV', 1, ?, ?)", [mateoId, formatDate(dateAt14Weeks), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 3, ?, ?)", [mateoId, formatDate(dateAt14Weeks), adminId]);
-
-        // Baby (Toddler 12m): Got all up to 9m including MMR 1 and IPV 2
-        const babyId = patientIds[5];
-        const dobBaby = dobToddler;
-        const dateBabyBirth = new Date(dobBaby);
-        const dateBaby6W = new Date(dobBaby); dateBaby6W.setDate(dobBaby.getDate() + 42);
-        const dateBaby10W = new Date(dobBaby); dateBaby10W.setDate(dobBaby.getDate() + 70);
-        const dateBaby14W = new Date(dobBaby); dateBaby14W.setDate(dobBaby.getDate() + 98);
-        const dateBaby9M = new Date(dobBaby); dateBaby9M.setDate(dobBaby.getDate() + 274);
-
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [babyId, formatDate(dateBabyBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [babyId, formatDate(dateBabyBirth), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [babyId, formatDate(dateBaby6W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 2, ?, ?)", [babyId, formatDate(dateBaby10W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 3, ?, ?)", [babyId, formatDate(dateBaby14W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [babyId, formatDate(dateBaby6W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 2, ?, ?)", [babyId, formatDate(dateBaby10W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 3, ?, ?)", [babyId, formatDate(dateBaby14W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'IPV', 1, ?, ?)", [babyId, formatDate(dateBaby14W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'IPV', 2, ?, ?)", [babyId, formatDate(dateBaby9M), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [babyId, formatDate(dateBaby6W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 2, ?, ?)", [babyId, formatDate(dateBaby10W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 3, ?, ?)", [babyId, formatDate(dateBaby14W), adminId]);
-        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'MMR', 1, ?, ?)", [babyId, formatDate(dateBaby9M), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'BCG', 1, ?, ?)", [sofiaId, formatDate(dobSofia), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'HepB', 1, ?, ?)", [sofiaId, formatDate(dobSofia), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 1, ?, ?)", [sofiaId, formatDate(sofia6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 2, ?, ?)", [sofiaId, formatDate(sofia10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'Pentavalent', 3, ?, ?)", [sofiaId, formatDate(sofia14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 1, ?, ?)", [sofiaId, formatDate(sofia6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 2, ?, ?)", [sofiaId, formatDate(sofia10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'OPV', 3, ?, ?)", [sofiaId, formatDate(sofia14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'IPV', 1, ?, ?)", [sofiaId, formatDate(sofia14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'IPV', 2, ?, ?)", [sofiaId, formatDate(sofia9M), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 1, ?, ?)", [sofiaId, formatDate(sofia6W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 2, ?, ?)", [sofiaId, formatDate(sofia10W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'PCV', 3, ?, ?)", [sofiaId, formatDate(sofia14W), adminId]);
+        await db.execute("INSERT INTO child_immunization_record (child_id, vaccine_type, dose_number, date_administered, administered_by_user_id) VALUES (?, 'MMR', 1, ?, ?)", [sofiaId, formatDate(sofia9M), adminId]);
 
         // Create Medicine Catalog & Inventory
         const meds = [

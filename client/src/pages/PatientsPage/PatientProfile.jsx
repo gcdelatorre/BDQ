@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { 
   ArrowLeft, 
   Baby, 
@@ -31,6 +31,7 @@ import { Card, CardBody } from "@/components/ui/card";
 export default function PatientProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("summary");
@@ -38,6 +39,27 @@ export default function PatientProfile() {
   useEffect(() => {
     fetchPatient();
   }, [id]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedTab = params.get("tab");
+
+    const tabMap = {
+      immunization: "child_imm",
+      child_imm: "child_imm",
+      maternal: "maternal_imm",
+      nutrition: "nutrition",
+      supplement: "supplement",
+      breastfeeding: "breastfeeding",
+      dispensing: "dispensing"
+    };
+
+    if (requestedTab && tabMap[requestedTab]) {
+      setActiveTab(tabMap[requestedTab]);
+    } else {
+      setActiveTab("summary");
+    }
+  }, [location.search]);
 
   const fetchPatient = async () => {
     try {

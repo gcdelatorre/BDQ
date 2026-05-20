@@ -2,7 +2,7 @@
 
 2. Immunization View Record.
 In our current system we dont have an identifier on which this vaccine belong or what should be taken.
-So just update the UI by just simply putting an identifier there of which month or age group.
+So just update the UI by just simply putting an identifier there of which month or age group so the nurse know which to check.
 {
   "BCG": {
     "doses": 1,
@@ -58,3 +58,5 @@ Vaccine Recall Page: Standardize the layout to match global UI guidelines and in
 Profile Synchronization Bug: Fix data reactive state errors in the Full Patient Profile view. Fields like certification_status and related metadata must instantly sync and persist with the backend database upon updating.
 
 De-scoping Requirement: Completely remove the Maternal Immunization module, including its associated database schemas, UI routes, and navigation items.
+
+6. Customized Toast for our System
