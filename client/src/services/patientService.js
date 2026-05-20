@@ -2,13 +2,21 @@ import api from "./api";
 
 const patientService = {
   /**
-   * Fetches all child patients from the system
+   * Fetches child patients from the system with optional search and pagination
+   * @param {Object} options
+   * @param {string} options.search
+   * @param {number} options.page
+   * @param {number} options.limit
    * @returns {Promise}
    */
-  getAllPatients: async () => {
+  getAllPatients: async ({ search = "", page = 1, limit = 20 } = {}) => {
     try {
-      const response = await api.get("/patient/get-all-patient");
-      // Backend returns { message, data: [...] }
+      const params = {};
+      if (search) params.search = search;
+      if (page) params.page = page;
+      if (limit) params.limit = limit;
+
+      const response = await api.get("/patient/get-all-patient", { params });
       return response.data.data;
     } catch (error) {
       console.error("Error fetching patients:", error);

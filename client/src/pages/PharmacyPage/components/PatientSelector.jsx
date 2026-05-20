@@ -1,15 +1,16 @@
 import { MagnifyingGlass, UsersThree, X, Phone } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
-const RECENT_LIMIT = 8;
-
 export default function PatientSelector({
   patients,
   searchPatient,
   onSearchChange,
   selectedPatient,
   onSelect,
-  onClear
+  onClear,
+  loading,
+  hasMore,
+  onLoadMore
 }) {
   const query = searchPatient.trim().toLowerCase();
 
@@ -18,14 +19,10 @@ export default function PatientSelector({
         `${p.first_name} ${p.last_name}`.toLowerCase().includes(query) ||
         p.family_serial_number?.toLowerCase().includes(query) ||
         p.contact_number?.includes(searchPatient.trim())
-      ).slice(0, 10)
-    : [];
+      )
+    : patients;
 
-  const recentPatients = [...patients]
-    .sort((a, b) => new Date(b.date_of_registration) - new Date(a.date_of_registration))
-    .slice(0, RECENT_LIMIT);
-
-  const listToShow = query ? filtered : recentPatients;
+  const listToShow = filtered;
 
   if (selectedPatient) {
     return (
@@ -85,35 +82,52 @@ export default function PatientSelector({
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
           {query ? `Matches (${listToShow.length})` : "Recently registered"}
         </p>
-        {listToShow.length === 0 ? (
+        {loading ? (
+          <p className="text-sm text-slate-500 font-medium py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            Searching patients...
+          </p>
+        ) : listToShow.length === 0 ? (
           <p className="text-sm text-slate-500 font-medium py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
             {query ? "No patients match your search." : "No patients registered yet."}
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 max-h-[220px] overflow-y-auto custom-scrollbar pr-1">
-            {listToShow.map((p) => (
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 max-h-55 overflow-y-auto custom-scrollbar pr-1">
+              {listToShow.map((p) => (
+                <button
+                  key={p.child_id}
+                  type="button"
+                  onClick={() => onSelect(p)}
+                  className={cn(
+                    "text-left p-3 rounded-xl border transition-all",
+                    "bg-white border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 hover:shadow-sm"
+                  )}
+                >
+                  <p className="text-sm font-bold text-slate-900 truncate">
+                    {p.first_name} {p.last_name}
+                  </p>
+                  <p className="text-[10px] font-bold text-teal-600 uppercase tracking-wider mt-1 truncate">
+                    {p.family_serial_number}
+                  </p>
+                  {p.contact_number ? (
+                    <p className="text-[10px] text-slate-500 mt-1 truncate">{p.contact_number}</p>
+                  ) : (
+                    <p className="text-[10px] text-amber-600 mt-1">No contact on file</p>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {hasMore && (
               <button
-                key={p.child_id}
                 type="button"
-                onClick={() => onSelect(p)}
-                className={cn(
-                  "text-left p-3 rounded-xl border transition-all",
-                  "bg-white border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 hover:shadow-sm"
-                )}
+                onClick={onLoadMore}
+                disabled={loading}
+                className="w-full py-3 text-sm font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-all"
               >
-                <p className="text-sm font-bold text-slate-900 truncate">
-                  {p.first_name} {p.last_name}
-                </p>
-                <p className="text-[10px] font-bold text-teal-600 uppercase tracking-wider mt-1 truncate">
-                  {p.family_serial_number}
-                </p>
-                {p.contact_number ? (
-                  <p className="text-[10px] text-slate-500 mt-1 truncate">{p.contact_number}</p>
-                ) : (
-                  <p className="text-[10px] text-amber-600 mt-1">No contact on file</p>
-                )}
+                {loading ? "Loading more..." : "Show more patients"}
               </button>
-            ))}
+            )}
           </div>
         )}
       </div>

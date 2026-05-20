@@ -118,16 +118,28 @@ export const registerChild = async (payload) => {
 }
 
 
-export const getAllPatient = async () => {
+export const getAllPatient = async ({ search = "", page = 1, limit = 20 } = {}) => {
+    const filters = [];
+    const values = [];
 
-    const [rows] = await db.execute(
-        "SELECT * FROM child_patient ORDER BY date_of_registration DESC"
-    );
+    const parsedPage = Number(page) || 1;
+    const parsedLimit = Number(limit) > 0 ? Number(limit) : 20;
+    const offset = (parsedPage - 1) * parsedLimit;
 
-    if (rows.length < 1) {
-        throw { status: 404, message: "No patients found" }
+    if (search && search.trim().length > 0) {
+        const query = `%${search.trim()}%`;
+        filters.push("(CONCAT(first_name, ' ', last_name) LIKE ? OR family_serial_number LIKE ? OR contact_number LIKE ?)");
+        values.push(query, query, query);
     }
 
+    let sql = "SELECT * FROM child_patient";
+    if (filters.length) {
+        sql += ` WHERE ${filters.join(" AND ")}`;
+    }
+    sql += " ORDER BY date_of_registration DESC LIMIT ? OFFSET ?";
+    values.push(parsedLimit, offset);
+
+    const [rows] = await db.execute(sql, values);
     return rows;
 }
 

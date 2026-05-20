@@ -25,7 +25,8 @@ export const register = async (req, res) => {
 
 export const getAllPatient = async (req, res) => {
     try {
-        const result = await patientService.getAllPatient();
+        const { search = "", page = 1, limit = 20 } = req.query;
+        const result = await patientService.getAllPatient({ search, page, limit });
         return res.status(200).json({
             message: "Patients fetched successfully!",
             data: result

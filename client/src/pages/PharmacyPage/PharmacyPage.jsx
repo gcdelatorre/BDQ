@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/useToast";
 import PatientSelector from "./components/PatientSelector";
 import MedicineCatalog from "./components/MedicineCatalog";
 import DispensingCart from "./components/DispensingCart";
+import DispensingHistoryModal from "./components/DispensingHistoryModal";
 
 export default function PharmacyPage() {
   const { toast } = useToast();
@@ -14,31 +15,61 @@ export default function PharmacyPage() {
 
   const [searchMed, setSearchMed] = useState("");
   const [searchPatient, setSearchPatient] = useState("");
+  const [patientPage, setPatientPage] = useState(1);
+  const [patientHasMore, setPatientHasMore] = useState(false);
+  const [patientLoading, setPatientLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState(null);
 
   const [basket, setBasket] = useState([]);
   const [notes, setNotes] = useState("");
   const [isDispensing, setIsDispensing] = useState(false);
 
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+
   const fetchInitialData = useCallback(async ({ silent = false } = {}) => {
     try {
       if (!silent) setInitialLoading(true);
-      const [patientsData, medsData] = await Promise.all([
-        patientService.getAllPatients(),
-        pharmacyService.getAllMedicines()
-      ]);
-      setPatients(patientsData);
+      const medsData = await pharmacyService.getAllMedicines();
       setMedicines(medsData);
     } catch {
       toast.error("Error", "Failed to load pharmacy data.");
     } finally {
       setInitialLoading(false);
     }
-  }, [toast]);
+  }, []);
+
+  const fetchPatients = useCallback(async ({ search = "", page = 1, append = false } = {}) => {
+    try {
+      setPatientLoading(true);
+      const data = await patientService.getAllPatients({ search, page, limit: 12 });
+
+      setPatients(prev => (append ? [...prev, ...data] : data));
+      setPatientHasMore(data.length === 12);
+    } catch {
+      toast.error("Error", "Failed to load patients.");
+    } finally {
+      setPatientLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchInitialData();
+    fetchPatients({ page: 1 });
   }, []);
+
+  const handlePatientSearch = (value) => {
+    setSearchPatient(value);
+    setPatientPage(1);
+    fetchPatients({ search: value, page: 1 });
+  };
+
+  const loadMorePatients = async () => {
+    const nextPage = patientPage + 1;
+    setPatientPage(nextPage);
+    await fetchPatients({ search: searchPatient, page: nextPage, append: true });
+  };
 
   const getLiveStock = (medicineId) => {
     const med = medicines.find(m => m.medicine_id === medicineId);
@@ -84,6 +115,29 @@ export default function PharmacyPage() {
   const handleClearPatient = () => {
     setSelectedPatient(null);
     setSearchPatient("");
+    setPatientPage(1);
+    fetchPatients({ search: "", page: 1 });
+  };
+
+  const fetchDispensingHistory = async () => {
+    try {
+      setHistoryLoading(true);
+      const data = await pharmacyService.getDispensingHistory(20);
+      setHistory(data);
+    } catch {
+      toast.error("Error", "Failed to load dispensing history.");
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const openHistory = async () => {
+    setHistoryOpen(true);
+    await fetchDispensingHistory();
+  };
+
+  const closeHistory = () => {
+    setHistoryOpen(false);
   };
 
   const handleDispense = async () => {
@@ -133,25 +187,37 @@ export default function PharmacyPage() {
 
   return (
     <div className="page-shell">
-      <div>
-        <h1 className="page-title">Medicine Dispensing</h1>
-        <p className="page-description">
-          Select the patient, add medicines, then confirm. Stock updates automatically.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="page-title">Medicine Dispensing</h1>
+          <p className="page-description">
+            Select the patient, add medicines, then confirm. Stock updates automatically.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={openHistory}
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-xl hover:bg-slate-200 transition-all"
+        >
+          View history
+        </button>
       </div>
 
       <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
         <PatientSelector
           patients={patients}
           searchPatient={searchPatient}
-          onSearchChange={setSearchPatient}
+          onSearchChange={handlePatientSearch}
           selectedPatient={selectedPatient}
           onSelect={handleSelectPatient}
           onClear={handleClearPatient}
+          loading={patientLoading}
+          hasMore={patientHasMore}
+          onLoadMore={loadMorePatients}
         />
       </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:min-h-[480px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-7 flex flex-col">
           <MedicineCatalog
             medicines={medicines}
@@ -177,6 +243,13 @@ export default function PharmacyPage() {
           />
         </div>
       </div>
+
+      <DispensingHistoryModal
+        isOpen={historyOpen}
+        onClose={closeHistory}
+        history={history}
+        loading={historyLoading}
+      />
     </div>
   );
 }
