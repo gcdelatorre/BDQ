@@ -6,6 +6,7 @@ import PatientSelector from "./components/PatientSelector";
 import MedicineCatalog from "./components/MedicineCatalog";
 import DispensingCart from "./components/DispensingCart";
 import DispensingHistoryModal from "./components/DispensingHistoryModal";
+import { ClockCounterClockwise } from "@phosphor-icons/react";
 
 export default function PharmacyPage() {
   const { toast } = useToast();
@@ -197,10 +198,12 @@ export default function PharmacyPage() {
         <button
           type="button"
           onClick={openHistory}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-xl hover:bg-slate-200 transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
         >
-          View history
+          <ClockCounterClockwise size={18} weight="bold" />
+          View History
         </button>
+
       </div>
 
       <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">

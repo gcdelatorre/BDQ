@@ -37,7 +37,9 @@ export default function RecentActivities({ logs = [], loading }) {
           View all <CaretRight size={12} weight="bold" />
         </Link>
       </div>
-      <div className="p-6">
+      
+      {/* Scrollable Container Container matching RecentDispensing */}
+      <div className="px-6 py-5 max-h-[350px] overflow-y-auto custom-scrollbar">
         {loading ? (
           <div className="space-y-3 animate-pulse">
             {[1, 2, 3].map((i) => (

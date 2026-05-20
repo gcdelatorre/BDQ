@@ -93,20 +93,6 @@ export default function Dashboard() {
           <h2 className="page-title">Welcome back, {displayName}</h2>
           <p className="page-description">Today&apos;s snapshot for the barangay health center.</p>
         </motion.div>
-        <motion.div variants={containerVariants} className="flex flex-wrap gap-2">
-          <Link
-            to="/pharmacy"
-            className="btn-primary"
-          >
-            Dispense medicine
-          </Link>
-          <Link
-            to="/patients"
-            className="btn-secondary"
-          >
-            Register patient
-          </Link>
-        </motion.div>
       </motion.div>
 
       <StatCards stats={stats} loading={loading} />

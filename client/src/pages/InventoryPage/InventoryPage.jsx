@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { 
-  Package, 
-  Plus, 
-  MagnifyingGlass, 
-  Warning, 
-  TrendUp, 
-  Pill, 
-  Calendar, 
+import {
+  Package,
+  Plus,
+  MagnifyingGlass,
+  Warning,
+  TrendUp,
+  Pill,
+  Calendar,
   Archive,
   ArrowRight,
   Info,
@@ -107,7 +107,7 @@ export default function InventoryPage() {
     }
   };
 
-  const filteredMedicines = medicines.filter(m => 
+  const filteredMedicines = medicines.filter(m =>
     m.medicine_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     m.generic_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -124,9 +124,9 @@ export default function InventoryPage() {
           <p className="text-slate-500 font-medium text-sm mt-1">Monitor medication stock levels and batch distribution records.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={() => setShowAddMedicineModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0"
           >
             <Plus size={18} weight="bold" />
             Register Medicine
@@ -175,8 +175,8 @@ export default function InventoryPage() {
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 group">
           <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search medicine by name or generic name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -205,11 +205,11 @@ export default function InventoryPage() {
           filteredMedicines.map((med) => {
             const stock = Number(med.total_stock) || 0;
             const isLowStock = stock <= med.reorder_level;
-            
+
             // Avoid redundancy if generic name is same as medicine name (or just brand name with dosage)
             // A simple check is if generic name is already in the medicine name string
             const showGenericName = !med.medicine_name.toLowerCase().includes(med.generic_name.toLowerCase());
-            
+
             // Calculate a rough percentage for the stock bar (cap at 100%)
             // Let's assume a "healthy" stock is 2.5x the reorder level for visualization purposes
             const targetStock = med.reorder_level * 2.5;
@@ -254,10 +254,10 @@ export default function InventoryPage() {
                         {stock.toLocaleString()} {med.unit_of_measure}
                       </p>
                     </div>
-                    
+
                     {/* Visual Progress Bar */}
                     <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                      <div 
+                      <div
                         className={cn(
                           "h-full rounded-full transition-all duration-1000",
                           isLowStock ? "bg-amber-500" : "bg-teal-500"
@@ -265,7 +265,7 @@ export default function InventoryPage() {
                         style={{ width: `${stockPercent}%` }}
                       />
                     </div>
-                    
+
                     {/* Minimal Status Text instead of clunky "MIN: 50" */}
                     {isLowStock ? (
                       <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1">
@@ -281,7 +281,7 @@ export default function InventoryPage() {
 
                 {/* Footer Action */}
                 <div className="p-2 bg-slate-50 border-t border-slate-100">
-                  <button 
+                  <button
                     onClick={() => {
                       setSelectedMedicine(med);
                       setShowAddBatchModal(true);
@@ -327,20 +327,20 @@ export default function InventoryPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Medicine Name</label>
-                    <input 
+                    <input
                       required type="text"
                       value={medicineForm.medicine_name}
-                      onChange={(e) => setMedicineForm({...medicineForm, medicine_name: e.target.value})}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, medicine_name: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                       placeholder="e.g. Paracetamol"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Generic Name</label>
-                    <input 
+                    <input
                       required type="text"
                       value={medicineForm.generic_name}
-                      onChange={(e) => setMedicineForm({...medicineForm, generic_name: e.target.value})}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, generic_name: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                       placeholder="e.g. Acetaminophen"
                     />
@@ -350,9 +350,9 @@ export default function InventoryPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
-                    <select 
+                    <select
                       value={medicineForm.medicine_category}
-                      onChange={(e) => setMedicineForm({...medicineForm, medicine_category: e.target.value})}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, medicine_category: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     >
                       <option value="Tablet">Tablet</option>
@@ -363,20 +363,20 @@ export default function InventoryPage() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Unit</label>
-                    <input 
+                    <input
                       required type="text"
                       value={medicineForm.unit_of_measure}
-                      onChange={(e) => setMedicineForm({...medicineForm, unit_of_measure: e.target.value})}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, unit_of_measure: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                       placeholder="e.g. pcs"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Reorder Point</label>
-                    <input 
+                    <input
                       required type="number"
                       value={medicineForm.reorder_level}
-                      onChange={(e) => setMedicineForm({...medicineForm, reorder_level: e.target.value})}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, reorder_level: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     />
                   </div>
@@ -384,23 +384,23 @@ export default function InventoryPage() {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Notes / Description</label>
-                  <textarea 
+                  <textarea
                     value={medicineForm.description}
-                    onChange={(e) => setMedicineForm({...medicineForm, description: e.target.value})}
+                    onChange={(e) => setMedicineForm({ ...medicineForm, description: e.target.value })}
                     className="w-full px-5 py-4 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-medium h-24 resize-none"
                     placeholder="Brief description of the medication..."
                   />
                 </div>
 
                 <div className="flex gap-4 pt-4 border-t border-slate-50">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowAddMedicineModal(false)}
                     className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-colors text-[11px] uppercase tracking-widest"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="flex-1 py-4 bg-teal-600 text-white rounded-2xl font-black shadow-xl hover:bg-teal-700 transition-all text-[11px] uppercase tracking-widest border-b-4 border-teal-800 active:border-b-0 active:translate-y-1"
                   >
@@ -442,20 +442,20 @@ export default function InventoryPage() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Batch Number</label>
-                    <input 
+                    <input
                       required type="text"
                       value={batchForm.batch_number}
-                      onChange={(e) => setBatchForm({...batchForm, batch_number: e.target.value})}
+                      onChange={(e) => setBatchForm({ ...batchForm, batch_number: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                       placeholder="e.g. LOT-2024-001"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Quantity Received</label>
-                    <input 
+                    <input
                       required type="number"
                       value={batchForm.quantity_in_stock}
-                      onChange={(e) => setBatchForm({...batchForm, quantity_in_stock: e.target.value})}
+                      onChange={(e) => setBatchForm({ ...batchForm, quantity_in_stock: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     />
                   </div>
@@ -466,10 +466,10 @@ export default function InventoryPage() {
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                       <Calendar size={14} className="text-teal-600" /> Expiry Date
                     </label>
-                    <input 
+                    <input
                       required type="date"
                       value={batchForm.expiration_date}
-                      onChange={(e) => setBatchForm({...batchForm, expiration_date: e.target.value})}
+                      onChange={(e) => setBatchForm({ ...batchForm, expiration_date: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     />
                   </div>
@@ -477,10 +477,10 @@ export default function InventoryPage() {
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
                       <Calendar size={14} className="text-teal-600" /> Date Received
                     </label>
-                    <input 
+                    <input
                       required type="date"
                       value={batchForm.date_received}
-                      onChange={(e) => setBatchForm({...batchForm, date_received: e.target.value})}
+                      onChange={(e) => setBatchForm({ ...batchForm, date_received: e.target.value })}
                       className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     />
                   </div>
@@ -488,24 +488,24 @@ export default function InventoryPage() {
 
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Supplier / Source</label>
-                  <input 
+                  <input
                     required type="text"
                     value={batchForm.supplier_name}
-                    onChange={(e) => setBatchForm({...batchForm, supplier_name: e.target.value})}
+                    onChange={(e) => setBatchForm({ ...batchForm, supplier_name: e.target.value })}
                     className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
                     placeholder="e.g. DOH Central Office"
                   />
                 </div>
 
                 <div className="flex gap-4 pt-4 border-t border-slate-50">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowAddBatchModal(false)}
                     className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-colors text-[11px] uppercase tracking-widest"
                   >
                     Cancel
                   </button>
-                  <button 
+                  <button
                     type="submit"
                     className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black shadow-xl hover:bg-slate-800 transition-all text-[11px] uppercase tracking-widest border-b-4 border-slate-950 active:border-b-0 active:translate-y-1"
                   >

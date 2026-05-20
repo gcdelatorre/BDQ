@@ -59,4 +59,6 @@ Profile Synchronization Bug: Fix data reactive state errors in the Full Patient 
 
 De-scoping Requirement: Completely remove the Maternal Immunization module, including its associated database schemas, UI routes, and navigation items.
 
-6. Customized Toast for our System
+6. Customized Toast for our System. and make the Recent Activities Scrollable like the Recent Dispensing
+
+7. fix modal incosistency, Inventory Page - Add new batch modal, Add new medicine modal. Design must be same as register patient modal.

@@ -160,15 +160,10 @@ export default function VaccineRecallPage() {
 
         <button
           onClick={() => setShowCallList(true)}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0"
         >
           <PhoneCall size={20} weight="fill" />
           Tomorrow's Call List
-          {tomorrowsList.length > 0 && (
-            <span className="bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded-full ml-1">
-              {tomorrowsList.length}
-            </span>
-          )}
         </button>
       </div>
 
@@ -319,7 +314,7 @@ export default function VaccineRecallPage() {
 
                   {/* Quick Record Action */}
                   <Link
-                    to={`/patients/${group.child_id}?tab=child_imm`}
+                    to={`/patients/${group.child_id}?tab=immunization`}
                     className="mt-6 w-full py-3 bg-slate-900 hover:bg-teal-600 text-white rounded-xl text-sm font-bold shadow-sm transition-all text-center flex justify-center items-center gap-2 active:scale-95"
                   >
                     <Syringe size={16} weight="bold" />
@@ -374,61 +369,79 @@ export default function VaccineRecallPage() {
       {/* Tomorrow's Call List Modal */}
       <AnimatePresence>
         {showCallList && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh]"
+              initial={{ opacity: 0, y: 16, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              className="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-2xl border border-slate-200"
             >
               {/* Modal Header */}
-              <div className="bg-indigo-600 p-6 text-white flex justify-between items-center shrink-0">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                    <PhoneCall size={24} weight="fill" />
+                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
+                    <PhoneCall size={22} weight="duotone" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold">Tomorrow's Call List</h3>
-                    <p className="text-indigo-200 text-sm font-medium">Patients due for vaccines tomorrow</p>
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-400 font-bold">Call List</p>
+                    <h3 className="text-lg font-bold text-slate-900">Tomorrow's Schedule</h3>
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowCallList(false)}
-                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  aria-label="Close call list"
                 >
-                  <X size={20} weight="bold" />
+                  <X size={18} weight="bold" />
                 </button>
               </div>
 
-              {/* Call List Content */}
-              <div className="p-6 overflow-y-auto flex-1">
+              {/* Modal Content */}
+              <div className="p-6">
                 {tomorrowsList.length === 0 ? (
-                  <div className="text-center py-16">
-                    <CheckCircle size={48} weight="duotone" className="text-slate-300 mx-auto mb-4" />
-                    <h4 className="font-bold text-slate-800 text-lg">No calls needed</h4>
-                    <p className="text-slate-500 text-sm mt-1">There are no patients scheduled for vaccines tomorrow.</p>
+                  <div className="flex h-60 flex-col items-center justify-center text-center">
+                    <CheckCircle size={40} weight="duotone" className="text-slate-300 mb-3" />
+                    <p className="text-sm text-slate-500 font-medium">No calls needed for tomorrow.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-130 overflow-y-auto custom-scrollbar pr-2">
                     {tomorrowsList.map((group, idx) => (
-                      <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200 bg-slate-50">
-                        <div>
-                          <p className="font-bold text-slate-900 text-base">{group.first_name} {group.last_name}</p>
-                          <p className="text-xs text-slate-500 font-medium mt-0.5">Mother: {group.mother_complete_name}</p>
-                          <div className="flex items-center gap-1 mt-2 text-indigo-700 font-bold bg-indigo-100/50 inline-flex px-2 py-1 rounded-lg">
-                            <PhoneCall size={14} />
-                            {group.contact_number || "No number listed"}
+                      <div key={idx} className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                        {/* Patient Row Header */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-bold text-slate-900">
+                              {group.first_name} {group.last_name}
+                            </p>
+                            <p className="text-[11px] text-slate-500 mt-0.5">
+                              Mother: {group.mother_complete_name}
+                            </p>
                           </div>
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-indigo-600 border border-slate-200 self-start sm:self-center">
+                            <PhoneCall size={14} weight="fill" />
+                            {group.contact_number || "No number listed"}
+                          </span>
                         </div>
 
-                        <div className="text-left sm:text-right">
-                          <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Needs Vaccines</p>
-                          <div className="flex flex-wrap gap-1 sm:justify-end">
-                            {group.vaccines.filter(v => v.diff_days === 1).map((v, i) => (
-                              <span key={i} className="font-bold text-xs text-teal-700 bg-teal-50 px-2 py-1 rounded-md border border-teal-100">
-                                {v.vaccine_type} D{v.dose_number}
-                              </span>
-                            ))}
+                        {/* Content Grid */}
+                        <div className="mt-3 grid gap-2 sm:grid-cols-1">
+                          <div className="rounded-2xl bg-white p-3 border border-slate-200">
+                            <p className="text-[10px] uppercase tracking-[0.25em] text-slate-400 font-bold mb-2">
+                              Required Vaccines
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {group.vaccines
+                                .filter((v) => v.diff_days === 1)
+                                .map((v, i) => (
+                                  <span
+                                    key={i}
+                                    className="inline-flex font-bold text-xs text-teal-700 bg-teal-50 px-2.5 py-1 rounded-xl border border-teal-100"
+                                  >
+                                    {v.vaccine_type} D{v.dose_number}
+                                  </span>
+                                ))}
+                            </div>
                           </div>
                         </div>
                       </div>
