@@ -7,6 +7,9 @@ const router = express.Router();
 // POST /api/dispensing/new (Admin, Nurse, Midwife)
 router.post("/new", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensingController.dispense);
 
+// GET /api/dispensing/count (Admin, Nurse, Midwife)
+router.get("/count", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensingController.getDispensingCount);
+
 // GET /api/dispensing/history (Admin, Nurse, Midwife)
 router.get("/history", protect, restrictTo("Admin", "Nurse", "Midwife"), dispensingController.getHistory);
 

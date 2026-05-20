@@ -66,3 +66,45 @@
     0 0 0 1px rgba(0, 0, 0, 0.01);
 }
 
+@layer components {
+  .page-shell {
+    @apply space-y-6 pb-10 max-w-[1600px] mx-auto;
+  }
+
+  .page-eyebrow {
+    @apply text-[10px] font-bold uppercase tracking-widest text-teal-600 mb-1;
+  }
+
+  .page-title {
+    @apply text-2xl font-black text-slate-900 tracking-tight;
+  }
+
+  .page-description {
+    @apply text-slate-500 font-medium text-sm mt-1;
+  }
+
+  .field-label {
+    @apply text-[10px] text-slate-400 font-bold uppercase tracking-widest;
+  }
+
+  .field-value {
+    @apply text-sm font-bold text-slate-900;
+  }
+
+  .step-label {
+    @apply text-[10px] font-bold text-slate-500 uppercase tracking-widest;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-teal-500 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-slate-50 transition-colors;
+  }
+
+  .link-subtle {
+    @apply text-teal-600 hover:text-teal-700 text-xs font-bold flex items-center gap-0.5 hover:underline transition-colors;
+  }
+}
+

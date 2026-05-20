@@ -1,30 +1,33 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import StatCards from "./components/StatCards";
 import RecentDispensing from "./components/RecentDispensing";
 import StockAlerts from "./components/StockAlerts";
 import RecentActivities from "./components/RecentActivities";
 import UpcomingRecalls from "./components/UpcomingRecalls";
+import pharmacyService from "@/services/pharmacyService";
+import patientService from "@/services/patientService";
+import auditService from "@/services/auditService";
+import clinicalService from "@/services/clinicalService";
+import { useAuth } from "@/contexts/AuthContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
+    transition: { staggerChildren: 0.1 }
   }
 };
 
-import { useState, useEffect } from "react";
-import pharmacyService from "@/services/pharmacyService";
-import patientService from "@/services/patientService";
-import auditService from "@/services/auditService";
-import clinicalService from "@/services/clinicalService";
+const RECENT_TX_LIMIT = 10;
+const RECENT_LOG_LIMIT = 8;
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [stats, setStats] = useState({
     totalPatients: 0,
-    activePrescriptions: 0,
+    dispensingCount: 0,
     lowStockCount: 0
   });
   const [alerts, setAlerts] = useState([]);
@@ -40,10 +43,11 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [meds, patients, history, activities, recallList] = await Promise.all([
+      const [meds, patients, recentHistory, dispensingCount, activities, recallList] = await Promise.all([
         pharmacyService.getAllMedicines(),
         patientService.getAllPatients(),
-        pharmacyService.getDispensingHistory(),
+        pharmacyService.getDispensingHistory(RECENT_TX_LIMIT),
+        pharmacyService.getDispensingCount(),
         auditService.getAllLogs(),
         clinicalService.getVaccineRecallList()
       ]);
@@ -52,19 +56,19 @@ export default function Dashboard() {
 
       setStats({
         totalPatients: patients.length,
-        activePrescriptions: history.length,
+        dispensingCount,
         lowStockCount: lowStockMeds.length
       });
 
-      setHistory(history);
-      setLogs(activities || []);
+      setHistory(recentHistory);
+      setLogs((activities || []).slice(0, RECENT_LOG_LIMIT));
       setRecalls(recallList || []);
 
       setAlerts(lowStockMeds.map(m => ({
+        medicine_id: m.medicine_id,
         type: (m.total_stock || 0) === 0 ? "Out of Stock" : "Low Stock",
         message: `${m.medicine_name} (${m.total_stock || 0} ${m.unit_of_measure} remaining)`
       })));
-
     } catch (error) {
       console.error("Dashboard Fetch Error:", error);
     } finally {
@@ -72,38 +76,52 @@ export default function Dashboard() {
     }
   };
 
+  const displayName = user?.first_name
+    ? `${user.first_name}${user.last_name ? ` ${user.last_name}` : ""}`
+    : "there";
+
   return (
     <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="space-y-10 pb-10"
+      className="page-shell space-y-8"
     >
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Welcome back, Admin! 👋</h2>
-          <p className="text-slate-500 text-sm font-medium mt-1">Here is what's happening in the barangay health center today.</p>
-        </div>
-      </div>
+      <motion.div variants={containerVariants} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <motion.div variants={containerVariants}>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-teal-600 mb-1">Overview</p>
+          <h2 className="page-title">Welcome back, {displayName}</h2>
+          <p className="page-description">Today&apos;s snapshot for the barangay health center.</p>
+        </motion.div>
+        <motion.div variants={containerVariants} className="flex flex-wrap gap-2">
+          <Link
+            to="/pharmacy"
+            className="btn-primary"
+          >
+            Dispense medicine
+          </Link>
+          <Link
+            to="/patients"
+            className="btn-secondary"
+          >
+            Register patient
+          </Link>
+        </motion.div>
+      </motion.div>
 
-      {/* KPI Row */}
-      <StatCards stats={stats} />
+      <StatCards stats={stats} loading={loading} />
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Left Column (Primary Info) */}
+      <motion.div variants={containerVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-8 space-y-6">
-          <RecentDispensing transactions={history} />
-          <RecentActivities logs={logs} />
+          <RecentDispensing transactions={history} loading={loading} />
+          <RecentActivities logs={logs} loading={loading} />
         </div>
 
-        {/* Right Column (Alerts & Reminders) */}
         <div className="lg:col-span-4 space-y-6">
           <StockAlerts alerts={alerts} loading={loading} />
           <UpcomingRecalls recalls={recalls} loading={loading} />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

@@ -74,7 +74,17 @@ export const dispenseMedicine = async (payload) => {
 /**
  * Get the history of all dispensing transactions
  */
-export const getDispensingHistory = async () => {
+export const getDispensingCount = async () => {
+    const [[{ total }]] = await db.execute(
+        "SELECT COUNT(*) as total FROM dispensing_transaction"
+    );
+    return total;
+};
+
+export const getDispensingHistory = async (limit = null) => {
+    const parsedLimit = limit != null ? Math.min(Math.max(parseInt(limit, 10) || 0, 1), 500) : null;
+    const limitClause = parsedLimit ? `LIMIT ${parsedLimit}` : "";
+
     const [rows] = await db.execute(`
         SELECT 
             dt.*, 
@@ -84,6 +94,7 @@ export const getDispensingHistory = async () => {
         JOIN child_patient cp ON dt.child_id = cp.child_id
         JOIN user u ON dt.user_id = u.user_id
         ORDER BY dt.transaction_date DESC
+        ${limitClause}
     `);
     return rows;
 };

@@ -8,13 +8,13 @@ const itemVariants = {
 };
 
 const kpis = (stats) => [
-  { label: "Total Patients", value: stats.totalPatients.toLocaleString(), icon: UsersThree, color: "teal", trend: "Live" },
-  { label: "Total Transactions", value: stats.activePrescriptions.toLocaleString(), icon: ClipboardText, color: "blue", trend: "History" },
-  { label: "Stock Alerts", value: stats.lowStockCount.toString().padStart(2, '0'), icon: WarningCircle, color: "amber", trend: "Low Stock" },
+  { label: "Registered Patients", value: stats.totalPatients.toLocaleString(), icon: UsersThree, color: "teal", trend: "Registry" },
+  { label: "Dispensing Records", value: stats.dispensingCount.toLocaleString(), icon: ClipboardText, color: "blue", trend: "All time" },
+  { label: "Stock Alerts", value: stats.lowStockCount.toString().padStart(2, "0"), icon: WarningCircle, color: "amber", trend: "Needs attention" },
 ];
 
-export default function StatCards({ stats }) {
-  const currentKpis = kpis(stats || { totalPatients: 0, activePrescriptions: 0, lowStockCount: 0 });
+export default function StatCards({ stats, loading }) {
+  const currentKpis = kpis(stats || { totalPatients: 0, dispensingCount: 0, lowStockCount: 0 });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -22,12 +22,16 @@ export default function StatCards({ stats }) {
         <motion.div
           key={kpi.label}
           variants={itemVariants}
-          className="bg-white border border-slate-100 p-7 rounded-2xl shadow-sm hover:shadow-md transition-all group relative overflow-hidden"
+          className="bg-white border border-slate-100 p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden"
         >
           <div className="flex items-start justify-between relative z-10">
-            <div>
+            <motion.div variants={itemVariants}>
               <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.1em] mb-4">{kpi.label}</p>
-              <h3 className="text-3xl font-bold text-slate-900 tracking-tighter mb-2">{kpi.value}</h3>
+              {loading ? (
+                <motion.div variants={itemVariants} className="h-9 w-20 bg-slate-100 rounded-lg animate-pulse mb-2" />
+              ) : (
+                <h3 className="text-3xl font-bold text-slate-900 tracking-tighter mb-2">{kpi.value}</h3>
+              )}
               <div className={cn(
                 "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg",
                 kpi.color === "teal" && "text-teal-700 bg-teal-50",
@@ -36,7 +40,7 @@ export default function StatCards({ stats }) {
               )}>
                 <TrendUp className="w-3 h-3" /> {kpi.trend}
               </div>
-            </div>
+            </motion.div>
 
             <div className={cn(
               "w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300",

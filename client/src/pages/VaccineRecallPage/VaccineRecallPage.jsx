@@ -37,7 +37,7 @@ export default function VaccineRecallPage() {
   const [recalls, setRecalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState("all"); 
+  const [activeTab, setActiveTab] = useState("all");
   const [showCallList, setShowCallList] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -61,6 +61,7 @@ export default function VaccineRecallPage() {
   // 1. Group recalls by patient FIRST, so tabs/counts are accurate per patient
   const groupedRecalls = useMemo(() => {
     const grouped = recalls.reduce((acc, curr) => {
+
       if (!acc[curr.child_id]) {
         acc[curr.child_id] = {
           child_id: curr.child_id,
@@ -77,7 +78,7 @@ export default function VaccineRecallPage() {
           has_upcoming: false,
         };
       }
-      
+
       acc[curr.child_id].vaccines.push({
         vaccine_type: curr.vaccine_type,
         dose_number: curr.dose_number,
@@ -156,8 +157,8 @@ export default function VaccineRecallPage() {
             Monitor due vaccines and access contact information for patient follow-ups.
           </p>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => setShowCallList(true)}
           className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
         >
@@ -234,13 +235,13 @@ export default function VaccineRecallPage() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedGroups.map((group, index) => {
-              const isDefaulter = group.worst_diff_days < -30; 
+              const isDefaulter = group.worst_diff_days < -30;
               const isOverdue = group.has_overdue;
 
               return (
-                <motion.div 
+                <motion.div
                   key={group.child_id}
-                  variants={itemVariants} 
+                  variants={itemVariants}
                   className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col"
                 >
                   {/* Status Indicator Line at the top */}
@@ -253,14 +254,14 @@ export default function VaccineRecallPage() {
                   <div className="flex justify-between items-start mb-4">
                     <div className={cn(
                       "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold",
-                      isDefaulter ? "bg-rose-50 text-rose-700" 
-                      : isOverdue ? "bg-orange-50 text-orange-700" 
-                      : "bg-teal-50 text-teal-700"
+                      isDefaulter ? "bg-rose-50 text-rose-700"
+                        : isOverdue ? "bg-orange-50 text-orange-700"
+                          : "bg-teal-50 text-teal-700"
                     )}>
                       {isOverdue ? <WarningCircle size={14} weight="fill" /> : <Calendar size={14} weight="fill" />}
                       {isDefaulter ? `Defaulter (${Math.abs(group.worst_diff_days)}d late)`
-                      : isOverdue ? `Overdue by ${Math.abs(group.worst_diff_days)}d`
-                      : group.worst_diff_days === 0 ? "Due Today" : `Due in ${group.worst_diff_days}d`}
+                        : isOverdue ? `Overdue by ${Math.abs(group.worst_diff_days)}d`
+                          : group.worst_diff_days === 0 ? "Due Today" : `Due in ${group.worst_diff_days}d`}
                     </div>
                   </div>
 
@@ -391,7 +392,7 @@ export default function VaccineRecallPage() {
                     <p className="text-indigo-200 text-sm font-medium">Patients due for vaccines tomorrow</p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => setShowCallList(false)}
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
                 >
@@ -419,7 +420,7 @@ export default function VaccineRecallPage() {
                             {group.contact_number || "No number listed"}
                           </div>
                         </div>
-                        
+
                         <div className="text-left sm:text-right">
                           <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Needs Vaccines</p>
                           <div className="flex flex-wrap gap-1 sm:justify-end">

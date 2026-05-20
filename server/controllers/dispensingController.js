@@ -27,9 +27,23 @@ export const dispense = async (req, res) => {
 /**
  * Fetch all dispensing history
  */
+export const getDispensingCount = async (req, res) => {
+    try {
+        const total = await dispensingService.getDispensingCount();
+        res.status(200).json({
+            message: "Dispensing count fetched successfully",
+            data: { total }
+        });
+    } catch (error) {
+        console.error("Fetch Dispensing Count Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
 export const getHistory = async (req, res) => {
     try {
-        const result = await dispensingService.getDispensingHistory();
+        const limit = req.query.limit ? parseInt(req.query.limit, 10) : null;
+        const result = await dispensingService.getDispensingHistory(limit);
         res.status(200).json({
             message: "Dispensing history fetched successfully",
             data: result

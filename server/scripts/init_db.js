@@ -53,8 +53,8 @@ const initDB = async () => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash("password123", salt);
         const [userResult] = await db.execute(
-            "INSERT INTO user (first_name, last_name, role, username, password_hash) VALUES (?, ?, ?, ?, ?)",
-            ["System", "Admin", "Admin", "admin123", hashedPassword]
+            "INSERT INTO user (first_name, last_name, role, username, password_hash, contact_number) VALUES (?, ?, ?, ?, ?, ?)",
+            ["System", "Admin", "Admin", "admin123", hashedPassword, "09991234567"]
         );
         const adminId = userResult.insertId;
 

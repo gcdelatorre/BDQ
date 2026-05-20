@@ -28,9 +28,15 @@ const pharmacyService = {
     return response.data;
   },
 
-  getDispensingHistory: async () => {
-    const response = await api.get("/dispensing/history");
+  getDispensingHistory: async (limit) => {
+    const params = limit != null ? { limit } : {};
+    const response = await api.get("/dispensing/history", { params });
     return response.data.data;
+  },
+
+  getDispensingCount: async () => {
+    const response = await api.get("/dispensing/count");
+    return response.data.data.total;
   },
   
   getHistoryByChild: async (childId) => {

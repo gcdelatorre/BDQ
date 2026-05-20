@@ -11,7 +11,7 @@ export const registerChild = async (payload) => {
         sex,
         date_of_birth,
         mother_complete_name,
-        contact_number = null,
+        contact_number,
         complete_address,
         se_status,
         length_at_birth_cm,

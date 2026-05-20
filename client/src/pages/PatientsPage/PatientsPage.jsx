@@ -107,11 +107,11 @@ export default function PatientsPage() {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="page-shell">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Child Patients</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Directory of registered barangay health records.</p>
+          <h1 className="page-title">Child Patients</h1>
+          <p className="page-description">Directory of registered barangay health records.</p>
         </div>
         
         <button 
