@@ -149,11 +149,8 @@ export default function VaccineRecallPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-            <Bell className="text-teal-600" weight="duotone" />
-            Vaccine Recall Registry
-          </h2>
-          <p className="text-slate-500 text-sm font-medium">
+          <h1 className="page-title">Vaccine Recall Registry</h1>
+          <p className="page-description">
             Monitor due vaccines and access contact information for patient follow-ups.
           </p>
         </div>

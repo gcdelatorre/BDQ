@@ -122,8 +122,8 @@ export default function InventoryPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Inventory Management</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Monitor medication stock levels and batch distribution records.</p>
+          <h1 className="page-title">Inventory Management</h1>
+          <p className="page-description">Monitor medication stock levels and batch distribution records.</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -423,8 +423,8 @@ export default function InventoryPage() {
                 <button onClick={() => setShowAddMedicineModal(false)} type="button" className="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-900 transition-colors text-sm">
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   form="add-medicine-form"
                   className="flex items-center gap-2 px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0 text-sm"
                 >
@@ -543,8 +543,8 @@ export default function InventoryPage() {
                 <button onClick={() => setShowAddBatchModal(false)} type="button" className="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-900 transition-colors text-sm">
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   form="add-batch-form"
                   className="flex items-center gap-2 px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0 text-sm"
                 >

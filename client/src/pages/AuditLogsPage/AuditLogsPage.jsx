@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { 
-  ClockCounterClockwise, 
-  MagnifyingGlass, 
-  Funnel, 
-  UserCircle, 
-  Tag, 
+import {
+  ClockCounterClockwise,
+  MagnifyingGlass,
+  Funnel,
+  UserCircle,
+  Tag,
   Calendar,
   ShieldCheck,
   FileText,
@@ -41,7 +41,7 @@ export default function AuditLogsPage() {
   };
 
   const filteredLogs = logs.filter(log => {
-    const matchesSearch = 
+    const matchesSearch =
       log.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.details?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesAction = filterAction === "ALL" || log.action_type === filterAction;
@@ -63,11 +63,13 @@ export default function AuditLogsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Security Audit Logs</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Immutable record of all system activity and data mutations.</p>
+          <h1 className="page-title">Security Audit Logs</h1>
+          <p className="page-description">
+            Immutable record of all system activity and data mutations.
+          </p>
         </div>
         <div className="flex items-center gap-3">
-          <button 
+          <button
             onClick={fetchLogs}
             className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
           >
@@ -125,8 +127,8 @@ export default function AuditLogsPage() {
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 group">
           <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by username or activity details..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -135,7 +137,7 @@ export default function AuditLogsPage() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-2">Action Type:</span>
-          <select 
+          <select
             value={filterAction}
             onChange={(e) => setFilterAction(e.target.value)}
             className="bg-white border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-teal-500 transition-all"

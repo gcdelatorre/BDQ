@@ -34,7 +34,7 @@ So just update the UI by just simply putting an identifier there of which month 
   }
 }
 
-3. UI/UX Consistency & Scalability
+3. UI/UX Consistency & Scalability // DONE
 Global UI Polish: Enforce a unified design system across all modules (consistent typography, button styles, padding, and color schemes).
 
 Pharmacy Page Optimizations:
@@ -61,4 +61,6 @@ De-scoping Requirement: Completely remove the Maternal Immunization module, incl
 
 6. Customized Toast for our System. and make the Recent Activities Scrollable like the Recent Dispensing
 
-7. fix modal incosistency, Inventory Page - Add new batch modal, Add new medicine modal. Design must be same as register patient modal.
+7. fix seeders, store the real dummy datas, fix medicine seeders
+
+8. npm sequelize
