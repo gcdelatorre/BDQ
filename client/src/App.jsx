@@ -45,7 +45,6 @@ export default function App() {
                     <Route path="/patients/:id" element={<PatientProfile />} />
                     <Route path="/pharmacy" element={<PharmacyPage />} />
                     <Route path="/inventory" element={<InventoryPage />} />
-                    <Route path="/reports" element={<div>Reports Page</div>} />
                     <Route path="/audit" element={<AuditLogsPage />} />
                     <Route path="/recall" element={<VaccineRecallPage />} />
                   </Routes>

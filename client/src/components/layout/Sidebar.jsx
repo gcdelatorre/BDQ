@@ -32,7 +32,6 @@ const menuGroups = [
   {
     title: "Insights",
     items: [
-      { label: "Reports", path: "/reports", icon: ChartBar },
       { label: "Audit Logs", path: "/audit", icon: ClockCounterClockwise },
       { label: "Vaccine Recall", path: "/recall", icon: Bell },
     ]

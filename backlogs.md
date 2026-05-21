@@ -1,6 +1,6 @@
-1. Family Serial Number (FSN): Implement a "One Family, One Serial Number" architecture.
+1. Family Serial Number (FSN): Implement a "One Family, One Serial Number" architecture. // DONE
 
-2. Immunization View Record.
+2. Immunization View Record. // DONE
 In our current system we dont have an identifier on which this vaccine belong or what should be taken.
 So just update the UI by just simply putting an identifier there of which month or age group so the nurse know which to check.
 {

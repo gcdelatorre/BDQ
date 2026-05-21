@@ -12,7 +12,9 @@ import {
   Info,
   Tag,
   NotePencil,
-  Funnel
+  Funnel,
+  IdentificationCard,
+  X
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import pharmacyService from "@/services/pharmacyService";
@@ -301,113 +303,135 @@ export default function InventoryPage() {
       {/* Add Medicine Modal */}
       <AnimatePresence>
         {showAddMedicineModal && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
+              className="bg-white w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-3xl shadow-xl flex flex-col border border-slate-100"
             >
-              <div className="p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-teal-600 text-white rounded-2xl flex items-center justify-center shadow-lg border border-teal-500">
-                    <Pill size={24} weight="bold" />
+              {/* Header */}
+              <div className="px-8 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                    <Pill size={22} weight="bold" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-slate-900 tracking-tight">Register New Medicine</h4>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Master Drug List Database</p>
+                    <h2 className="text-xl font-bold text-slate-900 tracking-tight">Add New Medicine</h2>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Master Drug Catalog</p>
                   </div>
                 </div>
-                <button onClick={() => setShowAddMedicineModal(false)} className="text-slate-400 hover:text-red-500 transition-all p-2 bg-white rounded-xl border border-slate-100">
-                  <Plus size={24} weight="bold" className="rotate-45" />
+                <button onClick={() => setShowAddMedicineModal(false)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-900">
+                  <X size={24} weight="bold" />
                 </button>
               </div>
 
-              <form onSubmit={handleAddMedicine} className="p-8 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Medicine Name</label>
-                    <input
-                      required type="text"
-                      value={medicineForm.medicine_name}
-                      onChange={(e) => setMedicineForm({ ...medicineForm, medicine_name: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                      placeholder="e.g. Paracetamol"
-                    />
+              {/* Form Body */}
+              <form id="add-medicine-form" onSubmit={handleAddMedicine} className="flex-1 overflow-y-auto p-8 space-y-8">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <Tag size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Drug Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Brand/Trade Name</label>
+                      <input
+                        required type="text"
+                        value={medicineForm.medicine_name}
+                        onChange={(e) => setMedicineForm({ ...medicineForm, medicine_name: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="e.g. Paracetamol 500mg"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Generic Name</label>
+                      <input
+                        required type="text"
+                        value={medicineForm.generic_name}
+                        onChange={(e) => setMedicineForm({ ...medicineForm, generic_name: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="e.g. Acetaminophen"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <Package size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Packaging & Inventory</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
+                      <select
+                        value={medicineForm.medicine_category}
+                        onChange={(e) => setMedicineForm({ ...medicineForm, medicine_category: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                      >
+                        <option value="Tablet">Tablet</option>
+                        <option value="Syrup">Syrup</option>
+                        <option value="Capsule">Capsule</option>
+                        <option value="Injection">Injection</option>
+                        <option value="Cream">Cream</option>
+                        <option value="Drops">Drops</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Unit of Measure</label>
+                      <input
+                        required type="text"
+                        value={medicineForm.unit_of_measure}
+                        onChange={(e) => setMedicineForm({ ...medicineForm, unit_of_measure: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="e.g. pcs, ml, box"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Reorder Level</label>
+                      <input
+                        required type="number"
+                        value={medicineForm.reorder_level}
+                        onChange={(e) => setMedicineForm({ ...medicineForm, reorder_level: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="Minimum quantity"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <NotePencil size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Additional Notes</h3>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Generic Name</label>
-                    <input
-                      required type="text"
-                      value={medicineForm.generic_name}
-                      onChange={(e) => setMedicineForm({ ...medicineForm, generic_name: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                      placeholder="e.g. Acetaminophen"
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Description & Usage</label>
+                    <textarea
+                      value={medicineForm.description}
+                      onChange={(e) => setMedicineForm({ ...medicineForm, description: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium resize-none h-20"
+                      placeholder="Indications, dosage info, storage requirements..."
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Category</label>
-                    <select
-                      value={medicineForm.medicine_category}
-                      onChange={(e) => setMedicineForm({ ...medicineForm, medicine_category: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    >
-                      <option value="Tablet">Tablet</option>
-                      <option value="Syrup">Syrup</option>
-                      <option value="Capsule">Capsule</option>
-                      <option value="Injection">Injection</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Unit</label>
-                    <input
-                      required type="text"
-                      value={medicineForm.unit_of_measure}
-                      onChange={(e) => setMedicineForm({ ...medicineForm, unit_of_measure: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                      placeholder="e.g. pcs"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Reorder Point</label>
-                    <input
-                      required type="number"
-                      value={medicineForm.reorder_level}
-                      onChange={(e) => setMedicineForm({ ...medicineForm, reorder_level: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Notes / Description</label>
-                  <textarea
-                    value={medicineForm.description}
-                    onChange={(e) => setMedicineForm({ ...medicineForm, description: e.target.value })}
-                    className="w-full px-5 py-4 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-medium h-24 resize-none"
-                    placeholder="Brief description of the medication..."
-                  />
-                </div>
-
-                <div className="flex gap-4 pt-4 border-t border-slate-50">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddMedicineModal(false)}
-                    className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-colors text-[11px] uppercase tracking-widest"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-4 bg-teal-600 text-white rounded-2xl font-black shadow-xl hover:bg-teal-700 transition-all text-[11px] uppercase tracking-widest border-b-4 border-teal-800 active:border-b-0 active:translate-y-1"
-                  >
-                    Save to Catalog
-                  </button>
-                </div>
               </form>
+
+              {/* Footer */}
+              <div className="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button onClick={() => setShowAddMedicineModal(false)} type="button" className="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-900 transition-colors text-sm">
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  form="add-medicine-form"
+                  className="flex items-center gap-2 px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0 text-sm"
+                >
+                  <Plus size={18} weight="bold" />
+                  Add to Catalog
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
@@ -416,103 +440,118 @@ export default function InventoryPage() {
       {/* Add Batch Modal */}
       <AnimatePresence>
         {showAddBatchModal && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden border border-slate-100"
+              className="bg-white w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl shadow-xl flex flex-col border border-slate-100"
             >
-              <div className="p-8 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center shadow-lg border border-slate-800">
-                    <Package size={24} weight="bold" />
+              {/* Header */}
+              <div className="px-8 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center text-white shadow-md">
+                    <Package size={22} weight="bold" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-slate-900 tracking-tight">Record Inventory Batch</h4>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{selectedMedicine?.medicine_name}</p>
+                    <h2 className="text-xl font-bold text-slate-900 tracking-tight">Record Inventory Batch</h2>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{selectedMedicine?.medicine_name}</p>
                   </div>
                 </div>
-                <button onClick={() => setShowAddBatchModal(false)} className="text-slate-400 hover:text-red-500 transition-all p-2 bg-white rounded-xl border border-slate-100">
-                  <Plus size={24} weight="bold" className="rotate-45" />
+                <button onClick={() => setShowAddBatchModal(false)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-400 hover:text-slate-900">
+                  <X size={24} weight="bold" />
                 </button>
               </div>
 
-              <form onSubmit={handleAddBatch} className="p-8 space-y-6">
-                <div className="grid grid-cols-2 gap-6">
+              {/* Form Body */}
+              <form id="add-batch-form" onSubmit={handleAddBatch} className="flex-1 overflow-y-auto p-8 space-y-8">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <IdentificationCard size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Batch Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Batch Number / LOT</label>
+                      <input
+                        required type="text"
+                        value={batchForm.batch_number}
+                        onChange={(e) => setBatchForm({ ...batchForm, batch_number: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="e.g. LOT-2024-001"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Quantity Received</label>
+                      <input
+                        required type="number"
+                        value={batchForm.quantity_in_stock}
+                        onChange={(e) => setBatchForm({ ...batchForm, quantity_in_stock: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                        placeholder="Units"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <Calendar size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Dates & Storage</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Date Received</label>
+                      <input
+                        required type="date"
+                        value={batchForm.date_received}
+                        onChange={(e) => setBatchForm({ ...batchForm, date_received: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Expiration Date</label>
+                      <input
+                        required type="date"
+                        value={batchForm.expiration_date}
+                        onChange={(e) => setBatchForm({ ...batchForm, expiration_date: e.target.value })}
+                        className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
+                    <Archive size={20} weight="duotone" />
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Supplier & Location</h3>
+                  </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Batch Number</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Supplier / Source</label>
                     <input
                       required type="text"
-                      value={batchForm.batch_number}
-                      onChange={(e) => setBatchForm({ ...batchForm, batch_number: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                      placeholder="e.g. LOT-2024-001"
+                      value={batchForm.supplier_name}
+                      onChange={(e) => setBatchForm({ ...batchForm, supplier_name: e.target.value })}
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium"
+                      placeholder="e.g. DOH Central Office, Central Pharmacy"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Quantity Received</label>
-                    <input
-                      required type="number"
-                      value={batchForm.quantity_in_stock}
-                      onChange={(e) => setBatchForm({ ...batchForm, quantity_in_stock: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <Calendar size={14} className="text-teal-600" /> Expiry Date
-                    </label>
-                    <input
-                      required type="date"
-                      value={batchForm.expiration_date}
-                      onChange={(e) => setBatchForm({ ...batchForm, expiration_date: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-                      <Calendar size={14} className="text-teal-600" /> Date Received
-                    </label>
-                    <input
-                      required type="date"
-                      value={batchForm.date_received}
-                      onChange={(e) => setBatchForm({ ...batchForm, date_received: e.target.value })}
-                      className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Supplier / Source</label>
-                  <input
-                    required type="text"
-                    value={batchForm.supplier_name}
-                    onChange={(e) => setBatchForm({ ...batchForm, supplier_name: e.target.value })}
-                    className="w-full px-5 py-3.5 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-2xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    placeholder="e.g. DOH Central Office"
-                  />
-                </div>
-
-                <div className="flex gap-4 pt-4 border-t border-slate-50">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddBatchModal(false)}
-                    className="flex-1 py-4 text-slate-500 font-bold hover:bg-slate-50 rounded-2xl transition-colors text-[11px] uppercase tracking-widest"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black shadow-xl hover:bg-slate-800 transition-all text-[11px] uppercase tracking-widest border-b-4 border-slate-950 active:border-b-0 active:translate-y-1"
-                  >
-                    Record Stock
-                  </button>
                 </div>
               </form>
+
+              {/* Footer */}
+              <div className="px-8 py-5 bg-slate-50/50 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button onClick={() => setShowAddBatchModal(false)} type="button" className="px-6 py-2.5 text-slate-500 font-bold hover:text-slate-900 transition-colors text-sm">
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  form="add-batch-form"
+                  className="flex items-center gap-2 px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0 text-sm"
+                >
+                  <Package size={18} weight="bold" />
+                  Record Batch
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

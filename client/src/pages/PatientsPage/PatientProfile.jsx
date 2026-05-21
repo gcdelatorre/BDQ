@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { 
-  ArrowLeft, 
-  Baby, 
-  Syringe, 
-  ChartLineUp, 
-  Pill, 
-  UserCircle, 
-  Calendar, 
+import {
+  ArrowLeft,
+  Baby,
+  Syringe,
+  ChartLineUp,
+  Pill,
+  UserCircle,
+  Calendar,
   IdentificationCard,
-  CheckCircle,
-  Clock,
   Info,
-  UsersFour,
   ClipboardText
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,11 +19,11 @@ import ImmunizationTab from "./components/ImmunizationTab";
 import NutritionalTab from "./components/NutritionalTab";
 import SupplementationTab from "./components/SupplementationTab";
 import BreastfeedingTab from "./components/BreastfeedingTab";
-import MaternalImmunizationTab from "./components/MaternalImmunizationTab";
-import DispensingLogsTab from "./components/DispensingLogsTab";
-import ProfileTabNav from "./components/ProfileTabNav";
 import ProfileSummaryTab from "./components/ProfileSummaryTab";
 import { Card, CardBody } from "@/components/ui/card";
+import DispensingLogsTab from "./components/DispensingLogsTab";
+
+
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -47,7 +44,6 @@ export default function PatientProfile() {
     const tabMap = {
       immunization: "child_imm",
       child_imm: "child_imm",
-      maternal: "maternal_imm",
       nutrition: "nutrition",
       supplement: "supplement",
       breastfeeding: "breastfeeding",
@@ -85,8 +81,8 @@ export default function PatientProfile() {
 
   const formatDate = (date) => {
     if (!date) return "Not Recorded";
-    return new Date(date).toLocaleDateString('en-US', { 
-      month: 'long', day: 'numeric', year: 'numeric' 
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric'
     });
   };
 
@@ -105,34 +101,30 @@ export default function PatientProfile() {
   );
 
   const tabs = [
-    { id: "summary", label: "Full Profile", icon: IdentificationCard },
-    { id: "child_imm", label: "Child Immunization", icon: Syringe },
-    { id: "maternal_imm", label: "Maternal Immunization", icon: UsersFour },
-    { id: "nutrition", label: "Nutritional Assessment", icon: ChartLineUp },
-    { id: "supplement", label: "Supplementation", icon: Pill },
-    { id: "breastfeeding", label: "Breastfeeding", icon: Baby },
-    { id: "dispensing", label: "Medicine Logs", icon: ClipboardText },
+    { id: "summary", label: "Full Profile" },
+    { id: "child_imm", label: "Child Immunization" },
+    { id: "nutrition", label: "Nutritional Assessment" },
+    { id: "supplement", label: "Supplementation" },
+    { id: "breastfeeding", label: "Breastfeeding" },
+    { id: "dispensing", label: "Medicine Logs" },
   ];
 
   return (
     <div className="page-shell">
       {/* Navigation Header */}
-      <div className="flex items-center justify-between">
-        <button 
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <button
           onClick={() => navigate("/patients")}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-all group"
+          className="flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-bold text-sm transition-all hover:gap-2"
         >
-          <div className="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center group-hover:border-slate-300 shadow-sm">
-            <ArrowLeft size={18} weight="bold" />
-          </div>
-          Back to Directory
+          <ArrowLeft size={16} weight="bold" />
+          Back
         </button>
-        <div className="flex items-center gap-3">
-          <div className="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl font-bold text-sm shadow-sm flex items-center gap-2">
-            <Clock size={18} weight="duotone" className="text-teal-600" />
-            Registered: {formatDate(patient.date_of_registration)}
+        <div className="flex items-center gap-2 ml-auto">
+          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
+            Reg: {formatDate(patient.date_of_registration)}
           </div>
-          <div className="bg-teal-600 text-white px-5 py-2 rounded-xl font-bold text-sm shadow-md">
+          <div className="text-[11px] font-black text-white uppercase tracking-wider px-3 py-1.5 bg-teal-600 rounded-lg shadow-sm">
             FSN: {patient.family_serial_number}
           </div>
         </div>
@@ -141,49 +133,71 @@ export default function PatientProfile() {
       <Card className="relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-teal-50/30 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
         <CardBody className="relative z-10 py-6">
-        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-          <div className="w-24 h-24 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-            <UserCircle size={64} weight="duotone" />
-          </div>
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center gap-4 flex-wrap">
-              <h1 className="page-title">
-                {patient.first_name} {patient.middle_initial ? `${patient.middle_initial}. ` : ""}{patient.last_name}
-              </h1>
-              <div className="flex gap-2">
-                <span className={cn(
-                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
-                  patient.sex === 'M' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-pink-50 text-pink-700 border-pink-100"
-                )}>
-                  {patient.sex === 'M' ? "Male" : "Female"}
+          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+            <div className="w-24 h-24 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
+              <UserCircle size={64} weight="duotone" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center gap-4 flex-wrap">
+                <h1 className="page-title">
+                  {patient.first_name} {patient.middle_initial ? `${patient.middle_initial}. ` : ""}{patient.last_name}
+                </h1>
+                <div className="flex gap-2">
+                  <span className={cn(
+                    "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                    patient.sex === 'M' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-pink-50 text-pink-700 border-pink-100"
+                  )}>
+                    {patient.sex === 'M' ? "Male" : "Female"}
+                  </span>
+                  <span className={cn(
+                    "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                    patient.se_status === 'NHTS' ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"
+                  )}>
+                    {patient.se_status}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-slate-500 font-bold text-sm">
+                <span className="flex items-center gap-2.5">
+                  <Calendar size={20} weight="duotone" className="text-teal-600" />
+                  Born {formatDate(patient.date_of_birth)}
                 </span>
-                <span className={cn(
-                  "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
-                  patient.se_status === 'NHTS' ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"
-                )}>
-                  {patient.se_status}
+                <span className="flex items-center gap-2.5">
+                  <Baby size={20} weight="duotone" className="text-teal-600" />
+                  Current Age: {calculateAge(patient.date_of_birth)}
                 </span>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-slate-500 font-bold text-sm">
-              <span className="flex items-center gap-2.5">
-                <Calendar size={20} weight="duotone" className="text-teal-600" />
-                Born {formatDate(patient.date_of_birth)}
-              </span>
-              <span className="flex items-center gap-2.5">
-                <Baby size={20} weight="duotone" className="text-teal-600" />
-                Current Age: {calculateAge(patient.date_of_birth)}
-              </span>
-            </div>
           </div>
-        </div>
         </CardBody>
       </Card>
 
-      <ProfileTabNav tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+      {/* Redesigned Tab Navigation */}
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'shrink-0 border-b-2 px-1 pb-4 text-sm font-bold transition-colors',
+                activeTab === tab.id
+                  ? 'border-teal-600 text-teal-600'
+                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+
+
+
 
       {/* Main Content Area */}
-      <div className="min-h-[500px]">
+      <div className="min-h-125">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -199,10 +213,6 @@ export default function PatientProfile() {
 
             {activeTab === "child_imm" && (
               <ImmunizationTab childId={id} />
-            )}
-
-            {activeTab === "maternal_imm" && (
-              <MaternalImmunizationTab childId={id} />
             )}
 
             {activeTab === "nutrition" && (
