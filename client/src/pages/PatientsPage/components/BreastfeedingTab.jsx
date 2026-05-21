@@ -1,19 +1,65 @@
-import { useState, useEffect } from "react";
-import { Baby, Plus, Calendar, Info, NotePencil, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { useState, useEffect, useMemo } from "react";
+import { Baby, Plus, Info, Clock, Check, ListChecks, NotePencil, Trash } from "@phosphor-icons/react";
 import clinicalService from "@/services/clinicalService";
 import { useToast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+
+const MILESTONES = [
+  { 
+    id: "birth", 
+    label: "At Birth", 
+    target: "0", 
+    requirement: "Initiated breastfeeding immediately (within 90 mins)",
+    shortLabel: "Initiation",
+    phase: "Newborn Phase"
+  },
+  { 
+    id: "1.5", 
+    label: "1½ Months", 
+    target: "1.5", 
+    requirement: "Exclusive Breastfeeding Checkpoint",
+    shortLabel: "EBF Check",
+    phase: "1-3 Months Phase"
+  },
+  { 
+    id: "2.5", 
+    label: "2½ Months", 
+    target: "2.5", 
+    requirement: "Exclusive Breastfeeding Checkpoint",
+    shortLabel: "EBF Check",
+    phase: "1-3 Months Phase"
+  },
+  { 
+    id: "3.5", 
+    label: "3½ Months", 
+    target: "3.5", 
+    requirement: "Exclusive Breastfeeding Checkpoint",
+    shortLabel: "EBF Check",
+    phase: "1-3 Months Phase"
+  },
+  { 
+    id: "6", 
+    label: "6 Months", 
+    target: "6", 
+    requirement: "Final Exclusive Breastfeeding Checkpoint",
+    shortLabel: "Final EBF",
+    phase: "6 Months Phase"
+  }
+];
 
 export default function BreastfeedingTab({ childId }) {
   const { toast } = useToast();
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Modals States
+  const [selectedMilestone, setSelectedMilestone] = useState(null); // For New Record
+  const [selectedRecord, setSelectedRecord] = useState(null); // For Managing Existing
   
   const [formData, setFormData] = useState({
-    age_month_target: "",
     is_exclusively_breastfed: "Yes",
     check_date: new Date().toISOString().split('T')[0],
     remarks: ""
@@ -35,28 +81,69 @@ export default function BreastfeedingTab({ childId }) {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const milestonesWithStatus = useMemo(() => {
+    return MILESTONES.map(m => {
+      // Use Number conversion to ensure accurate comparison for decimals like 1.5
+      const record = history.find(h => Number(h.age_month_target) === Number(m.target));
+      return { ...m, record };
+    });
+  }, [history]);
+
+  const handleRecordStatus = async () => {
+    if (!selectedMilestone) return;
     try {
       setIsRecording(true);
       await clinicalService.recordBreastfeeding({
         child_id: childId,
+        age_month_target: String(selectedMilestone.target),
         ...formData
       });
       
-      toast.success("Checkpoint Saved", `Breastfeeding status for ${formData.age_month_target} months recorded.`);
-      setShowModal(false);
+      toast.success("Checkpoint Saved", `Status for ${selectedMilestone.label} recorded.`);
+      setSelectedMilestone(null);
       fetchHistory();
-      setFormData({
-        age_month_target: "",
-        is_exclusively_breastfed: "Yes",
-        check_date: new Date().toISOString().split('T')[0],
-        remarks: ""
-      });
     } catch (error) {
-      toast.error("Save Failed", error.message);
+      toast.error("Save Failed", "The 1-3 mo phase saving failed. Please check if the backend accepts decimal values.");
     } finally {
       setIsRecording(false);
+    }
+  };
+
+  const handleUpdateRecord = async () => {
+    if (!selectedRecord) return;
+    try {
+      setIsRecording(true);
+      await clinicalService.updateBreastfeedingRecord(selectedRecord.checkpoint_id, {
+        is_exclusively_breastfed: formData.is_exclusively_breastfed,
+        check_date: formData.check_date,
+        remarks: formData.remarks
+      });
+      toast.success("Record Updated", "Checkpoint details updated successfully.");
+      setSelectedRecord(null);
+      fetchHistory();
+    } catch (error) {
+      toast.error("Update Failed", error.message);
+    } finally {
+      setIsRecording(false);
+    }
+  };
+
+  const handleDeleteRecord = async () => {
+    if (!selectedRecord) return;
+    try {
+      setIsDeleting(true);
+      await clinicalService.deleteBreastfeedingRecord(selectedRecord.checkpoint_id);
+      toast.success("Record Deleted", "Checkpoint record has been removed.");
+      setSelectedRecord(null);
+      fetchHistory();
+    } catch (error) {
+      if (error.response?.status === 404) {
+        toast.error("Endpoint Not Found", "The backend delete route is not yet implemented.");
+      } else {
+        toast.error("Deletion Failed", error.message);
+      }
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -67,108 +154,129 @@ export default function BreastfeedingTab({ childId }) {
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header Info */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h3 className="text-xl font-bold text-slate-900 tracking-tight">Breastfeeding Checkpoints</h3>
-          <p className="text-slate-500 text-sm font-medium">Monitoring exclusive breastfeeding milestones</p>
+          <h3 className="text-lg font-bold text-slate-900 tracking-tight">Breastfeeding Checkpoints</h3>
+          <p className="text-slate-500 text-sm">Monitoring essential milestones from birth to 6 months</p>
         </div>
-        <button 
-          onClick={() => setShowModal(true)}
-          className="flex items-center justify-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm"
-        >
-          <Plus size={18} weight="bold" />
-          NEW CHECKPOINT
-        </button>
+        <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-600">
+          <Info size={16} weight="duotone" className="text-blue-500" />
+          Clinical Records
+        </div>
       </div>
 
-      {/* History Timeline */}
-      <div className="space-y-4">
-        {history.length === 0 ? (
-          <div className="text-center py-20 bg-slate-50 border border-dashed border-slate-200 rounded-3xl">
-            <Baby size={48} weight="duotone" className="text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-500 font-bold text-sm">No breastfeeding checkpoints recorded.</p>
-          </div>
-        ) : (
-          history.map((record) => (
-            <div key={record.checkpoint_id} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-6 group hover:border-teal-100 transition-colors">
+      {/* Milestone Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+        {milestonesWithStatus.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => {
+              if (m.record) {
+                setSelectedRecord(m.record);
+                setFormData({
+                  is_exclusively_breastfed: m.record.is_exclusively_breastfed,
+                  check_date: new Date(m.record.check_date).toISOString().split('T')[0],
+                  remarks: m.record.remarks || ""
+                });
+              } else {
+                setSelectedMilestone(m);
+                setFormData({
+                  is_exclusively_breastfed: "Yes",
+                  check_date: new Date().toISOString().split('T')[0],
+                  remarks: ""
+                });
+              }
+            }}
+            className={cn(
+              "w-full p-4 rounded-2xl border transition-all text-left group",
+              m.record 
+                ? "bg-emerald-50 border-emerald-100 text-emerald-700 hover:bg-emerald-50/90 hover:border-emerald-300" 
+                : "bg-slate-50 border-slate-100 text-slate-700 hover:border-teal-200 hover:bg-white"
+            )}
+          >
+            <div className="flex items-center justify-between gap-3 mb-4">
               <div className={cn(
-                "w-16 h-16 rounded-2xl flex flex-col items-center justify-center shrink-0 border transition-all",
-                record.is_exclusively_breastfed === 'Yes' 
-                  ? "bg-emerald-50 border-emerald-100 text-emerald-600" 
-                  : "bg-slate-50 border-slate-100 text-slate-400"
+                "w-10 h-10 rounded-xl flex items-center justify-center",
+                m.record ? "bg-white text-emerald-600 shadow-sm" : "bg-white text-slate-400 border border-slate-100"
               )}>
-                <span className="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Month</span>
-                <span className="text-xl font-black leading-none">{record.age_month_target}</span>
+                {m.id === 'birth' ? <Clock size={20} weight="duotone" /> : <Baby size={20} weight="duotone" />}
               </div>
-              
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-bold text-slate-900">Exclusively Breastfed:</h4>
-                  <span className={cn(
-                    "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider",
-                    record.is_exclusively_breastfed === 'Yes' ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                  )}>
-                    {record.is_exclusively_breastfed}
+              <span className={cn(
+                "rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-wider",
+                m.record ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-500"
+              )}>
+                {m.record ? "Recorded" : "Pending"}
+              </span>
+            </div>
+
+            <div className="mb-4">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-1">{m.phase}</span>
+              <h4 className="text-[15px] font-bold text-slate-900 leading-tight mb-1.5">{m.label}</h4>
+              <p className="text-[10px] text-slate-500 font-medium leading-relaxed line-clamp-2">
+                {m.requirement}
+              </p>
+            </div>
+
+            {m.record && (
+              <div className="mt-auto pt-4 border-t border-emerald-100/50 flex items-center justify-between text-[10px] font-bold">
+                <div className="flex flex-col">
+                  <span className="text-slate-400 uppercase tracking-widest mb-0.5 text-[8px]">EBF Status</span>
+                  <span className={m.record.is_exclusively_breastfed === 'Yes' ? "text-emerald-700 font-black" : "text-amber-600 font-black"}>
+                    {m.record.is_exclusively_breastfed === 'Yes' ? 'YES' : 'NO'}
                   </span>
                 </div>
-                {record.remarks ? (
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed italic line-clamp-1">"{record.remarks}"</p>
-                ) : (
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">No remarks added</p>
-                )}
+                <div className="text-right">
+                  <span className="text-slate-400 uppercase tracking-widest mb-0.5 text-[8px]">Date</span>
+                  <p className="text-slate-700">{new Date(m.record.check_date).toLocaleDateString()}</p>
+                </div>
               </div>
-
-              <div className="hidden md:block text-right">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Check Date</p>
-                <p className="text-xs font-bold text-slate-700">{new Date(record.check_date).toLocaleDateString()}</p>
-              </div>
-            </div>
-          ))
-        )}
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* Record Modal */}
+      {/* Record New Modal */}
       <AnimatePresence>
-        {showModal && (
+        {selectedMilestone && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.98, y: 10 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98, y: 10 }}
-              className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-slate-100"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 space-y-6 border border-slate-100"
             >
-              <div className="p-8 bg-slate-50/50 border-b border-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-600 text-white rounded-xl flex items-center justify-center shadow-md">
-                    <Baby size={22} weight="bold" />
-                  </div>
-                  <h4 className="text-xl font-bold text-slate-900">Breastfeeding Check</h4>
+              <div className="text-center space-y-2">
+                <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Baby size={32} weight="duotone" />
                 </div>
-                <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-900 transition-colors">
-                  <Plus size={24} weight="bold" className="rotate-45" />
-                </button>
+                <h4 className="text-xl font-bold text-slate-900">{selectedMilestone.label}</h4>
+                <p className="text-sm text-slate-500 font-medium">Record breastfeeding checkpoint status</p>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Requirement</p>
+                  <p className="text-xs font-semibold text-slate-700 leading-relaxed">{selectedMilestone.requirement}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Target Age (Mo)</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Check Date</label>
                     <input 
-                      required type="number"
-                      value={formData.age_month_target}
-                      onChange={(e) => setFormData({...formData, age_month_target: e.target.value})}
-                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
-                      placeholder="e.g. 6"
+                      type="date"
+                      value={formData.check_date}
+                      onChange={(e) => setFormData({...formData, check_date: e.target.value})}
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Exclusively Breastfed?</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Compliant?</label>
                     <select 
                       value={formData.is_exclusively_breastfed}
                       onChange={(e) => setFormData({...formData, is_exclusively_breastfed: e.target.value})}
-                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
                     >
                       <option value="Yes">Yes</option>
                       <option value="No">No</option>
@@ -177,42 +285,117 @@ export default function BreastfeedingTab({ childId }) {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Check Date</label>
-                  <input 
-                    required type="date"
-                    value={formData.check_date}
-                    onChange={(e) => setFormData({...formData, check_date: e.target.value})}
-                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Remarks</label>
+                  <textarea 
+                    value={formData.remarks}
+                    onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium h-24 resize-none"
+                    placeholder="Observations..."
                   />
                 </div>
+              </div>
 
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setSelectedMilestone(null)}
+                  className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleRecordStatus}
+                  disabled={isRecording}
+                  className="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm disabled:opacity-50"
+                >
+                  {isRecording ? "Saving..." : "Save Status"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Manage Record Modal (Edit/Undo) */}
+      <AnimatePresence>
+        {selectedRecord && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-8 space-y-6 border border-slate-100"
+            >
+              <div className="text-center space-y-2">
+                <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <NotePencil size={32} weight="duotone" />
+                </div>
+                <h4 className="text-xl font-bold text-slate-900">Manage Record</h4>
+                <p className="text-sm text-slate-500 font-medium">
+                  {MILESTONES.find(m => Number(m.target) === Number(selectedRecord.age_month_target))?.label} Checkpoint
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Check Date</label>
+                    <input 
+                      type="date" 
+                      value={formData.check_date}
+                      onChange={(e) => setFormData({...formData, check_date: e.target.value})}
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Compliant?</label>
+                    <select 
+                      value={formData.is_exclusively_breastfed}
+                      onChange={(e) => setFormData({...formData, is_exclusively_breastfed: e.target.value})}
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                    >
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Remarks</label>
                   <textarea 
                     value={formData.remarks}
                     onChange={(e) => setFormData({...formData, remarks: e.target.value})}
-                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium h-24 resize-none"
-                    placeholder="Observations or notes..."
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium h-24 resize-none"
+                    placeholder="Observations..."
                   />
                 </div>
+              </div>
 
-                <div className="flex gap-3 pt-4">
+              <div className="space-y-3">
+                <div className="flex gap-3">
                   <button 
-                    type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => setSelectedRecord(null)}
                     className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors text-sm"
                   >
                     Cancel
                   </button>
                   <button 
-                    type="submit"
+                    onClick={handleUpdateRecord}
                     disabled={isRecording}
                     className="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm disabled:opacity-50"
                   >
-                    {isRecording ? "Saving..." : "Save Checkpoint"}
+                    {isRecording ? "Saving..." : "Change Details"}
                   </button>
                 </div>
-              </form>
+                
+                <button 
+                  onClick={handleDeleteRecord}
+                  disabled={isDeleting}
+                  className="w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 hover:text-rose-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  <Trash size={16} weight="bold" />
+                  {isDeleting ? "Undoing..." : "Undo/Delete Record"}
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

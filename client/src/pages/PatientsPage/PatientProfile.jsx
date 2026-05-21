@@ -101,10 +101,10 @@ export default function PatientProfile() {
   );
 
   const tabs = [
-    { id: "summary", label: "Full Profile" },
-    { id: "child_imm", label: "Child Immunization" },
-    { id: "nutrition", label: "Nutritional Assessment" },
-    { id: "supplement", label: "Supplementation" },
+    { id: "summary", label: "Overview" },
+    { id: "child_imm", label: "Immunization" },
+    { id: "nutrition", label: "Growth" },
+    { id: "supplement", label: "Supplements" },
     { id: "breastfeeding", label: "Breastfeeding" },
     { id: "dispensing", label: "Medicine Logs" },
   ];
@@ -112,34 +112,35 @@ export default function PatientProfile() {
   return (
     <div className="page-shell">
       {/* Navigation Header */}
-      <div className="flex items-center justify-between gap-4 pb-2">
+      <div className="flex items-center justify-between gap-4 pb-4">
         <button
           onClick={() => navigate("/patients")}
-          className="flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-bold text-sm transition-all hover:gap-2"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold text-sm transition-all"
         >
-          <ArrowLeft size={16} weight="bold" />
-          Back
+          <ArrowLeft size={18} weight="bold" />
+          Directory
         </button>
-        <div className="flex items-center gap-2 ml-auto">
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg">
-            Reg: {formatDate(patient.date_of_registration)}
+        <div className="flex items-center gap-2">
+          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
+            Registered: {formatDate(patient.date_of_registration)}
           </div>
-          <div className="text-[11px] font-black text-white uppercase tracking-wider px-3 py-1.5 bg-teal-600 rounded-lg shadow-sm">
+          <div className="text-[10px] font-black text-teal-700 uppercase tracking-widest px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl">
             FSN: {patient.family_serial_number}
           </div>
         </div>
       </div>
 
-      <Card className="relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-teal-50/30 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
-        <CardBody className="relative z-10 py-6">
-          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-            <div className="w-24 h-24 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
-              <UserCircle size={64} weight="duotone" />
+      {/* Patient Header Card */}
+      <Card className="border-none shadow-sm bg-white overflow-hidden rounded-[2rem]">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-teal-50/20 rounded-full -mr-40 -mt-40 blur-3xl pointer-events-none" />
+        <CardBody className="p-8 relative z-10">
+          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
+            <div className="w-24 h-24 bg-teal-600 text-white rounded-3xl flex items-center justify-center shadow-lg shadow-teal-600/20">
+              <UserCircle size={60} weight="duotone" />
             </div>
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-4">
               <div className="flex items-center gap-4 flex-wrap">
-                <h1 className="page-title">
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                   {patient.first_name} {patient.middle_initial ? `${patient.middle_initial}. ` : ""}{patient.last_name}
                 </h1>
                 <div className="flex gap-2">
@@ -149,67 +150,70 @@ export default function PatientProfile() {
                   )}>
                     {patient.sex === 'M' ? "Male" : "Female"}
                   </span>
-                  <span className={cn(
-                    "px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
-                    patient.se_status === 'NHTS' ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-slate-50 text-slate-500 border-slate-200"
-                  )}>
+                  <span className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
                     {patient.se_status}
                   </span>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-slate-500 font-bold text-sm">
-                <span className="flex items-center gap-2.5">
-                  <Calendar size={20} weight="duotone" className="text-teal-600" />
-                  Born {formatDate(patient.date_of_birth)}
-                </span>
-                <span className="flex items-center gap-2.5">
-                  <Baby size={20} weight="duotone" className="text-teal-600" />
-                  Current Age: {calculateAge(patient.date_of_birth)}
-                </span>
+
+              <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-x-8 gap-y-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-teal-600">
+                    <Calendar size={18} weight="bold" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Date of Birth</p>
+                    <p className="text-sm font-bold text-slate-700">{formatDate(patient.date_of_birth)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-teal-600">
+                    <Baby size={18} weight="bold" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Current Age</p>
+                    <p className="text-sm font-bold text-slate-700">{calculateAge(patient.date_of_birth)}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </CardBody>
       </Card>
 
-      {/* Redesigned Tab Navigation */}
-      <div className="border-b border-slate-200">
-        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+      {/* Tab Navigation */}
+      <div className="pt-2">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'shrink-0 border-b-2 px-1 pb-4 text-sm font-bold transition-colors',
+                "px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shrink-0 border",
                 activeTab === tab.id
-                  ? 'border-teal-600 text-teal-600'
-                  : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700'
+                  ? "bg-teal-600 text-white border-teal-600 shadow-lg shadow-teal-600/20"
+                  : "bg-white text-slate-500 border-slate-100 hover:bg-slate-50 hover:text-slate-700"
               )}
             >
               {tab.label}
             </button>
           ))}
-        </nav>
+        </div>
       </div>
 
-
-
-
-
-      {/* Main Content Area */}
-      <div className="min-h-125">
+      {/* Content Area */}
+      <div className="min-h-[400px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             {activeTab === "summary" && (
               <ProfileSummaryTab patient={patient} formatDate={formatDate} />
             )}
-
 
             {activeTab === "child_imm" && (
               <ImmunizationTab childId={id} />
@@ -230,10 +234,10 @@ export default function PatientProfile() {
             {activeTab === "dispensing" && (
               <DispensingLogsTab childId={id} />
             )}
-
           </motion.div>
         </AnimatePresence>
       </div>
     </div>
   );
 }
+

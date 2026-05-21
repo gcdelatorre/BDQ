@@ -47,6 +47,10 @@ const clinicalService = {
     const response = await api.get(`/nutrition/child/${childId}`);
     return response.data.data;
   },
+  deleteNutritionAssessment: async (recordId) => {
+    const response = await api.delete(`/nutrition/record/${recordId}`);
+    return response.data;
+  },
 
   // Supplementation Record
   recordSupplement: async (data) => {
@@ -57,6 +61,10 @@ const clinicalService = {
     const response = await api.get(`/supplement/child/${childId}`);
     return response.data.data;
   },
+  deleteSupplementRecord: async (recordId) => {
+    const response = await api.delete(`/supplement/record/${recordId}`);
+    return response.data;
+  },
 
   // Breastfeeding Checkpoint
   recordBreastfeeding: async (data) => {
@@ -66,6 +74,14 @@ const clinicalService = {
   getBreastfeedingHistory: async (childId) => {
     const response = await api.get(`/breastfeeding/child/${childId}`);
     return response.data.data;
+  },
+  deleteBreastfeedingRecord: async (recordId) => {
+    const response = await api.delete(`/breastfeeding/record/${recordId}`);
+    return response.data;
+  },
+  updateBreastfeedingRecord: async (recordId, data) => {
+    const response = await api.put(`/breastfeeding/record/${recordId}`, data);
+    return response.data;
   }
 };
 
