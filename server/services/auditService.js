@@ -19,8 +19,8 @@ export const logAction = async (payload) => {
     }
 };
 
-export const getAllAuditLogs = async () => {
-    const [rows] = await db.execute(`
+export const getAllAuditLogs = async ({ search, actionType, startDate, endDate } = {}) => {
+    let sql = `
         SELECT 
             al.log_id,
             al.user_id,
@@ -33,9 +33,32 @@ export const getAllAuditLogs = async () => {
             al.description as details
         FROM audit_log al
         JOIN user u ON al.user_id = u.user_id
-        ORDER BY al.action_timestamp DESC
-    `);
+        WHERE 1=1
+    `;
+    const values = [];
 
-    // Don't throw 404 if empty, just return empty array for the UI
+    if (search && search.trim()) {
+        sql += ` AND (u.username LIKE ? OR al.description LIKE ?)`;
+        values.push(`%${search.trim()}%`, `%${search.trim()}%`);
+    }
+
+    if (actionType && actionType !== "ALL") {
+        sql += ` AND al.action_performed = ?`;
+        values.push(actionType);
+    }
+
+    if (startDate) {
+        sql += ` AND DATE(al.action_timestamp) >= ?`;
+        values.push(startDate);
+    }
+
+    if (endDate) {
+        sql += ` AND DATE(al.action_timestamp) <= ?`;
+        values.push(endDate);
+    }
+
+    sql += ` ORDER BY al.action_timestamp DESC`;
+
+    const [rows] = await db.execute(sql, values);
     return rows;
 }

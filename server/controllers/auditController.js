@@ -2,7 +2,13 @@ import * as auditService from "../services/auditService.js";
 
 export const getAllAuditLogs = async (req, res) => {
     try {
-        const result = await auditService.getAllAuditLogs();
+        const filters = {
+            search: req.query.search,
+            actionType: req.query.actionType,
+            startDate: req.query.startDate,
+            endDate: req.query.endDate
+        };
+        const result = await auditService.getAllAuditLogs(filters);
         return res.status(200).json({
             message: "Audit logs fetched successfully!",
             data: result
