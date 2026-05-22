@@ -226,22 +226,6 @@ export default function PharmacyPage() {
             hasMore={patientHasMore}
             onLoadMore={loadMorePatients}
           />
-          <div className="flex flex-wrap items-center gap-2">
-            {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "CREAM", "DROPS"].map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilterCategory(cat)}
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border",
-                  filterCategory === cat
-                    ? "bg-teal-600 text-white border-teal-600 shadow-sm"
-                    : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -251,6 +235,8 @@ export default function PharmacyPage() {
             medicines={medicines}
             searchMed={searchMed}
             onSearchChange={setSearchMed}
+            filterCategory={filterCategory}
+            onFilterCategoryChange={setFilterCategory}
             basket={basket}
             onAdd={addToBasket}
             disabled={!selectedPatient}

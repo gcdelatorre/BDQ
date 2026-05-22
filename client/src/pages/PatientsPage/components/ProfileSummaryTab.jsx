@@ -15,7 +15,14 @@ import {
   ProfileFieldGrid
 } from "@/components/patient/profile-ui";
 
-export default function ProfileSummaryTab({ patient, formatDate }) {
+import { useState, useEffect } from "react";
+
+export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
+  const [remarks, setRemarks] = useState(patient.remarks || "");
+
+  useEffect(() => {
+    setRemarks(patient.remarks || "");
+  }, [patient.remarks]);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
       <div className="flex flex-col gap-6">
@@ -63,7 +70,12 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
         <ProfileCard title="Nutritional Milestones" icon={Drop}>
             <ProfileFieldGrid cols={3} className="!gap-5">
               <ProfileField label="Breastfeeding Initiated">
-                <span className="font-medium">{formatDate(patient.initiated_breastfeeding_date)}</span>
+                <input
+                  type="date"
+                  className="bg-transparent font-medium outline-none text-slate-700 w-full"
+                  value={patient.initiated_breastfeeding_date ? patient.initiated_breastfeeding_date.split('T')[0] : ""}
+                  onChange={(e) => onUpdate('initiated_breastfeeding_date', e.target.value)}
+                />
               </ProfileField>
               <ProfileField label="Exclusively Breastfed (6 mo)">
                 <div className="flex items-center gap-2">
@@ -72,7 +84,15 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
                   ) : (
                     <X size={18} weight="bold" className="text-slate-300 shrink-0" />
                   )}
-                  <span className="uppercase">{patient.exclusively_breastfed_6_months || "—"}</span>
+                  <select
+                    className="bg-transparent border-none outline-none uppercase font-medium text-slate-700 cursor-pointer"
+                    value={patient.exclusively_breastfed_6_months || ""}
+                    onChange={(e) => onUpdate('exclusively_breastfed_6_months', e.target.value)}
+                  >
+                    <option value="">—</option>
+                    <option value="Yes">YES</option>
+                    <option value="No">NO</option>
+                  </select>
                 </div>
               </ProfileField>
               <ProfileField label="Complementary Foods">
@@ -82,7 +102,15 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
                   ) : (
                     <X size={18} weight="bold" className="text-slate-300 shrink-0" />
                   )}
-                  <span className="uppercase">{patient.intro_complementary_foods || "—"}</span>
+                  <select
+                    className="bg-transparent border-none outline-none uppercase font-medium text-slate-700 cursor-pointer"
+                    value={patient.intro_complementary_foods || ""}
+                    onChange={(e) => onUpdate('intro_complementary_foods', e.target.value)}
+                  >
+                    <option value="">—</option>
+                    <option value="Yes">YES</option>
+                    <option value="No">NO</option>
+                  </select>
                 </div>
               </ProfileField>
             </ProfileFieldGrid>
@@ -98,9 +126,12 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
               >
                 <p className="field-label">FIC (Fully Immunized Child)</p>
                 <div className="mt-2 flex items-center justify-between gap-3">
-                  <p className="text-lg font-bold text-slate-900">
-                    {patient.fic_date ? formatDate(patient.fic_date) : "Pending"}
-                  </p>
+                  <input
+                    type="date"
+                    className="bg-transparent font-bold text-lg text-slate-900 outline-none w-full"
+                    value={patient.fic_date ? patient.fic_date.split('T')[0] : ""}
+                    onChange={(e) => onUpdate('fic_date', e.target.value)}
+                  />
                   {patient.fic_date && <CheckCircle size={22} weight="fill" className="text-teal-500 shrink-0" />}
                 </div>
               </div>
@@ -112,9 +143,12 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
               >
                 <p className="field-label">CIC (Completely Immunized Child)</p>
                 <div className="mt-2 flex items-center justify-between gap-3">
-                  <p className="text-lg font-bold text-slate-900">
-                    {patient.cic_date ? formatDate(patient.cic_date) : "Pending"}
-                  </p>
+                  <input
+                    type="date"
+                    className="bg-transparent font-bold text-lg text-slate-900 outline-none w-full"
+                    value={patient.cic_date ? patient.cic_date.split('T')[0] : ""}
+                    onChange={(e) => onUpdate('cic_date', e.target.value)}
+                  />
                   {patient.cic_date && <CheckCircle size={22} weight="fill" className="text-blue-500 shrink-0" />}
                 </div>
               </div>
@@ -130,9 +164,14 @@ export default function ProfileSummaryTab({ patient, formatDate }) {
               <NotePencil size={18} weight="duotone" className="text-teal-600" />
               <p className="field-label mb-0">Clinical Remarks</p>
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed font-medium">
-              {patient.remarks || "No clinical remarks recorded."}
-            </p>
+            <textarea
+              className="w-full bg-transparent outline-none resize-none text-sm text-slate-600 leading-relaxed font-medium"
+              rows={3}
+              placeholder="Add clinical remarks here..."
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+              onBlur={() => patient.remarks !== remarks && onUpdate('remarks', remarks)}
+            />
           </CardBody>
         </Card>
       </div>

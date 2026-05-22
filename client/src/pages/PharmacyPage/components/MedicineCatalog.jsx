@@ -55,6 +55,8 @@ function MedicineCatalog({
   medicines,
   searchMed,
   onSearchChange,
+  filterCategory,
+  onFilterCategoryChange,
   basket,
   onAdd,
   disabled,
@@ -84,19 +86,40 @@ function MedicineCatalog({
 
       <div className="p-5 border-b border-slate-100 shrink-0">
         <p className="step-label mb-3">Step 2 — Add medicines</p>
-        <div className="relative">
-          <MagnifyingGlass
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Search catalog..."
-            value={searchMed}
-            onChange={(e) => onSearchChange(e.target.value)}
-            disabled={disabled || loading}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl outline-none text-sm font-medium disabled:cursor-not-allowed"
-          />
+        <div className="flex flex-col gap-3">
+          <div className="relative">
+            <MagnifyingGlass
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              size={20}
+            />
+            <input
+              type="text"
+              placeholder="Search catalog..."
+              value={searchMed}
+              onChange={(e) => onSearchChange(e.target.value)}
+              disabled={disabled || loading}
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl outline-none text-sm font-medium disabled:cursor-not-allowed"
+            />
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-2">
+            {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "CREAM", "DROPS"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => onFilterCategoryChange(cat)}
+                disabled={disabled || loading}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border",
+                  filterCategory === cat
+                    ? "bg-teal-600 text-white border-teal-600 shadow-sm"
+                    : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50",
+                  (disabled || loading) && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
         {disabled && !loading && (
           <p className="text-xs text-amber-700 font-bold mt-2">

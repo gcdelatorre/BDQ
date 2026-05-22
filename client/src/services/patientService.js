@@ -53,6 +53,22 @@ const patientService = {
       console.error(`Error fetching patient ${id}:`, error);
       throw error;
     }
+  },
+
+  /**
+   * Updates specific fields of a patient
+   * @param {number|string} id 
+   * @param {Object} data 
+   * @returns {Promise}
+   */
+  updatePatient: async (id, data) => {
+    try {
+      const response = await api.put(`/patient/${id}`, data);
+      return response.data.data;
+    } catch (error) {
+      console.error(`Error updating patient ${id}:`, error);
+      throw error;
+    }
   }
 };
 

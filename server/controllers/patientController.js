@@ -54,3 +54,22 @@ export const getPatientById = async (req, res) => {
         })
     }
 }
+
+export const updatePatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await patientService.updatePatientById(id, req.body);
+        
+        await log(req, "UPDATE", "child_patient", id, "Updated patient certification/metadata");
+
+        return res.status(200).json({
+            message: "Patient updated successfully!",
+            data: result
+        });
+    } catch (error) {
+        console.log("Update Error", error);
+        return res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        });
+    }
+}

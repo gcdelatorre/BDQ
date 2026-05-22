@@ -155,3 +155,36 @@ export const getPatientById = async (id) => {
 
     return rows[0];
 }
+
+export const updatePatientById = async (id, payload) => {
+    const allowedFields = [
+        'fic_date',
+        'cic_date',
+        'initiated_breastfeeding_date',
+        'exclusively_breastfed_6_months',
+        'intro_complementary_foods',
+        'remarks'
+    ];
+
+    const updates = [];
+    const values = [];
+
+    for (const field of allowedFields) {
+        if (payload[field] !== undefined) {
+            updates.push(`${field} = ?`);
+            values.push(payload[field] || null); // convert empty strings/undefined to null
+        }
+    }
+
+    if (updates.length === 0) return await getPatientById(id);
+
+    values.push(id);
+
+    await db.execute(
+        `UPDATE child_patient SET ${updates.join(', ')} WHERE child_id = ?`,
+        values
+    );
+
+    return await getPatientById(id);
+};
+

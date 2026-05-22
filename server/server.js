@@ -8,7 +8,7 @@ import auditRoutes from "./routes/auditRoutes.js";
 import medicineRoutes from "./routes/medicineRoutes.js";
 import dispensingRoutes from "./routes/dispensingRoutes.js";
 import immunizationRoutes from "./routes/immunizationRoutes.js";
-import maternalRoutes from "./routes/maternalRoutes.js";
+
 import nutritionRoutes from "./routes/nutritionRoutes.js";
 import supplementRoutes from "./routes/supplementRoutes.js";
 import breastfeedingRoutes from "./routes/breastfeedingRoutes.js";
@@ -49,7 +49,7 @@ app.use("/api/audit", auditRoutes);
 app.use("/api/medicine", medicineRoutes);
 app.use("/api/dispensing", dispensingRoutes);
 app.use("/api/immunization", immunizationRoutes);
-app.use("/api/maternal", maternalRoutes);
+
 app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/supplement", supplementRoutes);
 app.use("/api/breastfeeding", breastfeedingRoutes);

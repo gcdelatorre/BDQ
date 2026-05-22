@@ -22,6 +22,7 @@ import BreastfeedingTab from "./components/BreastfeedingTab";
 import ProfileSummaryTab from "./components/ProfileSummaryTab";
 import { Card, CardBody } from "@/components/ui/card";
 import DispensingLogsTab from "./components/DispensingLogsTab";
+import { useToast } from "@/hooks/useToast";
 
 
 
@@ -32,6 +33,7 @@ export default function PatientProfile() {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("summary");
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchPatient();
@@ -66,6 +68,16 @@ export default function PatientProfile() {
       console.error("Error loading profile:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateProfile = async (field, value) => {
+    try {
+      await patientService.updatePatient(id, { [field]: value });
+      setPatient(prev => ({ ...prev, [field]: value }));
+      toast.success("Profile Updated", "Changes saved successfully.");
+    } catch (error) {
+      toast.error("Update Failed", "Could not save changes.");
     }
   };
 
@@ -212,7 +224,7 @@ export default function PatientProfile() {
             transition={{ duration: 0.2 }}
           >
             {activeTab === "summary" && (
-              <ProfileSummaryTab patient={patient} formatDate={formatDate} />
+              <ProfileSummaryTab patient={patient} formatDate={formatDate} onUpdate={handleUpdateProfile} />
             )}
 
             {activeTab === "child_imm" && (

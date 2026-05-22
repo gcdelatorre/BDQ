@@ -3,7 +3,7 @@ import api from "./api";
 /**
  * CLINICAL SERVICE (Frontend)
  * Handles all clinical tracking data interactions
- * Consolidates pediatric and maternal health tracking
+ * Consolidates pediatric health tracking
  */
 const clinicalService = {
   // Child Immunization
@@ -28,15 +28,7 @@ const clinicalService = {
     return response.data;
   },
 
-  // Maternal Immunization
-  saveMaternalRecord: async (data) => {
-    const response = await api.post("/maternal/td-dose", data);
-    return response.data;
-  },
-  getMaternalRecord: async (childId) => {
-    const response = await api.get(`/maternal/child/${childId}`);
-    return response.data.data;
-  },
+
 
   // Nutritional Assessment
   recordNutritionAssessment: async (data) => {

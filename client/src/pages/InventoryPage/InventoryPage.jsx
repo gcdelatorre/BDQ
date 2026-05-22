@@ -27,6 +27,8 @@ export default function InventoryPage() {
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("ALL");
+  const [filterStatus, setFilterStatus] = useState("ALL");
   const [showAddMedicineModal, setShowAddMedicineModal] = useState(false);
   const [showAddBatchModal, setShowAddBatchModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
@@ -109,10 +111,19 @@ export default function InventoryPage() {
     }
   };
 
-  const filteredMedicines = medicines.filter(m =>
-    m.medicine_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.generic_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredMedicines = medicines.filter(m => {
+    const matchesSearch = m.medicine_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          m.generic_name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategory === "ALL" || m.medicine_category.toUpperCase() === filterCategory;
+    
+    const stock = Number(m.total_stock) || 0;
+    const isLowStock = stock <= m.reorder_level;
+    const matchesStatus = filterStatus === "ALL" || 
+                          (filterStatus === "LOW_STOCK" && isLowStock) || 
+                          (filterStatus === "OPTIMAL" && !isLowStock);
+                          
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   const totalStockCount = medicines.reduce((acc, m) => acc + (Number(m.total_stock) || 0), 0);
   const lowStockCount = medicines.filter(m => (Number(m.total_stock) || 0) <= m.reorder_level).length;
@@ -185,10 +196,31 @@ export default function InventoryPage() {
             className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl transition-all outline-none text-sm font-medium text-slate-900 border"
           />
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white text-slate-600 rounded-xl font-bold border border-slate-100 hover:bg-slate-50 transition-all text-[11px] tracking-wider uppercase">
-          <Funnel size={18} weight="bold" />
-          Filters
-        </button>
+        <div className="flex items-center gap-3">
+          <select 
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 transition-all cursor-pointer min-w-[140px]"
+          >
+            <option value="ALL">All Categories</option>
+            <option value="TABLET">Tablet</option>
+            <option value="SYRUP">Syrup</option>
+            <option value="CAPSULE">Capsule</option>
+            <option value="INJECTION">Injection</option>
+            <option value="CREAM">Cream</option>
+            <option value="DROPS">Drops</option>
+          </select>
+
+          <select 
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-4 py-3 bg-white border border-slate-100 rounded-xl text-sm font-bold text-slate-600 outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 transition-all cursor-pointer min-w-[140px]"
+          >
+            <option value="ALL">All Statuses</option>
+            <option value="LOW_STOCK">Low Stock</option>
+            <option value="OPTIMAL">Optimal</option>
+          </select>
+        </div>
       </div>
 
       {/* Inventory Grid Layout */}
