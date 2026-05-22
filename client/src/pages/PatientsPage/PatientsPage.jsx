@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Plus, MagnifyingGlass, Funnel, Copy } from "@phosphor-icons/react";
+import { Plus, MagnifyingGlass, Funnel, Copy, CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { DataTable } from "@/components/ui/DataTable";
 import patientService from "@/services/patientService";
 import { cn } from "@/lib/utils";
@@ -14,16 +14,41 @@ export default function PatientsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Pagination State
+  const [meta, setMeta] = useState({ total: 0, totalPages: 1, currentPage: 1 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 15;
 
   useEffect(() => {
     fetchPatients();
-  }, []);
+  }, [currentPage]);
+
+  // Debounced search
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (currentPage !== 1) setCurrentPage(1);
+      else fetchPatients();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      const data = await patientService.getAllPatients();
-      setPatients(data);
+      const response = await patientService.getAllPatients({ 
+        search: searchTerm,
+        page: currentPage,
+        limit 
+      });
+      
+      if (Array.isArray(response)) {
+        setPatients(response);
+        setMeta({ total: response.length, totalPages: 1, currentPage: 1 });
+      } else {
+        setPatients(response.data || []);
+        setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
+      }
     } catch (error) {
       console.error("Failed to load patients");
     } finally {
@@ -87,7 +112,8 @@ export default function PatientsPage() {
           </span>
           <button
             type="button"
-            onClick={async () => {
+            onClick={async (e) => {
+              e.preventDefault();
               try {
                 await navigator.clipboard.writeText(row.family_serial_number);
                 toast.success("Copied", "Family serial number copied to clipboard.");
@@ -115,11 +141,6 @@ export default function PatientsPage() {
     }
   ];
 
-  const filteredPatients = patients.filter(p => 
-    `${p.first_name} ${p.last_name}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.family_serial_number?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="page-shell">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -145,7 +166,7 @@ export default function PatientsPage() {
             placeholder="Search by name or family serial number..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl transition-all outline-none text-sm font-medium text-slate-900"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl transition-all outline-none text-sm font-medium text-slate-900 border"
           />
         </div>
         <button className="flex items-center gap-2 px-6 py-3 bg-white text-slate-600 rounded-xl font-bold border border-slate-100 hover:bg-slate-50 transition-all text-[11px] tracking-wider uppercase">
@@ -154,13 +175,43 @@ export default function PatientsPage() {
         </button>
       </div>
 
-      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin" />
+      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+        <div className="p-2">
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin" />
+            </div>
+          ) : (
+            <DataTable columns={columns} data={patients} />
+          )}
+        </div>
+
+        {/* Server-Side Pagination Controller */}
+        {meta.totalPages > 1 && (
+          <div className="px-8 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between mt-2">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Showing {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, meta.total)} of {meta.total}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1 || loading}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold uppercase tracking-widest disabled:opacity-50 transition-all"
+              >
+                <CaretLeft size={16} weight="bold" />
+              </button>
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-bold text-slate-500 uppercase px-2">Page {currentPage} of {meta.totalPages}</span>
+              </div>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(meta.totalPages, p + 1))}
+                disabled={currentPage === meta.totalPages || loading}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold uppercase tracking-widest disabled:opacity-50 transition-all"
+              >
+                <CaretRight size={16} weight="bold" />
+              </button>
+            </div>
           </div>
-        ) : (
-          <DataTable columns={columns} data={filteredPatients} />
         )}
       </div>
 

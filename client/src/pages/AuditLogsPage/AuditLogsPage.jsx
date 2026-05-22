@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import {
   ClockCounterClockwise,
   MagnifyingGlass,
-  Funnel,
   UserCircle,
   Tag,
   Calendar,
   ShieldCheck,
-  FileText,
   Pulse,
-  ArrowRight
+  CaretLeft,
+  CaretRight
 } from "@phosphor-icons/react";
-import { motion } from "framer-motion";
 import auditService from "@/services/auditService";
 import { useToast } from "@/hooks/useToast";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -20,33 +18,55 @@ export default function AuditLogsPage() {
   const { toast } = useToast();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [meta, setMeta] = useState({ total: 0, totalPages: 1, currentPage: 1 });
+  
+  // Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAction, setFilterAction] = useState("ALL");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const limit = 20;
 
   useEffect(() => {
     fetchLogs();
-  }, []);
+  }, [currentPage, filterAction, startDate, endDate]);
+
+  // Debounced search
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (currentPage !== 1) setCurrentPage(1);
+      else fetchLogs();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchQuery]);
 
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const data = await auditService.getAllLogs();
-      setLogs(data);
+      const response = await auditService.getAllLogs({
+        page: currentPage,
+        limit,
+        actionType: filterAction,
+        username: searchQuery,
+        startDate,
+        endDate
+      });
+      
+      if (Array.isArray(response)) {
+        setLogs(response);
+        setMeta({ total: response.length, totalPages: 1, currentPage: 1 });
+      } else {
+        setLogs(response.data || []);
+        setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
+      }
     } catch (error) {
       console.error("Audit Fetch Error:", error);
-      toast.error("Access Denied", "Only administrators can view audit logs.");
+      toast.error("Telemetry Error", "Failed to retrieve security logs from server.");
     } finally {
       setLoading(false);
     }
   };
-
-  const filteredLogs = logs.filter(log => {
-    const matchesSearch =
-      log.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.details?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesAction = filterAction === "ALL" || log.action_type === filterAction;
-    return matchesSearch && matchesAction;
-  });
 
   const getActionColor = (type) => {
     switch (type) {
@@ -63,14 +83,12 @@ export default function AuditLogsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="page-title">Security Audit Logs</h1>
-          <p className="page-description">
-            Immutable record of all system activity and data mutations.
-          </p>
+          <h1 className="page-title text-3xl font-bold text-slate-900 tracking-tight">Security Audit Logs</h1>
+          <p className="page-description text-slate-500 font-medium text-sm mt-1">Immutable record of all system activity and data mutations.</p>
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={fetchLogs}
+            onClick={() => { setCurrentPage(1); fetchLogs(); }}
             className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
           >
             <ClockCounterClockwise size={18} weight="bold" />
@@ -86,8 +104,8 @@ export default function AuditLogsPage() {
             <Pulse size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Activities</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">{logs.length}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Signals</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{meta.total}</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
@@ -95,10 +113,8 @@ export default function AuditLogsPage() {
             <Calendar size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Today's Logs</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">
-              {logs.filter(l => new Date(l.timestamp).toDateString() === new Date().toDateString()).length}
-            </h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Pages</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{meta.totalPages}</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
@@ -106,8 +122,8 @@ export default function AuditLogsPage() {
             <ShieldCheck size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Security Level</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none text-emerald-600">Active</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Protocol</p>
+            <h3 className="text-xl font-black text-emerald-600 leading-none uppercase">Active</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
@@ -115,44 +131,55 @@ export default function AuditLogsPage() {
             <UserCircle size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Active Users</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">
-              {new Set(logs.map(l => l.username)).size}
-            </h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Current Page</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{currentPage}</h3>
           </div>
         </div>
       </div>
 
-      {/* Standard Search Card */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1 group">
-          <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-          <input
-            type="text"
-            placeholder="Search by username or activity details..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl transition-all outline-none text-sm font-medium text-slate-900 border"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest px-2">Action Type:</span>
+      {/* Advanced Filters */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative group">
+            <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
+            <input
+              type="text"
+              placeholder="Search user or detail..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl outline-none text-sm font-medium text-slate-900 border"
+            />
+          </div>
           <select
             value={filterAction}
-            onChange={(e) => setFilterAction(e.target.value)}
-            className="bg-white border border-slate-100 rounded-xl px-4 py-3 text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-teal-500 transition-all"
+            onChange={(e) => { setFilterAction(e.target.value); setCurrentPage(1); }}
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-teal-500 transition-all appearance-none"
           >
-            <option value="ALL">All Actions</option>
+            <option value="ALL">All Operations</option>
             <option value="CREATE">Create</option>
             <option value="UPDATE">Update</option>
             <option value="DELETE">Delete</option>
             <option value="LOGIN">Login</option>
           </select>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-teal-500 transition-all"
+            placeholder="Start Date"
+          />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+            className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 outline-none shadow-sm focus:border-teal-500 transition-all"
+            placeholder="End Date"
+          />
         </div>
       </div>
 
       {/* Table Container */}
-      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
@@ -169,10 +196,10 @@ export default function AuditLogsPage() {
                 <tr>
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-slate-400 font-bold text-sm">Loading security logs...</p>
+                    <p className="text-slate-400 font-bold text-sm">Synchronizing security logs...</p>
                   </td>
                 </tr>
-              ) : filteredLogs.length === 0 ? (
+              ) : logs.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-8 py-20 text-center">
                     <ShieldCheck size={48} weight="duotone" className="text-slate-200 mx-auto mb-4" />
@@ -180,7 +207,7 @@ export default function AuditLogsPage() {
                   </td>
                 </tr>
               ) : (
-                filteredLogs.map((log) => (
+                logs.map((log) => (
                   <tr key={log.log_id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-8 py-5">
                       <div className="space-y-0.5">
@@ -229,6 +256,34 @@ export default function AuditLogsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Server-Side Pagination Controller */}
+        {meta.totalPages > 1 && (
+          <div className="px-8 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Showing {(currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, meta.total)} of {meta.total}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1 || loading}
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-teal-600 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              >
+                <CaretLeft size={18} weight="bold" />
+              </button>
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-bold text-slate-500 uppercase px-2">Page {currentPage} of {meta.totalPages}</span>
+              </div>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(meta.totalPages, p + 1))}
+                disabled={currentPage === meta.totalPages || loading}
+                className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-teal-600 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              >
+                <CaretRight size={18} weight="bold" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

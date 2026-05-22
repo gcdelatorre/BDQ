@@ -54,6 +54,8 @@ Audit Logs: Integrate strict server-side pagination alongside date, user, and ac
 
 Vaccine Recall Page: Standardize the layout to match global UI guidelines and integrate pagination for active/past recalls.
 
+Ensure filtering and pagination working on each pages that contains
+
 5. Patient Profiles & Scope Cleanup
 Profile Synchronization Bug: Fix data reactive state errors in the Full Patient Profile view. Fields like certification_status and related metadata must instantly sync and persist with the backend database upon updating.
 
