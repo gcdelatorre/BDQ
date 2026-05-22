@@ -30,16 +30,28 @@ export const getAllAuditLogs = async ({ search, actionType, startDate, endDate }
             al.target_table as table_name,
             al.target_record_id as entity_id,
             al.action_timestamp as timestamp,
-            al.description as details
+            CASE 
+                WHEN al.target_table = 'child_patient' AND cp.first_name IS NOT NULL 
+                THEN CONCAT(al.description, ' (', cp.first_name, ' ', cp.last_name, ')')
+                WHEN al.target_table IN ('child_immunization_record', 'breastfeeding_checkpoint', 'nutritional_assessment', 'supplementation_record') AND cp.first_name IS NOT NULL 
+                THEN CONCAT(al.description, ' (', cp.first_name, ' ', cp.last_name, ')')
+                ELSE al.description 
+            END as details
         FROM audit_log al
         JOIN user u ON al.user_id = u.user_id
+        LEFT JOIN child_patient cp ON 
+            (al.target_table = 'child_patient' AND al.target_record_id = cp.child_id) OR
+            (al.target_table = 'child_immunization_record' AND al.target_record_id = (SELECT child_id FROM child_immunization_record WHERE immunization_id = al.target_record_id)) OR
+            (al.target_table = 'breastfeeding_checkpoint' AND al.target_record_id = (SELECT child_id FROM breastfeeding_checkpoint WHERE checkpoint_id = al.target_record_id)) OR
+            (al.target_table = 'nutritional_assessment' AND al.target_record_id = (SELECT child_id FROM nutritional_assessment WHERE assessment_id = al.target_record_id)) OR
+            (al.target_table = 'supplementation_record' AND al.target_record_id = (SELECT child_id FROM supplementation_record WHERE supplement_id = al.target_record_id))
         WHERE 1=1
     `;
     const values = [];
 
     if (search && search.trim()) {
-        sql += ` AND (u.username LIKE ? OR al.description LIKE ?)`;
-        values.push(`%${search.trim()}%`, `%${search.trim()}%`);
+        sql += ` AND (u.username LIKE ? OR al.description LIKE ? OR cp.first_name LIKE ? OR cp.last_name LIKE ?)`;
+        values.push(`%${search.trim()}%`, `%${search.trim()}%`, `%${search.trim()}%`, `%${search.trim()}%`);
     }
 
     if (actionType && actionType !== "ALL") {
