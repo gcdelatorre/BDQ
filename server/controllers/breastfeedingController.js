@@ -41,3 +41,45 @@ export const getChildBreastfeedingHistory = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to delete/undo a breastfeeding checkpoint
+ */
+export const deleteRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await breastfeedingService.deleteBreastfeedingCheckpoint(record_id);
+
+        // Audit Log
+        await log(req, "DELETE", "breastfeeding_checkpoint", record_id, `Deleted breastfeeding checkpoint for child ID ${result.child_id} at ${result.age_month_target} months`);
+
+        res.status(200).json({
+            message: "Breastfeeding checkpoint deleted successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Delete Breastfeeding Checkpoint Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};
+
+/**
+ * Controller to update/edit a breastfeeding checkpoint
+ */
+export const updateRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await breastfeedingService.updateBreastfeedingCheckpoint(record_id, req.body);
+
+        // Audit Log
+        await log(req, "UPDATE", "breastfeeding_checkpoint", record_id, `Updated breastfeeding checkpoint for child ID ${result.child_id} at ${result.age_month_target} months`);
+
+        res.status(200).json({
+            message: "Breastfeeding checkpoint updated successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Update Breastfeeding Checkpoint Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

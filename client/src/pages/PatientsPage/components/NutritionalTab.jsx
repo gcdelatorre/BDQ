@@ -1,9 +1,16 @@
 import { useState, useEffect, useMemo } from "react";
-import { ChartLineUp, Plus, Ruler, Scales, Info, NotePencil } from "@phosphor-icons/react";
+import { ChartLineUp, Plus, Ruler, Scales, Info, NotePencil, Trash } from "@phosphor-icons/react";
 import clinicalService from "@/services/clinicalService";
 import { useToast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Map assessment periods to suggested ages
+const ASSESSMENT_PERIODS = [
+  { label: "1-3 Months", value: "1-3 months", suggestedAge: 2 },
+  { label: "6-11 Months", value: "6-11 months", suggestedAge: 8 },
+  { label: "12 Months", value: "12 months", suggestedAge: 12 }
+];
 
 export default function NutritionalTab({ childId }) {
   const { toast } = useToast();
@@ -12,9 +19,12 @@ export default function NutritionalTab({ childId }) {
   const [isRecording, setIsRecording] = useState(false);
   const [showModal, setShowModal] = useState(false);
   
+  // Modals States
+  const [selectedRecord, setSelectedRecord] = useState(null); // For Managing Existing
+  
   const [formData, setFormData] = useState({
     assessment_period: "1-3 months",
-    age_in_months_at_assessment: "",
+    age_in_months_at_assessment: "2",
     length_cm: "",
     length_date_taken: new Date().toISOString().split('T')[0],
     weight_kg: "",
@@ -22,6 +32,15 @@ export default function NutritionalTab({ childId }) {
     nutritional_status: "Normal",
     remarks: ""
   });
+
+  const handlePeriodChange = (period) => {
+    const selectedPeriod = ASSESSMENT_PERIODS.find(p => p.value === period);
+    setFormData(prev => ({
+      ...prev,
+      assessment_period: period,
+      age_in_months_at_assessment: String(selectedPeriod?.suggestedAge || "")
+    }));
+  };
 
   useEffect(() => {
     fetchHistory();
@@ -51,17 +70,22 @@ export default function NutritionalTab({ childId }) {
     e.preventDefault();
     try {
       setIsRecording(true);
-      await clinicalService.recordNutritionAssessment({
-        child_id: childId,
-        ...formData
-      });
-      
-      toast.success("Assessment Recorded", "Growth data has been saved successfully.");
+      if (selectedRecord) {
+        await clinicalService.updateNutritionAssessment(selectedRecord.assessment_id, formData);
+        toast.success("Assessment Updated", "Growth data has been modified.");
+      } else {
+        await clinicalService.recordNutritionAssessment({
+          child_id: childId,
+          ...formData
+        });
+        toast.success("Assessment Recorded", "Growth data has been saved successfully.");
+      }
       setShowModal(false);
+      setSelectedRecord(null);
       fetchHistory();
       setFormData({
         assessment_period: "1-3 months",
-        age_in_months_at_assessment: "",
+        age_in_months_at_assessment: "2",
         length_cm: "",
         length_date_taken: new Date().toISOString().split('T')[0],
         weight_kg: "",
@@ -103,7 +127,20 @@ export default function NutritionalTab({ childId }) {
           <p className="text-slate-500 text-sm">Monitoring height and weight development milestones</p>
         </div>
         <button 
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setSelectedRecord(null);
+            setFormData({
+              assessment_period: "1-3 months",
+              age_in_months_at_assessment: "2",
+              length_cm: "",
+              length_date_taken: new Date().toISOString().split('T')[0],
+              weight_kg: "",
+              weight_date_taken: new Date().toISOString().split('T')[0],
+              nutritional_status: "Normal",
+              remarks: ""
+            });
+            setShowModal(true);
+          }}
           className="flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm"
         >
           <Plus size={18} weight="bold" />
@@ -121,44 +158,62 @@ export default function NutritionalTab({ childId }) {
         ) : (
           history.map((record) => (
             <div key={record.assessment_id} className="relative group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-teal-100 transition-all">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
-                    <ChartLineUp size={22} weight="duotone" />
+              <div 
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedRecord(record);
+                  setFormData({
+                    assessment_period: record.assessment_period,
+                    age_in_months_at_assessment: String(record.age_in_months_at_assessment),
+                    length_cm: record.length_cm,
+                    length_date_taken: new Date(record.length_date_taken).toISOString().split('T')[0],
+                    weight_kg: record.weight_kg,
+                    weight_date_taken: new Date(record.weight_date_taken).toISOString().split('T')[0],
+                    nutritional_status: record.nutritional_status,
+                    remarks: record.remarks || ""
+                  });
+                  setShowModal(true);
+                }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center">
+                      <ChartLineUp size={22} weight="duotone" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900">{record.assessment_period}</h4>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{record.age_in_months_at_assessment} Mo Old</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">{record.assessment_period}</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{record.age_in_months_at_assessment} Mo Old</p>
-                  </div>
+                  <span className={cn(
+                    "px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                    statusColors[record.nutritional_status] || statusColors["Normal"]
+                  )}>
+                    {record.nutritional_status}
+                  </span>
                 </div>
-                <span className={cn(
-                  "px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
-                  statusColors[record.nutritional_status] || statusColors["Normal"]
-                )}>
-                  {record.nutritional_status}
-                </span>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Scales size={14} weight="fill" className="text-blue-500" />
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Weight</span>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Scales size={14} weight="fill" className="text-blue-500" />
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Weight</span>
+                    </div>
+                    <p className="text-lg font-bold text-slate-900">{record.weight_kg}<span className="text-[10px] ml-1 text-slate-400">kg</span></p>
                   </div>
-                  <p className="text-lg font-bold text-slate-900">{record.weight_kg}<span className="text-[10px] ml-1 text-slate-400">kg</span></p>
-                </div>
-                <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <Ruler size={14} weight="fill" className="text-teal-500" />
-                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Height</span>
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100/50">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Ruler size={14} weight="fill" className="text-teal-500" />
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Height</span>
+                    </div>
+                    <p className="text-lg font-bold text-slate-900">{record.length_cm}<span className="text-[10px] ml-1 text-slate-400">cm</span></p>
                   </div>
-                  <p className="text-lg font-bold text-slate-900">{record.length_cm}<span className="text-[10px] ml-1 text-slate-400">cm</span></p>
                 </div>
-              </div>
 
-              <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
-                <span>Record Date</span>
-                <span className="text-slate-600">{new Date(record.weight_date_taken).toLocaleDateString()}</span>
+                <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
+                  <span>Record Date</span>
+                  <span className="text-slate-600">{new Date(record.weight_date_taken).toLocaleDateString()}</span>
+                </div>
               </div>
 
               <button
@@ -169,7 +224,7 @@ export default function NutritionalTab({ childId }) {
                 className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-100 shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
                 title="Undo Assessment"
               >
-                <Plus size={14} weight="bold" className="rotate-45" />
+                <Trash size={14} weight="bold" />
               </button>
             </div>
           ))
@@ -179,7 +234,7 @@ export default function NutritionalTab({ childId }) {
       {/* Record Modal */}
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
+          <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -190,7 +245,7 @@ export default function NutritionalTab({ childId }) {
                 <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <ChartLineUp size={32} weight="duotone" />
                 </div>
-                <h4 className="text-xl font-bold text-slate-900">New Assessment</h4>
+                <h4 className="text-xl font-bold text-slate-900">{selectedRecord ? "Modify Assessment" : "New Assessment"}</h4>
                 <p className="text-sm text-slate-500 font-medium">Record height and weight data</p>
               </div>
 
@@ -199,7 +254,7 @@ export default function NutritionalTab({ childId }) {
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Period</label>
                   <select 
                     value={formData.assessment_period}
-                    onChange={(e) => setFormData({...formData, assessment_period: e.target.value})}
+                    onChange={(e) => handlePeriodChange(e.target.value)}
                     className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
                   >
                     <option value="1-3 months">1-3 Months</option>
@@ -238,29 +293,52 @@ export default function NutritionalTab({ childId }) {
                       required type="number"
                       value={formData.age_in_months_at_assessment}
                       onChange={(e) => setFormData({...formData, age_in_months_at_assessment: e.target.value})}
-                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
+                      className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm font-bold text-slate-700 border"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                    <select 
-                      value={formData.nutritional_status}
-                      onChange={(e) => setFormData({...formData, nutritional_status: e.target.value})}
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Date Taken</label>
+                    <input 
+                      required type="date"
+                      value={formData.weight_date_taken}
+                      onChange={(e) => setFormData({...formData, weight_date_taken: e.target.value, length_date_taken: e.target.value})}
                       className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700"
-                    >
-                      <option value="Normal">Normal</option>
-                      <option value="Underweight">Underweight</option>
-                      <option value="Stunted">Stunted</option>
-                      <option value="Wasted">Wasted</option>
-                      <option value="Obese">Obese</option>
-                    </select>
+                    />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Status</label>
+                  <select 
+                    value={formData.nutritional_status}
+                    onChange={(e) => setFormData({...formData, nutritional_status: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700 appearance-none"
+                  >
+                    <option value="Normal">Normal</option>
+                    <option value="Underweight">Underweight</option>
+                    <option value="Stunted">Stunted</option>
+                    <option value="Wasted">Wasted</option>
+                    <option value="Obese">Obese</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Professional Remarks</label>
+                  <textarea 
+                    value={formData.remarks}
+                    onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+                    className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-medium h-24 resize-none"
+                    placeholder="Enter observations..."
+                  />
                 </div>
 
                 <div className="flex gap-3 pt-2">
                   <button 
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      setSelectedRecord(null);
+                    }}
                     className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-50 rounded-xl transition-colors text-sm"
                   >
                     Cancel
@@ -270,7 +348,7 @@ export default function NutritionalTab({ childId }) {
                     disabled={isRecording}
                     className="flex-1 py-3 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 transition-all text-sm disabled:opacity-50"
                   >
-                    {isRecording ? "Saving..." : "Save Record"}
+                    {isRecording ? "Saving..." : (selectedRecord ? "Apply Changes" : "Save Record")}
                   </button>
                 </div>
               </form>

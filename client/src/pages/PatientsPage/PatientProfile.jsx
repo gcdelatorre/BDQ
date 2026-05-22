@@ -131,11 +131,11 @@ export default function PatientProfile() {
       </div>
 
       {/* Patient Header Card */}
-      <Card className="border-none shadow-sm bg-white overflow-hidden rounded-[2rem]">
+      <Card className="border-none shadow-sm bg-white overflow-hidden rounded-3xl">
         <div className="absolute top-0 right-0 w-80 h-80 bg-teal-50/20 rounded-full -mr-40 -mt-40 blur-3xl pointer-events-none" />
         <CardBody className="p-8 relative z-10">
           <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-            <div className="w-24 h-24 bg-teal-600 text-white rounded-3xl flex items-center justify-center shadow-lg shadow-teal-600/20">
+            <div className="w-24 h-24 bg-teal-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-teal-600/20">
               <UserCircle size={60} weight="duotone" />
             </div>
             <div className="flex-1 space-y-4">

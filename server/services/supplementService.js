@@ -37,3 +37,54 @@ export const getSupplementHistoryByChild = async (childId) => {
     );
     return rows;
 };
+
+/**
+ * Delete/Undo a supplement record
+ */
+export const deleteSupplementRecord = async (supplementId) => {
+    const [rows] = await db.execute(
+        "SELECT * FROM supplementation_record WHERE supplement_id = ?",
+        [supplementId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Supplement record not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        "DELETE FROM supplementation_record WHERE supplement_id = ?",
+        [supplementId]
+    );
+
+    return rows[0];
+};
+
+/**
+ * Update/Edit a supplement record
+ */
+export const updateSupplementRecord = async (supplementId, payload) => {
+    const {
+        supplement_type,
+        target_age_months,
+        date_given,
+        remarks = null
+    } = payload;
+
+    const [rows] = await db.execute(
+        "SELECT * FROM supplementation_record WHERE supplement_id = ?",
+        [supplementId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Supplement record not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        "UPDATE supplementation_record SET supplement_type = ?, target_age_months = ?, date_given = ?, remarks = ? WHERE supplement_id = ?",
+        [supplement_type, target_age_months, date_given, remarks, supplementId]
+    );
+
+    return { supplement_id: supplementId, ...rows[0], supplement_type, target_age_months, date_given, remarks };
+};

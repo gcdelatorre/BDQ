@@ -85,25 +85,6 @@ CREATE TABLE IF NOT EXISTS `child_patient` (
     ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================================================
--- 4. MATERNAL IMMUNIZATION
--- (One record per child — columns represent TT doses)
--- ============================================================
-CREATE TABLE IF NOT EXISTS `maternal_immunization` (
-  `maternal_imm_id`  BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT,
-  `child_id`         BIGINT UNSIGNED    NOT NULL UNIQUE,  -- one record per child
-  `tt2_td2_date`     DATE               DEFAULT NULL,
-  `tt3_date`         DATE               DEFAULT NULL,
-  `tt4_date`         DATE               DEFAULT NULL,
-  `tt5_date`         DATE               DEFAULT NULL,
-  `notes`            VARCHAR(255)       DEFAULT NULL,
-  `created_at`       DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at`       DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`maternal_imm_id`),
-  CONSTRAINT `fk_mat_imm_child`
-    FOREIGN KEY (`child_id`) REFERENCES `child_patient` (`child_id`)
-    ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
 -- 5. CHILD IMMUNIZATION RECORD
@@ -300,7 +281,6 @@ SET FOREIGN_KEY_CHECKS = 1;
 --   1.  user
 --   2.  audit_log
 --   3.  child_patient
---   4.  maternal_immunization
 --   5.  child_immunization_record
 --   6.  nutritional_assessment
 --   7.  supplementation_record

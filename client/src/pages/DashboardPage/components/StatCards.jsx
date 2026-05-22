@@ -26,11 +26,11 @@ export default function StatCards({ stats, loading }) {
         >
           <div className="flex items-start justify-between relative z-10">
             <motion.div variants={itemVariants}>
-              <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.1em] mb-4">{kpi.label}</p>
+              <p className="text-slate-500 text-[11px] font-bold uppercase tracking-[0.1em] mb-2">{kpi.label}</p>
               {loading ? (
                 <motion.div variants={itemVariants} className="h-9 w-20 bg-slate-100 rounded-lg animate-pulse mb-2" />
               ) : (
-                <h3 className="text-3xl font-bold text-slate-900 tracking-tighter mb-2">{kpi.value}</h3>
+                <h3 className="text-xl font-black text-slate-900 leading-tight mb-2">{kpi.value}</h3>
               )}
               <div className={cn(
                 "inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg",

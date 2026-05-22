@@ -41,3 +41,24 @@ export const getChildNutritionHistory = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to delete/undo a nutritional assessment
+ */
+export const deleteRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await nutritionService.deleteNutritionalAssessment(record_id);
+
+        // Audit Log
+        await log(req, "DELETE", "nutritional_assessment", record_id, `Deleted nutritional assessment for child ID ${result.child_id} with ${result.nutritional_status} status`);
+
+        res.status(200).json({
+            message: "Nutritional assessment deleted successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Delete Nutritional Assessment Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

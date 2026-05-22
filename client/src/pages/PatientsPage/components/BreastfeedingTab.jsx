@@ -17,15 +17,15 @@ const MILESTONES = [
   { 
     id: "1.5", 
     label: "1½ Months", 
-    target: "1.5", 
+    target: "1", // Mapped to 1 for backend compatibility
     requirement: "Exclusive Breastfeeding Checkpoint",
     shortLabel: "EBF Check",
     phase: "1-3 Months Phase"
   },
-  { 
+  {
     id: "2.5", 
     label: "2½ Months", 
-    target: "2.5", 
+    target: "2", // Mapped to 2 for backend compatibility
     requirement: "Exclusive Breastfeeding Checkpoint",
     shortLabel: "EBF Check",
     phase: "1-3 Months Phase"
@@ -33,7 +33,7 @@ const MILESTONES = [
   { 
     id: "3.5", 
     label: "3½ Months", 
-    target: "3.5", 
+    target: "3", // Mapped to 3 for backend compatibility
     requirement: "Exclusive Breastfeeding Checkpoint",
     shortLabel: "EBF Check",
     phase: "1-3 Months Phase"
@@ -83,8 +83,14 @@ export default function BreastfeedingTab({ childId }) {
 
   const milestonesWithStatus = useMemo(() => {
     return MILESTONES.map(m => {
-      // Use Number conversion to ensure accurate comparison for decimals like 1.5
-      const record = history.find(h => Number(h.age_month_target) === Number(m.target));
+      const record = history.find(h => {
+        const hTarget = parseFloat(h.age_month_target);
+        const mTarget = parseFloat(m.target);
+        if (m.id === "1.5") return hTarget === 1.5 || hTarget === 1;
+        if (m.id === "2.5") return hTarget === 2.5 || hTarget === 2;
+        if (m.id === "3.5") return hTarget === 3.5 || hTarget === 3;
+        return hTarget === mTarget;
+      });
       return { ...m, record };
     });
   }, [history]);
@@ -93,17 +99,17 @@ export default function BreastfeedingTab({ childId }) {
     if (!selectedMilestone) return;
     try {
       setIsRecording(true);
-      await clinicalService.recordBreastfeeding({
+      const payload = {
         child_id: childId,
         age_month_target: String(selectedMilestone.target),
         ...formData
-      });
-      
+      };
+      await clinicalService.recordBreastfeeding(payload);
       toast.success("Checkpoint Saved", `Status for ${selectedMilestone.label} recorded.`);
       setSelectedMilestone(null);
       fetchHistory();
     } catch (error) {
-      toast.error("Save Failed", "The 1-3 mo phase saving failed. Please check if the backend accepts decimal values.");
+      toast.error("Save Failed", "Verify your network connection or server status.");
     } finally {
       setIsRecording(false);
     }
@@ -113,16 +119,17 @@ export default function BreastfeedingTab({ childId }) {
     if (!selectedRecord) return;
     try {
       setIsRecording(true);
-      await clinicalService.updateBreastfeedingRecord(selectedRecord.checkpoint_id, {
+      const payload = {
         is_exclusively_breastfed: formData.is_exclusively_breastfed,
         check_date: formData.check_date,
         remarks: formData.remarks
-      });
+      };
+      await clinicalService.updateBreastfeedingRecord(selectedRecord.checkpoint_id, payload);
       toast.success("Record Updated", "Checkpoint details updated successfully.");
       setSelectedRecord(null);
       fetchHistory();
     } catch (error) {
-      toast.error("Update Failed", error.message);
+      toast.error("Update Failed", "Verify the server connection.");
     } finally {
       setIsRecording(false);
     }
@@ -137,11 +144,7 @@ export default function BreastfeedingTab({ childId }) {
       setSelectedRecord(null);
       fetchHistory();
     } catch (error) {
-      if (error.response?.status === 404) {
-        toast.error("Endpoint Not Found", "The backend delete route is not yet implemented.");
-      } else {
-        toast.error("Deletion Failed", error.message);
-      }
+      toast.error("Deletion Failed", error.message);
     } finally {
       setIsDeleting(false);
     }
@@ -155,7 +158,6 @@ export default function BreastfeedingTab({ childId }) {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* Header Info */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h3 className="text-lg font-bold text-slate-900 tracking-tight">Breastfeeding Checkpoints</h3>
@@ -167,7 +169,6 @@ export default function BreastfeedingTab({ childId }) {
         </div>
       </div>
 
-      {/* Milestone Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
         {milestonesWithStatus.map((m) => (
           <button
@@ -237,7 +238,6 @@ export default function BreastfeedingTab({ childId }) {
         ))}
       </div>
 
-      {/* Record New Modal */}
       <AnimatePresence>
         {selectedMilestone && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
@@ -315,7 +315,6 @@ export default function BreastfeedingTab({ childId }) {
         )}
       </AnimatePresence>
 
-      {/* Manage Record Modal (Edit/Undo) */}
       <AnimatePresence>
         {selectedRecord && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
@@ -331,7 +330,7 @@ export default function BreastfeedingTab({ childId }) {
                 </div>
                 <h4 className="text-xl font-bold text-slate-900">Manage Record</h4>
                 <p className="text-sm text-slate-500 font-medium">
-                  {MILESTONES.find(m => Number(m.target) === Number(selectedRecord.age_month_target))?.label} Checkpoint
+                  {MILESTONES.find(m => String(m.target) === String(selectedRecord.age_month_target))?.label} Checkpoint
                 </p>
               </div>
 

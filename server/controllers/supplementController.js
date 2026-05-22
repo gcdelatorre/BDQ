@@ -41,3 +41,24 @@ export const getChildSupplementHistory = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to delete/undo a supplement record
+ */
+export const deleteRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await supplementService.deleteSupplementRecord(record_id);
+
+        // Audit Log
+        await log(req, "DELETE", "supplementation_record", record_id, `Deleted ${result.supplement_type} record for child ID ${result.child_id}`);
+
+        res.status(200).json({
+            message: "Supplement record deleted successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Delete Supplement Record Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

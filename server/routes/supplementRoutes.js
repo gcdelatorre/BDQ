@@ -12,4 +12,8 @@ router.post("/record", protect, restrictTo("Admin", "Nurse", "Midwife"), supplem
 // GET /api/supplement/child/:child_id
 router.get("/child/:child_id", protect, restrictTo("Admin", "Nurse", "Midwife"), supplementController.getChildSupplementHistory);
 
+// 3. Delete/Undo a supplement record (Nurse, Midwife, Admin)
+// DELETE /api/supplement/record/:record_id
+router.delete("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), supplementController.deleteRecord);
+
 export default router;

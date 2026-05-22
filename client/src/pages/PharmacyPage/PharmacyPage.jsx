@@ -15,6 +15,7 @@ export default function PharmacyPage() {
   const [initialLoading, setInitialLoading] = useState(true);
 
   const [searchMed, setSearchMed] = useState("");
+  const [filterCategory, setFilterCategory] = useState("ALL");
   const [searchPatient, setSearchPatient] = useState("");
   const [patientPage, setPatientPage] = useState(1);
   const [patientHasMore, setPatientHasMore] = useState(false);
@@ -29,17 +30,24 @@ export default function PharmacyPage() {
   const [history, setHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
 
-  const fetchInitialData = useCallback(async ({ silent = false } = {}) => {
+  const fetchInitialData = useCallback(async ({ silent = false, category = "ALL" } = {}) => {
     try {
       if (!silent) setInitialLoading(true);
-      const medsData = await pharmacyService.getAllMedicines();
+      const medsData = await pharmacyService.getAllMedicines({
+        search: searchMed,
+        category: category
+      });
       setMedicines(medsData);
     } catch {
       toast.error("Error", "Failed to load pharmacy data.");
     } finally {
       setInitialLoading(false);
     }
-  }, []);
+  }, [searchMed]);
+
+  useEffect(() => {
+    fetchInitialData({ category: filterCategory });
+  }, [filterCategory, fetchInitialData]);
 
   const fetchPatients = useCallback(async ({ search = "", page = 1, append = false } = {}) => {
     try {
@@ -56,7 +64,6 @@ export default function PharmacyPage() {
   }, []);
 
   useEffect(() => {
-    fetchInitialData();
     fetchPatients({ page: 1 });
   }, []);
 
@@ -178,7 +185,7 @@ export default function PharmacyPage() {
       setBasket([]);
       setNotes("");
       setSearchPatient("");
-      await fetchInitialData({ silent: true });
+      await fetchInitialData({ silent: true, category: filterCategory });
     } catch (error) {
       toast.error("Transaction Failed", error.message);
     } finally {
@@ -203,21 +210,37 @@ export default function PharmacyPage() {
           <ClockCounterClockwise size={18} weight="bold" />
           View History
         </button>
-
       </div>
 
-      <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-        <PatientSelector
-          patients={patients}
-          searchPatient={searchPatient}
-          onSearchChange={handlePatientSearch}
-          selectedPatient={selectedPatient}
-          onSelect={handleSelectPatient}
-          onClear={handleClearPatient}
-          loading={patientLoading}
-          hasMore={patientHasMore}
-          onLoadMore={loadMorePatients}
-        />
+      <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <PatientSelector
+            patients={patients}
+            searchPatient={searchPatient}
+            onSearchChange={handlePatientSearch}
+            selectedPatient={selectedPatient}
+            onSelect={handleSelectPatient}
+            onClear={handleClearPatient}
+            loading={patientLoading}
+            hasMore={patientHasMore}
+            onLoadMore={loadMorePatients}
+          />
+          <div className="flex items-center gap-2">
+            <select 
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 outline-none"
+            >
+              <option value="ALL">ALL CATEGORIES</option>
+              <option value="Tablet">TABLET</option>
+              <option value="Syrup">SYRUP</option>
+              <option value="Capsule">CAPSULE</option>
+              <option value="Injection">INJECTION</option>
+              <option value="Cream">CREAM</option>
+              <option value="Drops">DROPS</option>
+            </select>
+          </div>
+        </div>
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

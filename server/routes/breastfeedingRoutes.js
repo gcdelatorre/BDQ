@@ -12,4 +12,12 @@ router.post("/record", protect, restrictTo("Admin", "Nurse", "Midwife"), breastf
 // GET /api/breastfeeding/child/:child_id
 router.get("/child/:child_id", protect, restrictTo("Admin", "Nurse", "Midwife"), breastfeedingController.getChildBreastfeedingHistory);
 
+// 3. Update a breastfeeding checkpoint (Nurse, Midwife, Admin)
+// PUT /api/breastfeeding/record/:record_id
+router.put("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), breastfeedingController.updateRecord);
+
+// 4. Delete/Undo a breastfeeding checkpoint (Nurse, Midwife, Admin)
+// DELETE /api/breastfeeding/record/:record_id
+router.delete("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), breastfeedingController.deleteRecord);
+
 export default router;

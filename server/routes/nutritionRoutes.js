@@ -12,4 +12,8 @@ router.post("/record", protect, restrictTo("Admin", "Nurse", "Midwife"), nutriti
 // GET /api/nutrition/child/:child_id
 router.get("/child/:child_id", protect, restrictTo("Admin", "Nurse", "Midwife"), nutritionController.getChildNutritionHistory);
 
+// 3. Delete/Undo a nutritional assessment (Nurse, Midwife, Admin)
+// DELETE /api/nutrition/record/:record_id
+router.delete("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), nutritionController.deleteRecord);
+
 export default router;

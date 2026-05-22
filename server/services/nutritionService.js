@@ -41,3 +41,60 @@ export const getNutritionHistoryByChild = async (childId) => {
     );
     return rows;
 };
+
+/**
+ * Delete/Undo a nutritional assessment
+ */
+export const deleteNutritionalAssessment = async (assessmentId) => {
+    const [rows] = await db.execute(
+        "SELECT * FROM nutritional_assessment WHERE assessment_id = ?",
+        [assessmentId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Nutritional assessment not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        "DELETE FROM nutritional_assessment WHERE assessment_id = ?",
+        [assessmentId]
+    );
+
+    return rows[0];
+};
+
+/**
+ * Update/Edit a nutritional assessment
+ */
+export const updateNutritionalAssessment = async (assessmentId, payload) => {
+    const {
+        assessment_period,
+        age_in_months_at_assessment,
+        length_cm,
+        length_date_taken,
+        weight_kg,
+        weight_date_taken,
+        nutritional_status,
+        remarks = null
+    } = payload;
+
+    const [rows] = await db.execute(
+        "SELECT * FROM nutritional_assessment WHERE assessment_id = ?",
+        [assessmentId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Nutritional assessment not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        `UPDATE nutritional_assessment 
+        SET assessment_period = ?, age_in_months_at_assessment = ?, length_cm = ?, length_date_taken = ?, weight_kg = ?, weight_date_taken = ?, nutritional_status = ?, remarks = ? 
+        WHERE assessment_id = ?`,
+        [assessment_period, age_in_months_at_assessment, length_cm, length_date_taken, weight_kg, weight_date_taken, nutritional_status, remarks, assessmentId]
+    );
+
+    return { assessment_id: assessmentId, ...rows[0], assessment_period, age_in_months_at_assessment, length_cm, length_date_taken, weight_kg, weight_date_taken, nutritional_status, remarks };
+};

@@ -37,3 +37,49 @@ export const getBreastfeedingHistoryByChild = async (childId) => {
     );
     return rows;
 };
+
+/**
+ * Delete/Undo a breastfeeding checkpoint
+ */
+export const deleteBreastfeedingCheckpoint = async (checkpointId) => {
+    const [rows] = await db.execute(
+        "SELECT * FROM breastfeeding_checkpoint WHERE checkpoint_id = ?",
+        [checkpointId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Breastfeeding checkpoint not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        "DELETE FROM breastfeeding_checkpoint WHERE checkpoint_id = ?",
+        [checkpointId]
+    );
+
+    return rows[0];
+};
+
+/**
+ * Update/Edit a breastfeeding checkpoint
+ */
+export const updateBreastfeedingCheckpoint = async (checkpointId, payload) => {
+    const { age_month_target, is_exclusively_breastfed, check_date, remarks = null } = payload;
+
+    const [rows] = await db.execute(
+        "SELECT * FROM breastfeeding_checkpoint WHERE checkpoint_id = ?",
+        [checkpointId]
+    );
+    if (rows.length === 0) {
+        const err = new Error("Breastfeeding checkpoint not found");
+        err.status = 404;
+        throw err;
+    }
+
+    await db.execute(
+        "UPDATE breastfeeding_checkpoint SET age_month_target = ?, is_exclusively_breastfed = ?, check_date = ?, remarks = ? WHERE checkpoint_id = ?",
+        [age_month_target, is_exclusively_breastfed, check_date, remarks, checkpointId]
+    );
+
+    return { checkpoint_id: checkpointId, ...rows[0], age_month_target, is_exclusively_breastfed, check_date, remarks };
+};

@@ -97,8 +97,11 @@ export default function VaccineRecallPage() {
 
   const filteredGroups = useMemo(() => {
     return groupedRecalls.filter((group) => {
+      // 7-day lookahead for upcoming recalls
+      const hasUpcomingWithinWeek = group.vaccines.some(v => v.status === "Upcoming" && v.diff_days <= 7);
+      
       if (activeTab === "overdue" && !group.has_overdue) return false;
-      if (activeTab === "upcoming" && !group.has_upcoming) return false;
+      if (activeTab === "upcoming" && !hasUpcomingWithinWeek) return false;
       if (searchQuery.trim() !== "") {
         const q = searchQuery.toLowerCase();
         const patientName = `${group.first_name} ${group.last_name}`.toLowerCase();
@@ -132,9 +135,6 @@ export default function VaccineRecallPage() {
           <p className="page-description text-slate-500 font-medium text-sm mt-1">Monitor due vaccines and access contact information for patient follow-ups.</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={fetchRecalls} className="p-2.5 bg-white border border-slate-100 text-slate-400 rounded-xl hover:text-teal-600 transition-all shadow-sm">
-            <ClockCounterClockwise size={20} weight="bold" />
-          </button>
           <button onClick={() => setShowCallList(true)} className="flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all">
             <PhoneCall size={20} weight="fill" />
             Tomorrow's Call List
@@ -144,7 +144,7 @@ export default function VaccineRecallPage() {
 
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
         <div className="flex bg-slate-100/80 p-1.5 rounded-xl w-full md:w-auto">
-          {[{ id: "all", label: "All" }, { id: "overdue", label: "Overdue" }, { id: "upcoming", label: "Upcoming" }].map((tab) => (
+          {[{ id: "all", label: "All" }, { id: "overdue", label: "Overdue" }, { id: "upcoming", label: "Upcoming (7 Days)" }].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -189,11 +189,14 @@ export default function VaccineRecallPage() {
               const isOverdue = group.has_overdue;
               return (
                 <motion.div key={group.child_id} variants={itemVariants} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden flex flex-col">
-                  <div className={cn("absolute top-0 left-0 w-full h-1", isOverdue ? "bg-rose-500" : "bg-teal-500")} />
+                  <div className={cn("absolute top-0 left-0 w-full h-1", isOverdue ? "bg-rose-500" : group.vaccines.some(v => v.diff_days <= 7) ? "bg-teal-500" : "bg-slate-300")} />
                   <div className="flex justify-between items-start mb-4">
-                    <div className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border", isOverdue ? "bg-rose-50 text-rose-700 border-rose-100" : "bg-teal-50 text-teal-700 border-teal-100")}>
+                    <div className={cn("inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border", isOverdue ? "bg-rose-50 text-rose-700 border-rose-100" : group.vaccines.some(v => v.diff_days <= 7) ? "bg-teal-50 text-teal-700 border-teal-100" : "bg-slate-50 text-slate-700 border-slate-100")}>
                       {isOverdue ? <WarningCircle size={14} weight="fill" /> : <Calendar size={14} weight="fill" />}
-                      {isOverdue ? "Overdue" : "Upcoming"}
+                      {isOverdue ? `Overdue (${Math.abs(group.worst_diff_days)}d)` 
+                        : group.worst_diff_days === 0 ? "Due Today" 
+                        : group.worst_diff_days > 0 ? `Due in ${group.worst_diff_days}d` 
+                        : "Upcoming"}
                     </div>
                   </div>
                   <div className="mb-4">
@@ -254,13 +257,15 @@ export default function VaccineRecallPage() {
       <AnimatePresence>
         {showCallList && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/20 backdrop-blur-sm">
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="bg-white w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl shadow-2xl flex flex-col border border-slate-100">
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-[2.5rem] shadow-2xl flex flex-col border border-slate-100">
               <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shadow-sm">
                     <PhoneCall size={24} weight="duotone" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Tomorrow's Schedule</h3>
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 tracking-tight">Tomorrow's Schedule</h3>
+                  </div>
                 </div>
                 <button onClick={() => setShowCallList(false)} className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all">
                   <X size={24} weight="bold" />
