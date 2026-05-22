@@ -44,11 +44,11 @@ const seed = async () => {
         dobTwelveMonths.setDate(today.getDate() - 370);
 
         const patients = [
-            ["Mia", "Santos", "F", formatDate(dobNewborn), "Anna Santos", "Purok 1, Brgy. Santa Cruz", "NHTS", "0501724029-00001", "09171234501"],
-            ["Noah", "Reyes", "M", formatDate(dobOneMonth), "Grace Reyes", "Purok 4, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00002", "09281234502"],
-            ["Ella", "Cruz", "F", formatDate(dobThreeMonths), "Diana Cruz", "Purok 2, Brgy. Santa Cruz", "NHTS", "0501724029-00003", "09391234503"],
-            ["Aiden", "Lopez", "M", formatDate(dobEightMonths), "Rita Lopez", "Purok 5, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00004", "09401234504"],
-            ["Sofia", "Dela Cruz", "F", formatDate(dobTwelveMonths), "Liza Dela Cruz", "Purok 3, Brgy. Santa Cruz", "NHTS", "0501724029-00005", "09511234505"]
+            ["Nathaniel", "Buag", "M", formatDate(dobNewborn), "Anna Santos", "Purok 1, Brgy. Santa Cruz", "NHTS", "0501724029-00001", "09171234501"],
+            ["Amouia Jane", "Casilac", "F", formatDate(dobOneMonth), "Grace Reyes", "Purok 4, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00002", "09281234502"],
+            ["Kenjie Apol", "Baclagan", "M", formatDate(dobThreeMonths), "Diana Cruz", "Purok 2, Brgy. Santa Cruz", "NHTS", "0501724029-00003", "09391234503"],
+            ["Athalia", "Del Socorro", "F", formatDate(dobEightMonths), "Rita Lopez", "Purok 5, Brgy. Santa Cruz", "Non-NHTS", "0501724029-00004", "09401234504"],
+            ["Zynna Eloix", "Yadao", "F", formatDate(dobTwelveMonths), "Liza Dela Cruz", "Purok 3, Brgy. Santa Cruz", "NHTS", "0501724029-00005", "09511234505"]
         ];
 
         const patientIds = [];
