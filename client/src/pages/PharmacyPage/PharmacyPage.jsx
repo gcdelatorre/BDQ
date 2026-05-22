@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import pharmacyService from "@/services/pharmacyService";
 import patientService from "@/services/patientService";
 import { useToast } from "@/hooks/useToast";
+import { cn } from "@/lib/utils";
 import PatientSelector from "./components/PatientSelector";
 import MedicineCatalog from "./components/MedicineCatalog";
 import DispensingCart from "./components/DispensingCart";
@@ -225,20 +226,21 @@ export default function PharmacyPage() {
             hasMore={patientHasMore}
             onLoadMore={loadMorePatients}
           />
-          <div className="flex items-center gap-2">
-            <select 
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-xs font-bold text-slate-700 outline-none"
-            >
-              <option value="ALL">ALL CATEGORIES</option>
-              <option value="Tablet">TABLET</option>
-              <option value="Syrup">SYRUP</option>
-              <option value="Capsule">CAPSULE</option>
-              <option value="Injection">INJECTION</option>
-              <option value="Cream">CREAM</option>
-              <option value="Drops">DROPS</option>
-            </select>
+          <div className="flex flex-wrap items-center gap-2">
+            {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "CREAM", "DROPS"].map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(cat)}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border",
+                  filterCategory === cat
+                    ? "bg-teal-600 text-white border-teal-600 shadow-sm"
+                    : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
       </section>

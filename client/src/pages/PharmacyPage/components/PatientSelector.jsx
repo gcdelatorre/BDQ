@@ -26,13 +26,13 @@ export default function PatientSelector({
 
   if (selectedPatient) {
     return (
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-teal-50 border border-teal-200 rounded-2xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-teal-50 border border-teal-200 rounded-2xl w-full">
         <div className="flex items-center gap-4 min-w-0">
           <div className="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center text-white shrink-0">
             <UsersThree size={24} weight="fill" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Patient</p>
+            <p className="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Active Patient</p>
             <p className="text-lg font-black text-slate-900 truncate">
               {selectedPatient.first_name} {selectedPatient.last_name}
             </p>
@@ -53,16 +53,16 @@ export default function PatientSelector({
           className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shrink-0"
         >
           <X size={16} weight="bold" />
-          Change patient
+          Remove Patient
         </button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div>
-        <label className="step-label mb-2 block">Step 1 — Select patient</label>
+        <label className="step-label mb-2 block">Step 1 — Find and Select Patient</label>
         <div className="relative">
           <MagnifyingGlass
             className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -79,9 +79,6 @@ export default function PatientSelector({
       </div>
 
       <div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
-          {query ? `Matches (${listToShow.length})` : "Recently registered"}
-        </p>
         {loading ? (
           <p className="text-sm text-slate-500 font-medium py-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
             Searching patients...
@@ -92,7 +89,7 @@ export default function PatientSelector({
           </p>
         ) : (
           <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 max-h-55 overflow-y-auto custom-scrollbar pr-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
               {listToShow.map((p) => (
                 <button
                   key={p.child_id}
@@ -109,11 +106,6 @@ export default function PatientSelector({
                   <p className="text-[10px] font-bold text-teal-600 uppercase tracking-wider mt-1 truncate">
                     {p.family_serial_number}
                   </p>
-                  {p.contact_number ? (
-                    <p className="text-[10px] text-slate-500 mt-1 truncate">{p.contact_number}</p>
-                  ) : (
-                    <p className="text-[10px] text-amber-600 mt-1">No contact on file</p>
-                  )}
                 </button>
               ))}
             </div>

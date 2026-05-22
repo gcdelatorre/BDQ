@@ -54,6 +54,7 @@ export default function BreastfeedingTab({ childId }) {
   const [loading, setLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [checkpointToDelete, setCheckpointToDelete] = useState(null);
   
   // Modals States
   const [selectedMilestone, setSelectedMilestone] = useState(null); // For New Record
@@ -135,14 +136,14 @@ export default function BreastfeedingTab({ childId }) {
     }
   };
 
-  const handleDeleteRecord = async () => {
-    if (!selectedRecord) return;
+  const handleDeleteRecord = async (recordId) => {
     try {
       setIsDeleting(true);
-      await clinicalService.deleteBreastfeedingRecord(selectedRecord.checkpoint_id);
+      await clinicalService.deleteBreastfeedingRecord(recordId);
       toast.success("Record Deleted", "Checkpoint record has been removed.");
       setSelectedRecord(null);
       fetchHistory();
+      setCheckpointToDelete(null);
     } catch (error) {
       toast.error("Deletion Failed", error.message);
     } finally {
@@ -386,13 +387,14 @@ export default function BreastfeedingTab({ childId }) {
                   </button>
                 </div>
                 
-                <button 
-                  onClick={handleDeleteRecord}
+                <button
+                  type="button"
+                  className="w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 hover:text-rose-700 transition-all text-sm flex items-center justify-center gap-2"
+                  onClick={() => handleDeleteRecord(selectedRecord.checkpoint_id)}
                   disabled={isDeleting}
-                  className="w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 hover:text-rose-700 transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   <Trash size={16} weight="bold" />
-                  {isDeleting ? "Undoing..." : "Undo/Delete Record"}
+                  {isDeleting ? "Deleting..." : "Undo/Delete Record"}
                 </button>
               </div>
             </motion.div>

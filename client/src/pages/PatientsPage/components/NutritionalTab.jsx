@@ -1,9 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { ChartLineUp, Plus, Ruler, Scales, Info, NotePencil, Trash } from "@phosphor-icons/react";
 import clinicalService from "@/services/clinicalService";
 import { useToast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // Map assessment periods to suggested ages
 const ASSESSMENT_PERIODS = [
@@ -18,6 +28,7 @@ export default function NutritionalTab({ childId }) {
   const [loading, setLoading] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [assessmentToDelete, setAssessmentToDelete] = useState(null);
   
   // Modals States
   const [selectedRecord, setSelectedRecord] = useState(null); // For Managing Existing
@@ -101,12 +112,11 @@ export default function NutritionalTab({ childId }) {
   };
 
   const handleDelete = async (recordId) => {
-    if (!window.confirm("Are you sure you want to delete this nutritional assessment?")) return;
-    
     try {
       await clinicalService.deleteNutritionAssessment(recordId);
       toast.success("Record Deleted", "The growth assessment has been removed.");
       fetchHistory();
+      setAssessmentToDelete(null);
     } catch (error) {
       toast.error("Deletion Failed", error.message);
     }
@@ -217,12 +227,13 @@ export default function NutritionalTab({ childId }) {
               </div>
 
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(record.assessment_id);
-                }}
+                type="button"
                 className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-slate-100 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-100 shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
                 title="Undo Assessment"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setAssessmentToDelete(record.assessment_id);
+                }}
               >
                 <Trash size={14} weight="bold" />
               </button>
@@ -356,6 +367,21 @@ export default function NutritionalTab({ childId }) {
           </div>
         )}
       </AnimatePresence>
+
+      <AlertDialog open={!!assessmentToDelete} onOpenChange={(open) => !open && setAssessmentToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the nutritional assessment record.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => handleDelete(assessmentToDelete)}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

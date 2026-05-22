@@ -9,7 +9,7 @@ import PharmacyPage from "./pages/PharmacyPage/PharmacyPage";
 import InventoryPage from "./pages/InventoryPage/InventoryPage";
 import AuditLogsPage from "./pages/AuditLogsPage/AuditLogsPage";
 import VaccineRecallPage from "./pages/VaccineRecallPage/VaccineRecallPage";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -31,7 +31,7 @@ export default function App() {
   return (
     <Router>
       <AuthProvider>
-        <Toaster position="top-center" richColors closeButton />
+        <Toaster position="bottom-center" closeButton />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route 
