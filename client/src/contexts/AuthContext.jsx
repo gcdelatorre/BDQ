@@ -10,13 +10,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        setUser({
-          user_id: 1,
-          first_name: "System",
-          last_name: "Admin",
-          role: "Admin",
-          username: "admin123"
-        });
+        const user = await authService.getCurrentUser();
+        setUser(user);
       } catch (err) {
         setUser(null);
       } finally {

@@ -19,11 +19,25 @@ const seed = async () => {
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash("password123", salt);
+        
+        // Admin
         const [userResult] = await db.execute(
             "INSERT INTO user (first_name, last_name, role, username, password_hash, contact_number) VALUES (?, ?, ?, ?, ?, ?)",
-            ["System", "Admin", "Admin", "admin123", hashedPassword, "09991234567"]
+            ["System", "Admin", "Admin", "admin", hashedPassword, "09991234567"]
         );
         const adminId = userResult.insertId;
+
+        // Midwife
+        await db.execute(
+            "INSERT INTO user (first_name, last_name, role, username, password_hash, contact_number) VALUES (?, ?, ?, ?, ?, ?)",
+            ["Barangay", "Midwife", "Nurse", "midwife", hashedPassword, "09991234568"]
+        );
+
+        // Nurse
+        await db.execute(
+            "INSERT INTO user (first_name, last_name, role, username, password_hash, contact_number) VALUES (?, ?, ?, ?, ?, ?)",
+            ["Barangay", "Nurse", "Nurse", "nurse", hashedPassword, "09991234569"]
+        );
 
         const today = new Date();
         const formatDate = (date) => date.toISOString().split("T")[0];
