@@ -57,6 +57,26 @@ export default function NutritionalTab({ childId }) {
     fetchHistory();
   }, [childId]);
 
+  useEffect(() => {
+    const weight = parseFloat(formData.weight_kg);
+    const age = parseInt(formData.age_in_months_at_assessment);
+
+    if (!isNaN(weight) && !isNaN(age) && weight > 0) {
+      // Simplified WHO-based calculation heuristic for weight-for-age
+      let wMedian = 3.3 + (age * (age < 6 ? 0.8 : 0.4));
+      
+      let status = "Normal";
+      if (weight < wMedian * 0.85) status = "Underweight";
+      else if (weight >= wMedian * 0.85 && weight < wMedian * 1.15) status = "Normal";
+      else if (weight >= wMedian * 1.15 && weight < wMedian * 1.3) status = "Overweight";
+      else status = "Obese";
+      
+      if (status !== formData.nutritional_status) {
+        setFormData(prev => ({ ...prev, nutritional_status: status }));
+      }
+    }
+  }, [formData.weight_kg, formData.age_in_months_at_assessment]);
+
   const fetchHistory = async () => {
     try {
       setLoading(true);
@@ -72,8 +92,7 @@ export default function NutritionalTab({ childId }) {
   const statusColors = {
     "Normal": "text-emerald-700 bg-emerald-50 border-emerald-100",
     "Underweight": "text-amber-700 bg-amber-50 border-amber-100",
-    "Stunted": "text-orange-700 bg-orange-50 border-orange-100",
-    "Wasted": "text-rose-700 bg-rose-50 border-rose-100",
+    "Overweight": "text-orange-700 bg-orange-50 border-orange-100",
     "Obese": "text-purple-700 bg-purple-50 border-purple-100"
   };
 
@@ -325,10 +344,9 @@ export default function NutritionalTab({ childId }) {
                     onChange={(e) => setFormData({...formData, nutritional_status: e.target.value})}
                     className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold text-slate-700 appearance-none"
                   >
-                    <option value="Normal">Normal</option>
                     <option value="Underweight">Underweight</option>
-                    <option value="Stunted">Stunted</option>
-                    <option value="Wasted">Wasted</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Overweight">Overweight</option>
                     <option value="Obese">Obese</option>
                   </select>
                 </div>

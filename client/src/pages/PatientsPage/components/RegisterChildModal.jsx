@@ -27,7 +27,27 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const next = { ...prev, [name]: value };
+      
+      // Auto-calculate birth weight status if weight changed
+      if (name === 'weight_at_birth_kg') {
+        const weight = parseFloat(value);
+        if (!value || isNaN(weight)) {
+          next.birth_weight_status = "Normal";
+        } else if (weight < 2.5) {
+          next.birth_weight_status = "Underweight";
+        } else if (weight >= 2.5 && weight < 4.0) {
+          next.birth_weight_status = "Normal";
+        } else if (weight >= 4.0 && weight < 4.5) {
+          next.birth_weight_status = "Overweight";
+        } else {
+          next.birth_weight_status = "Obese";
+        }
+      }
+      
+      return next;
+    });
   };
 
   const validateForm = () => {
@@ -213,9 +233,10 @@ export default function RegisterChildModal({ isOpen, onClose, onRefresh }) {
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Weight Status</label>
                 <select name="birth_weight_status" value={formData.birth_weight_status} onChange={handleChange} className="w-full px-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/5 focus:border-teal-500 rounded-xl transition-all outline-none text-sm border font-bold">
+                  <option value="Underweight">Underweight</option>
                   <option value="Normal">Normal</option>
-                  <option value="Low">Low</option>
-                  <option value="Unknown">Unknown</option>
+                  <option value="Overweight">Overweight</option>
+                  <option value="Obese">Obese</option>
                 </select>
               </div>
             </div>

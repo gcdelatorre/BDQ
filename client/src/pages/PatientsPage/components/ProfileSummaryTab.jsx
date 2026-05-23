@@ -52,7 +52,11 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
                   "text-[9px] px-2 py-0.5 rounded-full font-bold uppercase mt-2 inline-block border",
                   patient.birth_weight_status === "Normal"
                     ? "bg-teal-50 text-teal-700 border-teal-100"
-                    : "bg-amber-50 text-amber-700 border-amber-100"
+                    : patient.birth_weight_status === "Underweight"
+                    ? "bg-amber-50 text-amber-700 border-amber-100"
+                    : patient.birth_weight_status === "Overweight"
+                    ? "bg-orange-50 text-orange-700 border-orange-100"
+                    : "bg-purple-50 text-purple-700 border-purple-100"
                 )}
               >
                 {patient.birth_weight_status}

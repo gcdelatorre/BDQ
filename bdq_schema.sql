@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `child_patient` (
   `se_status`                         ENUM('NHTS','Non-NHTS') NOT NULL,
   `length_at_birth_cm`               DECIMAL(5,2)       NOT NULL,
   `weight_at_birth_kg`               DECIMAL(5,2)       NOT NULL,
-  `birth_weight_status`              ENUM('Low','Normal','Unknown') NOT NULL,
+  `birth_weight_status`              ENUM('Underweight','Normal','Overweight','Obese') NOT NULL,
   -- Breastfeeding summary fields (from paper form, filled at registration)
   `initiated_breastfeeding_date`     DATE               DEFAULT NULL,
   `exclusively_breastfed_6_months`   ENUM('Yes','No')   DEFAULT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `nutritional_assessment` (
   `length_date_taken`          DATE               NOT NULL,
   `weight_kg`                  DECIMAL(5,2)       NOT NULL,
   `weight_date_taken`          DATE               NOT NULL,
-  `nutritional_status`         ENUM('Underweight','Stunted','Wasted','Obese','Normal') NOT NULL,
+  `nutritional_status`         ENUM('Underweight','Normal','Overweight','Obese') NOT NULL,
   `assessed_by_user_id`        BIGINT UNSIGNED    NOT NULL,
   `remarks`                    VARCHAR(255)       DEFAULT NULL,
   `created_at`                 DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP,
