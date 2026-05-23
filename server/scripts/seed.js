@@ -49,7 +49,7 @@ const seed = async () => {
         dobOneMonth.setDate(today.getDate() - 41);
 
         const dobThreeMonths = new Date(today);
-        dobThreeMonths.setDate(today.getDate() - 100);
+        dobThreeMonths.setDate(today.getDate() - 97);
 
         const dobEightMonths = new Date(today);
         dobEightMonths.setDate(today.getDate() - 267);
