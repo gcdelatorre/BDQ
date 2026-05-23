@@ -17,7 +17,7 @@ const patientService = {
       if (limit) params.limit = limit;
 
       const response = await api.get("/patient/get-all-patient", { params });
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.error("Error fetching patients:", error);
       throw error;

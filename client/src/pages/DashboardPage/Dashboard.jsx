@@ -43,7 +43,7 @@ export default function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [meds, patients, recentHistory, dispensingCount, activities, recallList] = await Promise.all([
+      const [meds, patientsData, recentHistory, dispensingCount, activities, recallList] = await Promise.all([
         pharmacyService.getAllMedicines(),
         patientService.getAllPatients(),
         pharmacyService.getDispensingHistory(RECENT_TX_LIMIT),
@@ -53,15 +53,21 @@ export default function Dashboard() {
       ]);
 
       const lowStockMeds = meds.filter(m => (m.total_stock || 0) <= m.reorder_level);
+      
+      // Handle paginated response from patientService
+      const totalPatients = patientsData?.meta?.total ?? (Array.isArray(patientsData) ? patientsData.length : 0);
 
       setStats({
-        totalPatients: patients.length,
-        dispensingCount,
+        totalPatients,
+        dispensingCount: dispensingCount || 0,
         lowStockCount: lowStockMeds.length
       });
 
       setHistory(recentHistory);
-      setLogs((activities || []).slice(0, RECENT_LOG_LIMIT));
+
+      // auditService.getAllLogs() returns { message, data: [...] } — extract the array
+      const activityList = Array.isArray(activities) ? activities : (activities?.data || []);
+      setLogs(activityList.slice(0, RECENT_LOG_LIMIT));
       setRecalls(recallList || []);
 
       setAlerts(lowStockMeds.map(m => ({

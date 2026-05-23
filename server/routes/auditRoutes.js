@@ -4,7 +4,7 @@ import { protect, restrictTo } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// GET /api/audit/get-all-logs (Protected: Admin, Nurse)
-router.get("/get-all-logs", protect, restrictTo("Admin", "Nurse"), auditController.getAllAuditLogs);
+// GET /api/audit/get-all-logs (Protected: Admin, Nurse, Midwife)
+router.get("/get-all-logs", protect, restrictTo("Admin", "Nurse", "Midwife"), auditController.getAllAuditLogs);
 
 export default router;

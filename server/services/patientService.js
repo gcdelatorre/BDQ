@@ -122,8 +122,8 @@ export const getAllPatient = async ({ search = "", page = 1, limit = 20 } = {}) 
     const filters = [];
     const values = [];
 
-    const parsedPage = Number(page) || 1;
-    const parsedLimit = Number(limit) > 0 ? Number(limit) : 20;
+    const parsedPage = Math.max(1, parseInt(page) || 1);
+    const parsedLimit = Math.max(1, parseInt(limit) || 20);
     const offset = (parsedPage - 1) * parsedLimit;
 
     if (search && search.trim().length > 0) {
@@ -132,16 +132,26 @@ export const getAllPatient = async ({ search = "", page = 1, limit = 20 } = {}) 
         values.push(query, query, query);
     }
 
-    let sql = "SELECT * FROM child_patient";
-    if (filters.length) {
-        sql += ` WHERE ${filters.join(" AND ")}`;
-    }
-    sql += " ORDER BY date_of_registration DESC LIMIT ? OFFSET ?";
-    values.push(parsedLimit, offset);
+    const whereClause = filters.length ? `WHERE ${filters.join(" AND ")}` : "";
 
-    const [rows] = await db.execute(sql, values);
-    return rows;
+    // Get total count
+    const countSql = `SELECT COUNT(*) as total FROM child_patient ${whereClause}`;
+    const [[{ total }]] = await db.execute(countSql, values);
+
+    const sql = `SELECT * FROM child_patient ${whereClause} ORDER BY date_of_registration DESC LIMIT ? OFFSET ?`;
+    const [rows] = await db.execute(sql, [...values, parsedLimit, offset]);
+
+    return {
+        data: rows,
+        meta: {
+            total,
+            totalPages: Math.ceil(total / parsedLimit),
+            currentPage: parsedPage,
+            limit: parsedLimit
+        }
+    };
 }
+
 
 export const getPatientById = async (id) => {
     const [rows] = await db.execute(

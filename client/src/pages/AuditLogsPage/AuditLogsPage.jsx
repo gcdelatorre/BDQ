@@ -12,14 +12,14 @@ import {
 } from "@phosphor-icons/react";
 import auditService from "@/services/auditService";
 import { useToast } from "@/hooks/useToast";
-import { cn, formatRelativeTime } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 export default function AuditLogsPage() {
   const { toast } = useToast();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [meta, setMeta] = useState({ total: 0, totalPages: 1, currentPage: 1 });
-  
+
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAction, setFilterAction] = useState("ALL");
@@ -48,18 +48,13 @@ export default function AuditLogsPage() {
         page: currentPage,
         limit,
         actionType: filterAction,
-        username: searchQuery,
+        search: searchQuery,
         startDate,
         endDate
       });
-      
-      if (Array.isArray(response)) {
-        setLogs(response);
-        setMeta({ total: response.length, totalPages: 1, currentPage: 1 });
-      } else {
-        setLogs(response.data || []);
-        setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
-      }
+
+      setLogs(response.data || []);
+      setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
     } catch (error) {
       console.error("Audit Fetch Error:", error);
       toast.error("Telemetry Error", "Failed to retrieve security logs from server.");
@@ -211,9 +206,20 @@ export default function AuditLogsPage() {
                   <tr key={log.log_id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-8 py-5">
                       <div className="space-y-0.5">
-                        <p className="text-[14px] font-bold text-slate-900 leading-tight">{formatRelativeTime(log.timestamp)}</p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                          {new Date(log.timestamp).toLocaleDateString()}
+                        <p className="text-[13px] font-bold text-slate-900 leading-tight">
+                          {new Date(log.timestamp).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                          })}
+                        </p>
+                        <p className="text-[11px] font-bold text-teal-600 uppercase tracking-widest">
+                          {new Date(log.timestamp).toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: true 
+                          })}
                         </p>
                       </div>
                     </td>

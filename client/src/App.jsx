@@ -27,6 +27,18 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+/**
+ * Role-based route guard.
+ * If the user's role is NOT in the allowed list, redirect to Dashboard.
+ */
+const RoleRoute = ({ allowedRoles, children }) => {
+  const { user } = useAuth();
+  if (!allowedRoles.includes(user?.role)) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
+
 export default function App() {
   return (
     <Router>
@@ -43,10 +55,22 @@ export default function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/patients" element={<PatientsPage />} />
                     <Route path="/patients/:id" element={<PatientProfile />} />
-                    <Route path="/pharmacy" element={<PharmacyPage />} />
+                    <Route path="/pharmacy" element={
+                      <RoleRoute allowedRoles={["Nurse", "Midwife"]}>
+                        <PharmacyPage />
+                      </RoleRoute>
+                    } />
                     <Route path="/inventory" element={<InventoryPage />} />
-                    <Route path="/audit" element={<AuditLogsPage />} />
-                    <Route path="/recall" element={<VaccineRecallPage />} />
+                    <Route path="/audit" element={
+                      <RoleRoute allowedRoles={["Nurse", "Midwife"]}>
+                        <AuditLogsPage />
+                      </RoleRoute>
+                    } />
+                    <Route path="/recall" element={
+                      <RoleRoute allowedRoles={["Nurse", "Midwife"]}>
+                        <VaccineRecallPage />
+                      </RoleRoute>
+                    } />
                   </Routes>
                 </Layout>
               </ProtectedRoute>

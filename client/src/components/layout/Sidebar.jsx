@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import LOGO1 from "@/assets/logo1.png";
 
+// roles: which user roles can see this item. If omitted, all roles can see it.
 const menuGroups = [
   {
     title: "General",
@@ -25,22 +26,31 @@ const menuGroups = [
     title: "Clinical",
     items: [
       { label: "Patients", path: "/patients", icon: UsersThree },
-      { label: "Pharmacy", path: "/pharmacy", icon: Pill },
+      { label: "Pharmacy", path: "/pharmacy", icon: Pill, roles: ["Nurse", "Midwife"] },
       { label: "Inventory", path: "/inventory", icon: ClipboardText },
     ]
   },
   {
     title: "Insights",
     items: [
-      { label: "Audit Logs", path: "/audit", icon: ClockCounterClockwise },
-      { label: "Vaccine Recall", path: "/recall", icon: Bell },
+      { label: "Audit Logs", path: "/audit", icon: ClockCounterClockwise, roles: ["Nurse", "Midwife"] },
+      { label: "Vaccine Recall", path: "/recall", icon: Bell, roles: ["Nurse", "Midwife"] },
     ]
   }
 ];
 
 export default function Sidebar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const userRole = user?.role;
+
+  // Filter menu groups based on the current user's role
+  const visibleGroups = menuGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !item.roles || item.roles.includes(userRole))
+    }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-slate-100 flex flex-col fixed left-0 top-0 z-50">
@@ -55,7 +65,7 @@ export default function Sidebar() {
 
       {/* Grouped Navigation */}
       <nav className="flex-1 px-4 overflow-y-auto space-y-6 mt-4">
-        {menuGroups.map((group) => (
+        {visibleGroups.map((group) => (
           <div key={group.title} className="space-y-1">
             <p className="px-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">
               {group.title}

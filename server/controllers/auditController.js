@@ -6,12 +6,14 @@ export const getAllAuditLogs = async (req, res) => {
             search: req.query.search,
             actionType: req.query.actionType,
             startDate: req.query.startDate,
-            endDate: req.query.endDate
+            endDate: req.query.endDate,
+            page: req.query.page,
+            limit: req.query.limit
         };
         const result = await auditService.getAllAuditLogs(filters);
         return res.status(200).json({
             message: "Audit logs fetched successfully!",
-            data: result
+            ...result
         })
     } catch (error) {
         console.log("Failed to fetch audit logs", error);

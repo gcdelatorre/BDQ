@@ -8,13 +8,13 @@ import { useToast } from "@/hooks/useToast";
 
 import RegisterChildModal from "./components/RegisterChildModal";
 
-export default function PatientsPage() {
+function PatientsPage() {
   const { toast } = useToast();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Pagination State
   const [meta, setMeta] = useState({ total: 0, totalPages: 1, currentPage: 1 });
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,21 +36,17 @@ export default function PatientsPage() {
   const fetchPatients = async () => {
     try {
       setLoading(true);
-      const response = await patientService.getAllPatients({ 
+      const response = await patientService.getAllPatients({
         search: searchTerm,
         page: currentPage,
-        limit 
+        limit
       });
-      
-      if (Array.isArray(response)) {
-        setPatients(response);
-        setMeta({ total: response.length, totalPages: 1, currentPage: 1 });
-      } else {
-        setPatients(response.data || []);
-        setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
-      }
+
+      setPatients(response.data || []);
+      setMeta(response.meta || { total: 0, totalPages: 1, currentPage: 1 });
     } catch (error) {
       console.error("Failed to load patients");
+      toast.error("Error", "Could not load patient records.");
     } finally {
       setLoading(false);
     }
@@ -67,8 +63,8 @@ export default function PatientsPage() {
   };
 
   const columns = [
-    { 
-      header: "Patient Name", 
+    {
+      header: "Patient Name",
       cell: (row) => (
         <div className="flex flex-col">
           <p className="font-bold text-slate-900 text-[14px] leading-tight">{row.first_name} {row.last_name}</p>
@@ -76,8 +72,8 @@ export default function PatientsPage() {
         </div>
       )
     },
-    { 
-      header: "Sex", 
+    {
+      header: "Sex",
       cell: (row) => (
         <span className={cn(
           "px-3 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
@@ -87,16 +83,16 @@ export default function PatientsPage() {
         </span>
       )
     },
-    { 
-      header: "Age", 
+    {
+      header: "Age",
       cell: (row) => (
         <span className="text-slate-700 font-bold text-sm">
           {calculateAge(row.date_of_birth)}
         </span>
       )
     },
-    { 
-      header: "Mother's Name", 
+    {
+      header: "Mother's Name",
       cell: (row) => (
         <span className="text-slate-600 font-medium text-sm">
           {row.mother_complete_name}
@@ -131,8 +127,8 @@ export default function PatientsPage() {
     {
       header: "Action",
       cell: (row) => (
-        <Link 
-          to={`/patients/${row.child_id}`} 
+        <Link
+          to={`/patients/${row.child_id}`}
           className="text-teal-600 font-bold text-xs hover:text-teal-800 underline decoration-2 underline-offset-4 transition-all"
         >
           VIEW PROFILE
@@ -148,8 +144,8 @@ export default function PatientsPage() {
           <h1 className="page-title">Child Patients</h1>
           <p className="page-description">Directory of registered barangay health records.</p>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => setIsModalOpen(true)}
           className="flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0"
         >
@@ -161,8 +157,8 @@ export default function PatientsPage() {
       <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 group">
           <MagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-teal-600 transition-colors" size={20} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search by name or family serial number..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -215,11 +211,13 @@ export default function PatientsPage() {
         )}
       </div>
 
-      <RegisterChildModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <RegisterChildModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onRefresh={fetchPatients}
       />
     </div>
   );
 }
+
+export default PatientsPage;

@@ -29,7 +29,7 @@ export const getAllPatient = async (req, res) => {
         const result = await patientService.getAllPatient({ search, page, limit });
         return res.status(200).json({
             message: "Patients fetched successfully!",
-            data: result
+            ...result
         })
     } catch (error) {
         console.log("Failed to fetch patients", error);
