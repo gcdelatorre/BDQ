@@ -53,10 +53,11 @@ export default function PharmacyPage() {
   const fetchPatients = useCallback(async ({ search = "", page = 1, append = false } = {}) => {
     try {
       setPatientLoading(true);
-      const data = await patientService.getAllPatients({ search, page, limit: 12 });
+      const response = await patientService.getAllPatients({ search, page, limit: 12 });
+      const patientList = response.data || [];
 
-      setPatients(prev => (append ? [...prev, ...data] : data));
-      setPatientHasMore(data.length === 12);
+      setPatients(prev => (append ? [...prev, ...patientList] : patientList));
+      setPatientHasMore(response.meta?.totalPages > page);
     } catch {
       toast.error("Error", "Failed to load patients.");
     } finally {

@@ -10,8 +10,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const user = await authService.getCurrentUser();
-        setUser(user);
+        const response = await authService.getCurrentUser();
+        setUser(response.data);
       } catch (err) {
         setUser(null);
       } finally {

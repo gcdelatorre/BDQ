@@ -7,6 +7,10 @@ import * as authService from "../services/authService.js";
 
 export const getCurrentUser = async (req, res) => {
     try {
+        if (!req.session || !req.session.user) {
+            return res.status(401).json({ message: "No active session found" });
+        }
+        
         const { user_id } = req.session.user
         const user = await authService.getCurrentUser(user_id)
         res.status(200).json({
