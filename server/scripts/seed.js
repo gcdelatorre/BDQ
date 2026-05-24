@@ -211,6 +211,36 @@ const seed = async () => {
             );
         }
 
+        // --- SEED 30 AUDIT LOGS FOR PAGINATION ---
+        console.log("📝 Seeding 30 sample audit logs...");
+        const actions = ["CREATE", "UPDATE", "DELETE"];
+        const tables = ["child_patient", "child_immunization_record", "inventory", "medicine"];
+        
+        for (let i = 1; i <= 30; i++) {
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const table = tables[Math.floor(Math.random() * tables.length)];
+            let description = "";
+
+            if (table === "child_patient") {
+                description = `${action === "CREATE" ? "Registered" : "Updated"} patient: ${patients[Math.floor(Math.random() * patients.length)][0]} ${patients[Math.floor(Math.random() * patients.length)][1]}`;
+            } else if (table === "child_immunization_record") {
+                description = `Recorded Pentavalent dose #${Math.floor(Math.random() * 3) + 1} for ${patients[Math.floor(Math.random() * patients.length)][0]}`;
+            } else if (table === "inventory") {
+                description = `Added batch BN-99${i} for ${meds[Math.floor(Math.random() * meds.length)][0]}`;
+            } else {
+                description = `Modified drug catalog entry for ${meds[Math.floor(Math.random() * meds.length)][0]}`;
+            }
+
+            // Stagger the dates a bit for realistic sorting
+            const logDate = new Date();
+            logDate.setMinutes(logDate.getMinutes() - (i * 10));
+
+            await db.execute(
+                "INSERT INTO audit_log (user_id, action_performed, target_table, description, action_timestamp) VALUES (?, ?, ?, ?, ?)",
+                [adminId, action, table, description, logDate]
+            );
+        }
+
         console.log("✅ Seeding completed successfully!");
         process.exit(0);
     } catch (error) {
