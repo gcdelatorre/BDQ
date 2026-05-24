@@ -72,63 +72,50 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
 
       <div className="lg:col-span-2 flex flex-col gap-6">
         <ProfileCard title="Nutritional Milestones" icon={Drop}>
-            <div className="mb-3 p-2 bg-teal-50 border border-teal-100 rounded-lg flex items-center gap-2">
-              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-              <p className="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Auto-calculated from records</p>
-            </div>
             <ProfileFieldGrid cols={3} className="gap-5">
               <ProfileField label="Breastfeeding Initiated">
-                <input
-                  type="date"
-                  className="bg-transparent font-medium outline-none text-slate-700 w-full"
-                  value={patient.initiated_breastfeeding_date ? patient.initiated_breastfeeding_date.split('T')[0] : ""}
-                  onChange={(e) => onUpdate('initiated_breastfeeding_date', e.target.value)}
-                />
+                <p className="font-bold text-slate-700">
+                  {patient.initiated_breastfeeding_date ? formatDate(patient.initiated_breastfeeding_date) : "No record yet"}
+                </p>
               </ProfileField>
               <ProfileField label="Exclusively Breastfed (6 mo)">
                 <div className="flex items-center gap-2">
                   {patient.exclusively_breastfed_6_months === "Yes" ? (
-                    <CheckCircle size={18} weight="fill" className="text-teal-500 shrink-0" />
+                    <>
+                      <CheckCircle size={18} weight="fill" className="text-teal-500 shrink-0" />
+                      <span className="font-bold text-slate-700">YES</span>
+                    </>
+                  ) : patient.exclusively_breastfed_6_months === "No" ? (
+                    <>
+                      <X size={18} weight="bold" className="text-rose-500 shrink-0" />
+                      <span className="font-bold text-slate-700">NO</span>
+                    </>
                   ) : (
-                    <X size={18} weight="bold" className="text-slate-300 shrink-0" />
+                    <span className="font-bold text-slate-400">No record yet</span>
                   )}
-                  <select
-                    className="bg-transparent border-none outline-none uppercase font-medium text-slate-700 cursor-pointer"
-                    value={patient.exclusively_breastfed_6_months || ""}
-                    onChange={(e) => onUpdate('exclusively_breastfed_6_months', e.target.value)}
-                  >
-                    <option value="">—</option>
-                    <option value="Yes">YES</option>
-                    <option value="No">NO</option>
-                  </select>
                 </div>
               </ProfileField>
               <ProfileField label="Complementary Foods">
                 <div className="flex items-center gap-2">
                   {patient.intro_complementary_foods === "Yes" ? (
-                    <CheckCircle size={18} weight="fill" className="text-teal-500 shrink-0" />
+                    <>
+                      <CheckCircle size={18} weight="fill" className="text-teal-500 shrink-0" />
+                      <span className="font-bold text-slate-700">YES</span>
+                    </>
+                  ) : patient.intro_complementary_foods === "No" ? (
+                    <>
+                      <X size={18} weight="bold" className="text-rose-500 shrink-0" />
+                      <span className="font-bold text-slate-700">NO</span>
+                    </>
                   ) : (
-                    <X size={18} weight="bold" className="text-slate-300 shrink-0" />
+                    <span className="font-bold text-slate-400">No record yet</span>
                   )}
-                  <select
-                    className="bg-transparent border-none outline-none uppercase font-medium text-slate-700 cursor-pointer"
-                    value={patient.intro_complementary_foods || ""}
-                    onChange={(e) => onUpdate('intro_complementary_foods', e.target.value)}
-                  >
-                    <option value="">—</option>
-                    <option value="Yes">YES</option>
-                    <option value="No">NO</option>
-                  </select>
                 </div>
               </ProfileField>
             </ProfileFieldGrid>
         </ProfileCard>
 
         <ProfileCard title="Certification Status" icon={CheckCircle}>
-            <div className="mb-3 p-2 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <p className="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Auto-calculated from immunization</p>
-            </div>
             <ProfileFieldGrid cols={2}>
               <div
                 className={cn(
@@ -138,12 +125,9 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
               >
                 <p className="field-label">FIC (Fully Immunized Child)</p>
                 <div className="mt-2 flex items-center justify-between gap-3">
-                  <input
-                    type="date"
-                    className="bg-transparent font-bold text-lg text-slate-900 outline-none w-full"
-                    value={patient.fic_date ? patient.fic_date.split('T')[0] : ""}
-                    onChange={(e) => onUpdate('fic_date', e.target.value)}
-                  />
+                  <p className={cn("font-bold text-lg", patient.fic_date ? "text-slate-900" : "text-slate-400")}>
+                    {patient.fic_date ? formatDate(patient.fic_date) : "Pending"}
+                  </p>
                   {patient.fic_date && <CheckCircle size={22} weight="fill" className="text-teal-500 shrink-0" />}
                 </div>
               </div>
@@ -155,12 +139,9 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
               >
                 <p className="field-label">CIC (Completely Immunized Child)</p>
                 <div className="mt-2 flex items-center justify-between gap-3">
-                  <input
-                    type="date"
-                    className="bg-transparent font-bold text-lg text-slate-900 outline-none w-full"
-                    value={patient.cic_date ? patient.cic_date.split('T')[0] : ""}
-                    onChange={(e) => onUpdate('cic_date', e.target.value)}
-                  />
+                  <p className={cn("font-bold text-lg", patient.cic_date ? "text-slate-900" : "text-slate-400")}>
+                    {patient.cic_date ? formatDate(patient.cic_date) : "No record yet"}
+                  </p>
                   {patient.cic_date && <CheckCircle size={22} weight="fill" className="text-blue-500 shrink-0" />}
                 </div>
               </div>

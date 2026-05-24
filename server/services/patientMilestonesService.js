@@ -116,8 +116,10 @@ export const calculateBreastfeedingMilestones = async (childId) => {
 
         // Exclusively Breastfed at 6 months = checkpoint at 6 months milestone
         const sixMonthCheckpoint = checkpoints.find(c => c.age_month_target === 6);
-        if (sixMonthCheckpoint && sixMonthCheckpoint.is_exclusively_breastfed === 1) {
+        if (sixMonthCheckpoint && sixMonthCheckpoint.is_exclusively_breastfed === 'Yes') {
             exclusively_6_months = "Yes";
+        } else if (sixMonthCheckpoint) {
+            exclusively_6_months = "No";
         }
     }
 
@@ -139,7 +141,7 @@ export const calculateComplementaryFoods = async (childId) => {
         [childId]
     );
 
-    return assessments.length > 0 ? "Yes" : null;
+    return assessments.length > 0 ? "Yes" : "No";
 };
 
 /**
@@ -165,13 +167,13 @@ export const getPatientWithCalculatedMilestones = async (childId) => {
     const breastfeedingData = await calculateBreastfeedingMilestones(childId);
     const complementaryFoods = await calculateComplementaryFoods(childId);
 
-    // Merge with existing patient data, but only auto-fill if not manually set
+    // Prioritize auto-calculated values to reflect current records
     return {
         ...patient,
-        fic_date: patient.fic_date || ficDate,
-        cic_date: patient.cic_date || cicDate,
-        initiated_breastfeeding_date: patient.initiated_breastfeeding_date || breastfeedingData.initiated_breastfeeding_date,
-        exclusively_breastfed_6_months: patient.exclusively_breastfed_6_months || breastfeedingData.exclusively_breastfed_6_months,
-        intro_complementary_foods: patient.intro_complementary_foods || complementaryFoods
+        fic_date: ficDate || patient.fic_date,
+        cic_date: cicDate || patient.cic_date,
+        initiated_breastfeeding_date: breastfeedingData.initiated_breastfeeding_date || patient.initiated_breastfeeding_date,
+        exclusively_breastfed_6_months: breastfeedingData.exclusively_breastfed_6_months || patient.exclusively_breastfed_6_months,
+        intro_complementary_foods: (complementaryFoods === "Yes" ? "Yes" : patient.intro_complementary_foods) || "No"
     };
 };
