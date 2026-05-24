@@ -84,7 +84,7 @@ function MedicineCatalog({
   }, {});
 
   return (
-    <div className="relative bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col min-h-[320px] lg:min-h-0 lg:flex-1 overflow-hidden">
+    <div className="relative bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col min-h-[400px] lg:h-[650px] overflow-hidden">
       {loading && (
         <div
           className="absolute inset-0 z-10 flex items-center justify-center bg-white/80 backdrop-blur-[1px] rounded-2xl"
