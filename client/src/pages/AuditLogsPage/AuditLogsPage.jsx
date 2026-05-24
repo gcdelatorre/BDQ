@@ -180,7 +180,7 @@ export default function AuditLogsPage() {
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
                 <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Time & Date</th>
-                <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Authorized User</th>
+                <th className="px-8 py-5 text-[9px] font-bold text-slate-400 uppercase tracking-widest">Authorized User</th>
                 <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Action</th>
                 <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Activity Details</th>
                 <th className="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Entity</th>
@@ -206,7 +206,7 @@ export default function AuditLogsPage() {
                   <tr key={log.log_id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-8 py-5">
                       <div className="space-y-0.5">
-                        <p className="text-[13px] font-bold text-slate-900 leading-tight">
+                        <p className="text-[11px] font-bold text-slate-900 leading-tight">
                           {new Date(log.timestamp).toLocaleDateString('en-US', { 
                             month: 'short', 
                             day: 'numeric', 
@@ -230,7 +230,7 @@ export default function AuditLogsPage() {
                         </div>
                         <div>
                           <p className="text-[14px] font-bold text-slate-900 leading-none mb-1">{log.username || "System"}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Role: {log.user_role}</p>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase leading-none">Role: {log.user_role}</p>
                         </div>
                       </div>
                     </td>

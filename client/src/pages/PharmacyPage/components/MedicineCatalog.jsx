@@ -13,40 +13,50 @@ const MedicineCard = memo(function MedicineCard({ med, inBasketQty, disabled, on
       disabled={isOutOfStock || disabled}
       onClick={() => onAdd(med)}
       className={cn(
-        "relative flex flex-col text-left p-3 rounded-xl border min-h-[7.5rem]",
-        "transition-[border-color,background-color,box-shadow] duration-150",
+        "relative flex items-center gap-3 text-left p-3 rounded-xl border",
+        "transition-all duration-200",
         isOutOfStock && "opacity-50 cursor-not-allowed bg-slate-50 border-slate-100",
-        !isOutOfStock && inBasketQty > 0 && "bg-teal-50 border-teal-200",
-        !isOutOfStock && !inBasketQty && "bg-white border-slate-200 hover:border-teal-300 hover:shadow-sm"
+        !isOutOfStock && inBasketQty > 0 && "bg-teal-50 border-teal-200 ring-1 ring-teal-200/50",
+        !isOutOfStock && !inBasketQty && "bg-white border-slate-200 hover:border-teal-300 hover:shadow-md hover:-translate-y-0.5"
       )}
     >
       {inBasketQty > 0 && (
-        <span className="absolute top-0 right-0 min-w-[1.5rem] h-6 px-1 bg-teal-600 text-white text-[10px] font-black rounded-bl-lg flex items-center justify-center">
+        <div className="absolute -top-2 -right-2 w-6 h-6 bg-teal-600 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg border-2 border-white z-10">
           {inBasketQty}
-        </span>
+        </div>
       )}
+      
       <div
         className={cn(
-          "w-9 h-9 rounded-lg flex items-center justify-center mb-2 shrink-0",
-          isOutOfStock ? "bg-slate-100 text-slate-400" : "bg-teal-50 text-teal-600"
+          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+          isOutOfStock ? "bg-slate-200 text-slate-400" : "bg-teal-600 text-white"
         )}
       >
-        <Pill size={18} weight="duotone" />
+        <Pill size={20} weight="duotone" />
       </div>
-      <p className="text-xs font-bold text-slate-900 line-clamp-2 leading-snug">{med.medicine_name}</p>
-      {showGeneric && (
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5 line-clamp-1">
-          {med.generic_name}
+
+      <div className="flex-1 min-w-0 py-0.5">
+        <p className="text-[11px] font-bold text-slate-900 line-clamp-2 leading-tight mb-0.5">
+          {med.medicine_name}
         </p>
-      )}
-      <p
-        className={cn(
-          "text-[10px] font-black uppercase tracking-wider mt-auto pt-2",
-          isOutOfStock ? "text-red-500" : "text-slate-500"
+        {showGeneric && (
+          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider line-clamp-1 mb-1">
+            {med.generic_name}
+          </p>
         )}
-      >
-        {isOutOfStock ? "Out of stock" : `${stock} ${med.unit_of_measure}`}
-      </p>
+        <div className="flex items-center gap-1.5">
+          <div className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            isOutOfStock ? "bg-rose-500" : (stock < 20 ? "bg-amber-500" : "bg-emerald-500")
+          )} />
+          <p className={cn(
+            "text-[9px] font-black uppercase tracking-widest",
+            isOutOfStock ? "text-rose-600" : "text-slate-500"
+          )}>
+            {isOutOfStock ? "NO STOCK" : `${stock} ${med.unit_of_measure}`}
+          </p>
+        </div>
+      </div>
     </button>
   );
 });
@@ -101,7 +111,7 @@ function MedicineCatalog({
               className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl outline-none text-sm font-medium disabled:cursor-not-allowed"
             />
           </div>
-          
+
           <div className="flex flex-wrap items-center gap-2">
             {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "CREAM", "DROPS"].map((cat) => (
               <button

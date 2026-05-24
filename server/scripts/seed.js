@@ -30,7 +30,7 @@ const seed = async () => {
         // Midwife
         await db.execute(
             "INSERT INTO user (first_name, last_name, role, username, password_hash, contact_number) VALUES (?, ?, ?, ?, ?, ?)",
-            ["Barangay", "Midwife", "Nurse", "midwife", hashedPassword, "09991234568"]
+            ["Barangay", "Midwife", "Midwife", "midwife", hashedPassword, "09991234568"]
         );
 
         // Nurse

@@ -10,7 +10,7 @@ const itemVariants = {
 const kpis = (stats) => [
   { label: "Registered Patients", value: (stats?.totalPatients ?? 0).toLocaleString(), icon: UsersThree, color: "teal", trend: "Registry" },
   { label: "Dispensing Records", value: (stats?.dispensingCount ?? 0).toLocaleString(), icon: ClipboardText, color: "blue", trend: "All time" },
-  { label: "Stock Alerts", value: (stats?.lowStockCount ?? 0).toString().padStart(2, "0"), icon: WarningCircle, color: "amber", trend: "Needs attention" },
+  { label: "Stock Alerts", value: (stats?.lowStockCount ?? 0).toString(), icon: WarningCircle, color: "amber", trend: "Needs attention" },
 ];
 
 export default function StatCards({ stats, loading }) {

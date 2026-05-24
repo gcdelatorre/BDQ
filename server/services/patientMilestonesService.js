@@ -174,6 +174,6 @@ export const getPatientWithCalculatedMilestones = async (childId) => {
         cic_date: cicDate || patient.cic_date,
         initiated_breastfeeding_date: breastfeedingData.initiated_breastfeeding_date || patient.initiated_breastfeeding_date,
         exclusively_breastfed_6_months: breastfeedingData.exclusively_breastfed_6_months || patient.exclusively_breastfed_6_months,
-        intro_complementary_foods: (complementaryFoods === "Yes" ? "Yes" : patient.intro_complementary_foods) || "No"
+        intro_complementary_foods: patient.intro_complementary_foods || (complementaryFoods === "Yes" ? "Yes" : null)
     };
 };
