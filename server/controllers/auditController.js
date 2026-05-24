@@ -22,3 +22,18 @@ export const getAllAuditLogs = async (req, res) => {
         })
     }
 }
+
+export const getAuditStats = async (req, res) => {
+    try {
+        const stats = await auditService.getAuditStats();
+        return res.status(200).json({
+            message: "Audit stats fetched successfully!",
+            data: stats
+        });
+    } catch (error) {
+        console.log("Failed to fetch audit stats", error);
+        return res.status(error.status || 500).json({
+            message: error.message || "Internal Server Error"
+        });
+    }
+};

@@ -4,11 +4,13 @@ import {
   MagnifyingGlass,
   UserCircle,
   Tag,
-  Calendar,
   ShieldCheck,
   Pulse,
   CaretLeft,
-  CaretRight
+  CaretRight,
+  ChartLineUp,
+  PlusCircle,
+  NotePencil
 } from "@phosphor-icons/react";
 import auditService from "@/services/auditService";
 import { useToast } from "@/hooks/useToast";
@@ -19,6 +21,12 @@ export default function AuditLogsPage() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [meta, setMeta] = useState({ total: 0, totalPages: 1, currentPage: 1 });
+  const [stats, setStats] = useState({
+    total_signals: 0,
+    today_count: 0,
+    creations: 0,
+    modifications: 0
+  });
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +38,7 @@ export default function AuditLogsPage() {
 
   useEffect(() => {
     fetchLogs();
+    fetchStats();
   }, [currentPage, filterAction, startDate, endDate]);
 
   // Debounced search
@@ -40,6 +49,15 @@ export default function AuditLogsPage() {
     }, 500);
     return () => clearTimeout(timeout);
   }, [searchQuery]);
+
+  const fetchStats = async () => {
+    try {
+      const data = await auditService.getStats();
+      setStats(data);
+    } catch (error) {
+      console.error("Stats Fetch Error:", error);
+    }
+  };
 
   const fetchLogs = async () => {
     try {
@@ -83,7 +101,7 @@ export default function AuditLogsPage() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => { setCurrentPage(1); fetchLogs(); }}
+            onClick={() => { setCurrentPage(1); fetchLogs(); fetchStats(); }}
             className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
           >
             <ClockCounterClockwise size={18} weight="bold" />
@@ -99,26 +117,26 @@ export default function AuditLogsPage() {
             <Pulse size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Signals</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">{meta.total}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Activities</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{stats.total_signals}</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
           <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center border border-blue-100 shadow-sm">
-            <Calendar size={24} weight="duotone" />
+            <ChartLineUp size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Total Pages</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">{meta.totalPages}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Activities Today</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{stats.today_count}</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
-          <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center border border-purple-100 shadow-sm">
+          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-100 shadow-sm">
             <ShieldCheck size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Protocol</p>
-            <h3 className="text-xl font-black text-emerald-600 leading-none uppercase">Active</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Clinical Records</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{stats.clinical_records}</h3>
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-5">
@@ -126,8 +144,8 @@ export default function AuditLogsPage() {
             <UserCircle size={24} weight="duotone" />
           </div>
           <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Current Page</p>
-            <h3 className="text-xl font-black text-slate-900 leading-none">{currentPage}</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">New Patients</p>
+            <h3 className="text-xl font-black text-slate-900 leading-none">{stats.new_patients}</h3>
           </div>
         </div>
       </div>

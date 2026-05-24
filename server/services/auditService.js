@@ -107,4 +107,34 @@ export const getAllAuditLogs = async ({ search, actionType, startDate, endDate, 
             limit: parsedLimit
         }
     };
-}
+    };
+
+    /**
+     * Get summary stats for the audit dashboard
+     */
+    export const getAuditStats = async () => {
+        // 1. Total Activities (All time)
+        const [[{ total_signals }]] = await db.execute("SELECT COUNT(*) as total_signals FROM audit_log");
+
+        // 2. Activities Today
+        const [[{ today_count }]] = await db.execute(
+            "SELECT COUNT(*) as today_count FROM audit_log WHERE DATE(action_timestamp) = CURDATE()"
+        );
+
+        // 3. Clinical Records (Immunizations + Nutritional Assessments)
+        const [[{ clinical_records }]] = await db.execute(
+            "SELECT COUNT(*) as clinical_records FROM audit_log WHERE target_table IN ('child_immunization_record', 'nutritional_assessment')"
+        );
+
+        // 4. New Patient Enrollments (CREATE child_patient)
+        const [[{ new_patients }]] = await db.execute(
+            "SELECT COUNT(*) as new_patients FROM audit_log WHERE action_performed = 'CREATE' AND target_table = 'child_patient'"
+        );
+
+        return {
+            total_signals,
+            today_count,
+            clinical_records,
+            new_patients
+        };
+    };

@@ -36,7 +36,7 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
             </span>
           </ProfileField>
           <ProfileField label="Home Address">
-            <span className="font-medium text-slate-700 leading-relaxed">
+            <span className="font-bold text-slate-700 leading-relaxed">
               {patient.complete_address}
             </span>
           </ProfileField>
@@ -91,7 +91,7 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
                       <span className="font-bold text-slate-700">NO</span>
                     </>
                   ) : (
-                    <span className="font-bold text-slate-400">No record yet</span>
+                    <span className="font-bold text-slate-700">No record yet</span>
                   )}
                 </div>
               </ProfileField>
