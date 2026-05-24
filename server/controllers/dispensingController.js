@@ -1,6 +1,8 @@
 import * as dispensingService from "../services/dispensingService.js";
 import { log } from "../utils/logger.js";
 
+import * as patientService from "../services/patientService.js";
+
 /**
  * Handle a new dispensing transaction
  */
@@ -11,8 +13,12 @@ export const dispense = async (req, res) => {
 
         const result = await dispensingService.dispenseMedicine(payload);
 
+        // Fetch child name for audit log
+        const child = await patientService.getPatientById(payload.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "CREATE", "dispensing_transaction", result.transaction_id, `Dispensed medicine(s) to child ID ${payload.child_id}`);
+        await log(req, "CREATE", "dispensing_transaction", result.transaction_id, `Dispensed medicine(s) to ${childName}`);
 
         res.status(201).json({
             message: "Medicine(s) dispensed successfully",

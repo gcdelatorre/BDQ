@@ -62,7 +62,8 @@ export const updatePatient = async (req, res) => {
         const { id } = req.params;
         const result = await patientService.updatePatientById(id, req.body);
         
-        await log(req, "UPDATE", "child_patient", id, "Updated patient certification/metadata");
+        const patientName = `${result.first_name} ${result.last_name}`;
+        await log(req, "UPDATE", "child_patient", id, `Updated profile for ${patientName}`);
 
         return res.status(200).json({
             message: "Patient updated successfully!",

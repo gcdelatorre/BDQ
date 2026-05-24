@@ -1,6 +1,8 @@
 import * as breastfeedingService from "../services/breastfeedingService.js";
 import { log } from "../utils/logger.js";
 
+import * as patientService from "../services/patientService.js";
+
 /**
  * Controller to record a new breastfeeding checkpoint
  */
@@ -11,8 +13,11 @@ export const recordCheckpoint = async (req, res) => {
 
         const result = await breastfeedingService.addBreastfeedingCheckpoint(payload);
 
+        const child = await patientService.getPatientById(payload.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "CREATE", "breastfeeding_checkpoint", result.checkpoint_id, `Recorded breastfeeding status for child ID ${payload.child_id} at ${payload.age_month_target} months`);
+        await log(req, "CREATE", "breastfeeding_checkpoint", result.checkpoint_id, `Recorded breastfeeding status for ${childName} at ${payload.age_month_target} months`);
 
         res.status(201).json({
             message: "Breastfeeding checkpoint saved successfully",

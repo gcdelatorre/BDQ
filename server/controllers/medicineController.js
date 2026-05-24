@@ -22,22 +22,27 @@ export const addMedicine = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
-
 /**
- * Add a new stock batch to an existing medicine
+ * Add a new batch of stock for an existing medicine
  */
 export const addInventoryBatch = async (req, res) => {
     try {
         const result = await medicineService.addInventoryBatch(req.body);
 
-        await log(req, "CREATE", "inventory", result.inventory_id, `Added batch ${req.body.batch_number} for medicine ID ${req.body.medicine_id}`);
+        // Fetch medicine name for audit log
+        const medicines = await medicineService.getAllMedicines();
+        const medicine = medicines.find(m => m.medicine_id == req.body.medicine_id);
+        const medName = medicine ? medicine.medicine_name : `ID ${req.body.medicine_id}`;
+
+        // Audit Log
+        await log(req, "CREATE", "inventory", result.inventory_id, `Added batch ${req.body.batch_number} for ${medName}`);
 
         res.status(201).json({
-            message: "Inventory batch added successfully",
+            message: "Batch added successfully",
             data: result
         });
     } catch (error) {
-        console.error("Add Inventory Error:", error);
+        console.error("Add Batch Error:", error);
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };

@@ -1,6 +1,8 @@
 import * as immunizationService from "../services/immunizationService.js";
 import { log } from "../utils/logger.js";
 
+import * as patientService from "../services/patientService.js";
+
 /**
  * Controller to record a child's immunization
  */
@@ -11,8 +13,12 @@ export const recordChild = async (req, res) => {
 
         const result = await immunizationService.recordChildImmunization(payload);
 
+        // Fetch child name for audit log
+        const child = await patientService.getPatientById(payload.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "CREATE", "child_immunization_record", result.immunization_id, `Recorded ${payload.vaccine_type} dose #${payload.dose_number} for child ID ${payload.child_id}`);
+        await log(req, "CREATE", "child_immunization_record", result.immunization_id, `Recorded ${payload.vaccine_type} dose #${payload.dose_number} for ${childName}`);
 
         res.status(201).json({
             message: "Immunization record saved successfully",
@@ -66,8 +72,12 @@ export const deleteRecord = async (req, res) => {
         const { record_id } = req.params;
         const result = await immunizationService.deleteChildImmunizationRecord(record_id);
 
+        // Fetch child name for audit log
+        const child = await patientService.getPatientById(result.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "DELETE", "child_immunization_record", record_id, `Undid/deleted ${result.vaccine_type} dose #${result.dose_number} for child ID ${result.child_id}`);
+        await log(req, "DELETE", "child_immunization_record", record_id, `Undid/deleted ${result.vaccine_type} dose #${result.dose_number} for ${childName}`);
 
         res.status(200).json({
             message: "Immunization record deleted successfully",
@@ -87,8 +97,12 @@ export const updateRecord = async (req, res) => {
         const { record_id } = req.params;
         const result = await immunizationService.updateChildImmunizationRecord(record_id, req.body);
 
+        // Fetch child name for audit log
+        const child = await patientService.getPatientById(result.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "UPDATE", "child_immunization_record", record_id, `Updated ${result.vaccine_type} dose #${result.dose_number} for child ID ${result.child_id}`);
+        await log(req, "UPDATE", "child_immunization_record", record_id, `Updated ${result.vaccine_type} dose #${result.dose_number} for ${childName}`);
 
         res.status(200).json({
             message: "Immunization record updated successfully",

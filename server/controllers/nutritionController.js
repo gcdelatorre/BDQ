@@ -1,6 +1,7 @@
 import * as nutritionService from "../services/nutritionService.js";
 import { log } from "../utils/logger.js";
 
+import * as patientService from "../services/patientService.js";
 /**
  * Controller to record a new nutritional assessment
  */
@@ -11,8 +12,11 @@ export const recordAssessment = async (req, res) => {
 
         const result = await nutritionService.addNutritionalAssessment(payload);
 
+        const child = await patientService.getPatientById(payload.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "CREATE", "nutritional_assessment", result.assessment_id, `Recorded ${payload.nutritional_status} status for child ID ${payload.child_id}`);
+        await log(req, "CREATE", "nutritional_assessment", result.assessment_id, `Recorded ${payload.nutritional_status} status for ${childName}`);
 
         res.status(201).json({
             message: "Nutritional assessment saved successfully",

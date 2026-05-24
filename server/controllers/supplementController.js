@@ -1,6 +1,8 @@
 import * as supplementService from "../services/supplementService.js";
 import { log } from "../utils/logger.js";
 
+import * as patientService from "../services/patientService.js";
+
 /**
  * Controller to record a new supplementation event
  */
@@ -11,8 +13,11 @@ export const recordSupplement = async (req, res) => {
 
         const result = await supplementService.addSupplementRecord(payload);
 
+        const child = await patientService.getPatientById(payload.child_id);
+        const childName = `${child.first_name} ${child.last_name}`;
+
         // Audit Log
-        await log(req, "CREATE", "supplementation_record", result.supplement_id, `Given ${payload.supplement_type} to child ID ${payload.child_id}`);
+        await log(req, "CREATE", "supplementation_record", result.supplement_id, `Given ${payload.supplement_type} to ${childName}`);
 
         res.status(201).json({
             message: "Supplementation record saved successfully",
