@@ -151,9 +151,45 @@ const seed = async () => {
         await recordVaccine(sofiaId, "MMR", 1, sofia9M);
 
         const meds = [
-            ["Paracetamol 500mg", "Paracetamol", "Tablet", "pcs", 50],
-            ["Amoxicillin 250mg/5ml", "Amoxicillin", "Syrup", "bottle", 10],
-            ["Vitamin A 100,000 IU", "Retinol", "Capsule", "pcs", 100]
+            // 1. Pain and Fever Relief
+            ["Paracetamol 500mg", "Paracetamol", "Tablet", "pcs", 50, 100],
+            ["Paracetamol 125mg/5ml Syrup", "Paracetamol", "Syrup", "bottle", 50, 100],
+            ["Paracetamol 250mg/5ml Syrup", "Paracetamol", "Syrup", "bottle", 50, 100],
+            ["Paracetamol 100mg/ml Drops", "Paracetamol", "Drops", "bottle", 50, 100],
+            ["Mefenamic Acid 500mg", "Mefenamic Acid", "Capsule", "pcs", 50, 35],
+            ["Ibuprofen 100mg/5ml Suspension", "Ibuprofen", "Syrup", "bottle", 50, 100],
+            ["Ibuprofen 200mg/5ml Suspension", "Ibuprofen", "Syrup", "bottle", 50, 100],
+
+            // 2. Cough, Colds, and Allergies
+            ["Lagundi 600mg", "Lagundi", "Tablet", "pcs", 50, 100],
+            ["Lagundi 300mg/5ml Syrup", "Lagundi", "Syrup", "bottle", 50, 100],
+            ["Cetirizine 10mg", "Cetirizine", "Tablet", "pcs", 50, 40],
+            ["Cetirizine 5mg/5ml Syrup", "Cetirizine", "Syrup", "bottle", 50, 100],
+            ["Salbutamol 2.5mg Nebule", "Salbutamol", "Nebule", "pcs", 50, 15],
+
+            // 3. Cardiovascular and Maintenance
+            ["Amlodipine 5mg", "Amlodipine", "Tablet", "pcs", 50, 100],
+            ["Amlodipine 10mg", "Amlodipine", "Tablet", "pcs", 50, 100],
+            ["Losartan 50mg", "Losartan", "Tablet", "pcs", 50, 100],
+            ["Losartan 100mg", "Losartan", "Tablet", "pcs", 50, 100],
+            ["Clonidine 75mcg", "Clonidine", "Tablet", "pcs", 50, 20],
+
+            // 4. Diabetes Maintenance
+            ["Metformin 500mg", "Metformin", "Tablet", "pcs", 50, 100],
+            ["Metformin 800mg", "Metformin", "Tablet", "pcs", 50, 100],
+
+            // 5. Gastrointestinal
+            ["Oral Rehydration Salts (ORS)", "ORS", "Sachet", "pcs", 50, 100],
+            ["Zinc Sulfate Syrup", "Zinc Sulfate", "Syrup", "bottle", 50, 45],
+            ["Zinc Sulfate Drops", "Zinc Sulfate", "Drops", "bottle", 50, 45],
+            ["Antacid Chewable Tablet", "Aluminum + Magnesium Hydroxide", "Tablet", "pcs", 50, 100],
+            ["Antacid Suspension", "Aluminum + Magnesium Hydroxide", "Syrup", "bottle", 50, 100],
+
+            // 6. Vitamins and Supplements
+            ["Iron + Folic Acid", "Ferrous Sulfate + Folic Acid", "Tablet", "pcs", 50, 100],
+            ["Ascorbic Acid 500mg", "Vitamin C", "Tablet", "pcs", 50, 100],
+            ["Ascorbic Acid Syrup", "Vitamin C", "Syrup", "bottle", 50, 100],
+            ["Vitamin B Complex", "Vitamin B1+B6+B12", "Tablet", "pcs", 50, 30]
         ];
 
         for (const m of meds) {
@@ -165,7 +201,7 @@ const seed = async () => {
             const medId = res.insertId;
             await db.execute(
                 "INSERT INTO inventory (medicine_id, batch_number, quantity_in_stock, expiration_date, date_received, supplier_name) VALUES (?, ?, ?, ?, CURDATE(), ?)",
-                [medId, `BN-${Math.floor(Math.random() * 9000) + 1000}`, 100, "2027-12-31", "Department of Health"]
+                [medId, `BN-${Math.floor(Math.random() * 9000) + 1000}`, m[5], "2027-12-31", "Department of Health"]
             );
         }
 
