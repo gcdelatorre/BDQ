@@ -22,6 +22,11 @@ const pharmacyService = {
     return response.data;
   },
 
+  getInventoryHistory: async (medicineId) => {
+    const response = await api.get(`/medicine/history/${medicineId}`);
+    return response.data.data;
+  },
+
   // Dispensing
   dispenseMedicine: async (data) => {
     const response = await api.post("/dispensing/new", data);

@@ -13,4 +13,7 @@ router.post("/add-batch", protect, restrictTo("Admin", "Nurse"), medicineControl
 // GET /api/medicine/all (Admin/Nurse/Midwife)
 router.get("/all", protect, restrictTo("Admin", "Nurse", "Midwife"), medicineController.getAllMedicines);
 
+// GET /api/medicine/history/:id (Admin/Nurse/Midwife)
+router.get("/history/:id", protect, restrictTo("Admin", "Nurse", "Midwife"), medicineController.getInventoryHistory);
+
 export default router;

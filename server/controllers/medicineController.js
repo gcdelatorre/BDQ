@@ -57,3 +57,20 @@ export const getAllMedicines = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Get Batch history for a specific medicine
+ */
+export const getInventoryHistory = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await medicineService.getInventoryHistory(id);
+        res.status(200).json({
+            message: "Inventory history fetched successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Get Inventory History Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

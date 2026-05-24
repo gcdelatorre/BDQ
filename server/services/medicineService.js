@@ -57,3 +57,15 @@ export const getAllMedicines = async () => {
     `);
     return rows;
 };
+
+/**
+ * 4. Get Inventory History (Batch records) for a specific medicine
+ */
+export const getInventoryHistory = async (medicineId) => {
+    const [rows] = await db.execute(`
+        SELECT * FROM inventory 
+        WHERE medicine_id = ? 
+        ORDER BY date_received DESC, created_at DESC
+    `, [medicineId]);
+    return rows;
+};
