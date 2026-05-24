@@ -68,7 +68,6 @@ export default function InventoryPage() {
     expiration_date: "",
     date_received: new Date().toISOString().split('T')[0],
     supplier_name: "",
-    storage_location: "Main Cabinet"
   });
 
   useEffect(() => {
@@ -123,7 +122,6 @@ export default function InventoryPage() {
         expiration_date: "",
         date_received: new Date().toISOString().split('T')[0],
         supplier_name: "",
-        storage_location: "Main Cabinet"
       });
     } catch (error) {
       toast.error("Error", error.message);
@@ -565,7 +563,7 @@ export default function InventoryPage() {
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 text-teal-600 border-b border-teal-50 pb-2">
                     <Calendar size={20} weight="duotone" />
-                    <h3 className="font-bold text-xs uppercase tracking-widest">Dates & Storage</h3>
+                    <h3 className="font-bold text-xs uppercase tracking-widest">Dates & Receipt</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">

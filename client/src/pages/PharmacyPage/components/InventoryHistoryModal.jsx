@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Calendar, Warehouse, Hash, Truck, Archive } from "@phosphor-icons/react";
+import { X, Calendar, Warehouse, Hash, Truck, Archive, Clock } from "@phosphor-icons/react";
 
 export default function InventoryHistoryModal({ isOpen, onClose, history, loading, medicineName }) {
   const formatDate = (date) => {
@@ -99,13 +99,6 @@ export default function InventoryHistoryModal({ isOpen, onClose, history, loadin
                           <p className="text-sm font-bold text-slate-700">{formatDate(batch.expiration_date)}</p>
                         </div>
                       </div>
-
-                      {batch.storage_location && (
-                        <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-white/50 rounded-xl border border-slate-100">
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Storage:</p>
-                          <p className="text-[11px] font-bold text-slate-600">{batch.storage_location}</p>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -117,6 +110,3 @@ export default function InventoryHistoryModal({ isOpen, onClose, history, loadin
     </AnimatePresence>
   );
 }
-
-// Helper to avoid ReferenceError if Clock is not imported (though it's usually needed)
-import { Clock } from "@phosphor-icons/react";

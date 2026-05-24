@@ -4,11 +4,11 @@ import { protect, restrictTo } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// POST /api/medicine/add-medicine (Admin/Nurse)
-router.post("/add-medicine", protect, restrictTo("Admin", "Nurse"), medicineController.addMedicine);
+// POST /api/medicine/add-medicine (Admin/Nurse/Midwife)
+router.post("/add-medicine", protect, restrictTo("Admin", "Nurse", "Midwife"), medicineController.addMedicine);
 
-// POST /api/medicine/add-batch (Admin/Nurse)
-router.post("/add-batch", protect, restrictTo("Admin", "Nurse"), medicineController.addInventoryBatch);
+// POST /api/medicine/add-batch (Admin/Nurse/Midwife)
+router.post("/add-batch", protect, restrictTo("Admin", "Nurse", "Midwife"), medicineController.addInventoryBatch);
 
 // GET /api/medicine/all (Admin/Nurse/Midwife)
 router.get("/all", protect, restrictTo("Admin", "Nurse", "Midwife"), medicineController.getAllMedicines);

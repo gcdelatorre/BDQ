@@ -165,10 +165,6 @@ function PatientsPage() {
             className="w-full pl-12 pr-4 py-3 bg-slate-50 border-transparent focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-200 rounded-xl transition-all outline-none text-sm font-medium text-slate-900 border"
           />
         </div>
-        <button className="flex items-center gap-2 px-6 py-3 bg-white text-slate-600 rounded-xl font-bold border border-slate-100 hover:bg-slate-50 transition-all text-[11px] tracking-wider uppercase">
-          <Funnel size={18} weight="bold" />
-          Filters
-        </button>
       </div>
 
       <div className="bg-white p-2 rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">

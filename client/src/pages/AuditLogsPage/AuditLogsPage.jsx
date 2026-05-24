@@ -225,12 +225,12 @@ export default function AuditLogsPage() {
                     </td>
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-white transition-colors">
+                        <div className="w-8 h-8 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 group-hover:bg-white transition-colors">
                           <UserCircle size={20} />
                         </div>
                         <div>
                           <p className="text-[14px] font-bold text-slate-900 leading-none mb-1">{log.username || "System"}</p>
-                          <p className="text-[8px] font-bold text-slate-400 uppercase leading-none">Role: {log.user_role}</p>
+                          <p className="text-[7px] font-normal text-slate-400 uppercase leading-none">Role: {log.user_role}</p>
                         </div>
                       </div>
                     </td>
@@ -243,7 +243,7 @@ export default function AuditLogsPage() {
                       </span>
                     </td>
                     <td className="px-8 py-5">
-                      <p className="text-[13px] font-medium text-slate-600 max-w-sm leading-relaxed">
+                      <p className="text-[12px] font-medium text-slate-600 max-w-sm leading-relaxed">
                         {log.details}
                       </p>
                     </td>
