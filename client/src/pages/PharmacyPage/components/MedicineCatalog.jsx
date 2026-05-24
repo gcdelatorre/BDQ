@@ -72,11 +72,17 @@ function MedicineCatalog({
   disabled,
   loading
 }) {
-  const filtered = medicines.filter(
-    (m) =>
+  const filtered = medicines.filter((m) => {
+    const matchesSearch =
       m.medicine_name.toLowerCase().includes(searchMed.toLowerCase()) ||
-      m.generic_name.toLowerCase().includes(searchMed.toLowerCase())
-  );
+      m.generic_name.toLowerCase().includes(searchMed.toLowerCase());
+
+    const matchesCategory =
+      filterCategory === "ALL" ||
+      m.medicine_category.toUpperCase() === filterCategory.toUpperCase();
+
+    return matchesSearch && matchesCategory;
+  });
 
   const basketQtyById = basket.reduce((acc, item) => {
     acc[item.medicine_id] = item.quantity_dispensed;
@@ -113,7 +119,7 @@ function MedicineCatalog({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "CREAM", "DROPS"].map((cat) => (
+            {["ALL", "TABLET", "SYRUP", "CAPSULE", "INJECTION", "NEBULE", "SACHET", "DROPS", "OINTMENT"].map((cat) => (
               <button
                 key={cat}
                 onClick={() => onFilterCategoryChange(cat)}
