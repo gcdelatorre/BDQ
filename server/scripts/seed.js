@@ -10,8 +10,14 @@ const seed = async () => {
         console.log("🌱 Seeding database...");
 
         await db.execute("SET FOREIGN_KEY_CHECKS = 0");
+        await db.execute("TRUNCATE TABLE audit_log");
+        await db.execute("TRUNCATE TABLE dispensed_medicine");
+        await db.execute("TRUNCATE TABLE dispensing_transaction");
         await db.execute("TRUNCATE TABLE inventory");
         await db.execute("TRUNCATE TABLE medicine");
+        await db.execute("TRUNCATE TABLE breastfeeding_checkpoint");
+        await db.execute("TRUNCATE TABLE supplementation_record");
+        await db.execute("TRUNCATE TABLE nutritional_assessment");
         await db.execute("TRUNCATE TABLE child_immunization_record");
         await db.execute("TRUNCATE TABLE child_patient");
         await db.execute("TRUNCATE TABLE user");
