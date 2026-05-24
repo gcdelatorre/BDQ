@@ -62,3 +62,24 @@ export const deleteRecord = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to update/edit a supplement record
+ */
+export const updateRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await supplementService.updateSupplementRecord(record_id, req.body);
+
+        // Audit Log
+        await log(req, "UPDATE", "supplementation_record", record_id, `Updated ${result.supplement_type} record for child ID ${result.child_id}`);
+
+        res.status(200).json({
+            message: "Supplement record updated successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Update Supplement Record Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

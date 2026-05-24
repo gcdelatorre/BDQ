@@ -12,7 +12,11 @@ router.post("/record", protect, restrictTo("Admin", "Nurse", "Midwife"), supplem
 // GET /api/supplement/child/:child_id
 router.get("/child/:child_id", protect, restrictTo("Admin", "Nurse", "Midwife"), supplementController.getChildSupplementHistory);
 
-// 3. Delete/Undo a supplement record (Nurse, Midwife, Admin)
+// 3. Update a supplement record (Nurse, Midwife, Admin)
+// PUT /api/supplement/record/:record_id
+router.put("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), supplementController.updateRecord);
+
+// 4. Delete/Undo a supplement record (Nurse, Midwife, Admin)
 // DELETE /api/supplement/record/:record_id
 router.delete("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), supplementController.deleteRecord);
 

@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/DashboardPage/Dashboard";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import Login from "./pages/AuthPage/Login"; 
+import Login from "./pages/AuthPage/Login";
+import Signup from "./pages/AuthPage/Signup";
 import PatientsPage from "./pages/PatientsPage/PatientsPage";
 import PatientProfile from "./pages/PatientsPage/PatientProfile";
 import PharmacyPage from "./pages/PharmacyPage/PharmacyPage";
@@ -46,6 +47,7 @@ export default function App() {
         <Toaster position="bottom-center" closeButton />
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route 
             path="/*" 
             element={

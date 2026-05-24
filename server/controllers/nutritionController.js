@@ -62,3 +62,24 @@ export const deleteRecord = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
     }
 };
+
+/**
+ * Controller to update/edit a nutritional assessment
+ */
+export const updateRecord = async (req, res) => {
+    try {
+        const { record_id } = req.params;
+        const result = await nutritionService.updateNutritionalAssessment(record_id, req.body);
+
+        // Audit Log
+        await log(req, "UPDATE", "nutritional_assessment", record_id, `Updated nutritional assessment for child ID ${result.child_id} with ${result.nutritional_status} status`);
+
+        res.status(200).json({
+            message: "Nutritional assessment updated successfully",
+            data: result
+        });
+    } catch (error) {
+        console.error("Update Nutritional Assessment Error:", error);
+        res.status(error.status || 500).json({ message: error.message || "Internal Server Error" });
+    }
+};

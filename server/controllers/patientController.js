@@ -1,4 +1,5 @@
 import * as patientService from "../services/patientService.js";
+import * as milestonesService from "../services/patientMilestonesService.js";
 import { log } from "../utils/logger.js";
 
 export const register = async (req, res) => {
@@ -42,7 +43,8 @@ export const getAllPatient = async (req, res) => {
 export const getPatientById = async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await patientService.getPatientById(id);
+        // Use the milestone service to get patient with auto-calculated fields
+        const result = await milestonesService.getPatientWithCalculatedMilestones(id);
         return res.status(200).json({
             message: "Patient fetched successfully!",
             data: result

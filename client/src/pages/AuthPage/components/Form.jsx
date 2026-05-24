@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Lock, User, CircleNotch } from "@phosphor-icons/react";
 
 export default function LoginForm() {
@@ -91,6 +91,13 @@ export default function LoginForm() {
                     "Sign In to Portal"
                 )}
             </button>
+
+            <p className="text-center text-slate-500 text-sm font-medium">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-teal-600 hover:text-teal-700 font-bold transition-colors">
+                    Create one
+                </Link>
+            </p>
         </form>
     );
 }

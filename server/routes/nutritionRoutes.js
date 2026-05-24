@@ -12,7 +12,11 @@ router.post("/record", protect, restrictTo("Admin", "Nurse", "Midwife"), nutriti
 // GET /api/nutrition/child/:child_id
 router.get("/child/:child_id", protect, restrictTo("Admin", "Nurse", "Midwife"), nutritionController.getChildNutritionHistory);
 
-// 3. Delete/Undo a nutritional assessment (Nurse, Midwife, Admin)
+// 3. Update a nutritional assessment (Nurse, Midwife, Admin)
+// PUT /api/nutrition/record/:record_id
+router.put("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), nutritionController.updateRecord);
+
+// 4. Delete/Undo a nutritional assessment (Nurse, Midwife, Admin)
 // DELETE /api/nutrition/record/:record_id
 router.delete("/record/:record_id", protect, restrictTo("Admin", "Nurse", "Midwife"), nutritionController.deleteRecord);
 
