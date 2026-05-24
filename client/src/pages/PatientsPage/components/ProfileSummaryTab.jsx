@@ -72,10 +72,6 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
 
       <div className="lg:col-span-2 flex flex-col gap-6">
         <ProfileCard title="Nutritional Milestones" icon={Drop}>
-            <div className="mb-3 p-2 bg-teal-50 border border-teal-100 rounded-lg flex items-center gap-2">
-              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-              <p className="text-[10px] font-bold text-teal-700 uppercase tracking-widest">Calculated from clinical records</p>
-            </div>
             <ProfileFieldGrid cols={3} className="gap-5">
               <ProfileField label="Breastfeeding Initiated">
                 <p className="font-bold text-slate-700">
@@ -121,10 +117,6 @@ export default function ProfileSummaryTab({ patient, formatDate, onUpdate }) {
         </ProfileCard>
 
         <ProfileCard title="Certification Status" icon={CheckCircle}>
-            <div className="mb-3 p-2 bg-blue-50 border border-blue-100 rounded-lg flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <p className="text-[10px] font-bold text-blue-700 uppercase tracking-widest">Auto-calculated from immunization records</p>
-            </div>
             <ProfileFieldGrid cols={2}>
               <div
                 className={cn(
