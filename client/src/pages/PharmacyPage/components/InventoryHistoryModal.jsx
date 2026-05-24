@@ -48,10 +48,10 @@ export default function InventoryHistoryModal({ isOpen, onClose, history, loadin
                 </div>
               ) : history.length === 0 ? (
                 <div className="flex h-48 flex-col items-center justify-center text-center space-y-3">
-                   <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
-                      <Archive size={32} />
-                   </div>
-                   <p className="text-slate-500 font-medium text-sm">No batch records found for this medicine.</p>
+                  <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300">
+                    <Archive size={32} />
+                  </div>
+                  <p className="text-slate-500 font-medium text-sm">No batch records found for this medicine.</p>
                 </div>
               ) : (
                 <div className="space-y-4 max-h-130 overflow-y-auto custom-scrollbar pr-2">
@@ -59,51 +59,51 @@ export default function InventoryHistoryModal({ isOpen, onClose, history, loadin
                     <div key={batch.inventory_id} className="rounded-3xl border border-slate-100 bg-slate-50 p-5 hover:bg-white hover:border-blue-100 transition-all group">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                           <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-blue-600 transition-colors">
-                              <Hash size={20} weight="bold" />
-                           </div>
-                           <div>
-                              <p className="text-sm font-black text-slate-900">Batch #{batch.batch_number}</p>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Reference ID: {batch.inventory_id}</p>
-                           </div>
+                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 group-hover:text-blue-600 transition-colors">
+                            <Hash size={20} weight="bold" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-slate-900">{batch.batch_number}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Reference ID: {batch.inventory_id}</p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
-                           <span className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white shadow-lg shadow-blue-600/20">
-                              {batch.quantity_in_stock} UNITS
-                           </span>
+                          <span className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-xs font-black text-white shadow-lg shadow-blue-600/20">
+                            {batch.quantity_in_stock} UNITS
+                          </span>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div className="rounded-2xl bg-white p-3 border border-slate-200/50">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                             <Calendar size={14} className="text-teal-500" />
-                             <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Received On</p>
+                            <Calendar size={14} className="text-teal-500" />
+                            <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Received On</p>
                           </div>
                           <p className="text-sm font-bold text-slate-700">{formatDate(batch.date_received)}</p>
                         </div>
                         <div className="rounded-2xl bg-white p-3 border border-slate-200/50">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                             <Truck size={14} className="text-blue-500" />
-                             <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Supplier</p>
+                            <Truck size={14} className="text-blue-500" />
+                            <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Supplier</p>
                           </div>
                           <p className="text-sm font-bold text-slate-700 truncate" title={batch.supplier_name}>
-                             {batch.supplier_name || "N/A"}
+                            {batch.supplier_name || "N/A"}
                           </p>
                         </div>
                         <div className="rounded-2xl bg-white p-3 border border-slate-200/50">
                           <div className="flex items-center gap-1.5 mb-1.5">
-                             <Clock size={14} className="text-rose-500" />
-                             <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Expiration</p>
+                            <Clock size={14} className="text-rose-500" />
+                            <p className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Expiration</p>
                           </div>
                           <p className="text-sm font-bold text-slate-700">{formatDate(batch.expiration_date)}</p>
                         </div>
                       </div>
-                      
+
                       {batch.storage_location && (
                         <div className="mt-3 flex items-center gap-2 px-3 py-2 bg-white/50 rounded-xl border border-slate-100">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Storage:</p>
-                           <p className="text-[11px] font-bold text-slate-600">{batch.storage_location}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Storage:</p>
+                          <p className="text-[11px] font-bold text-slate-600">{batch.storage_location}</p>
                         </div>
                       )}
                     </div>
