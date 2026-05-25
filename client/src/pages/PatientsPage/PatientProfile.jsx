@@ -23,6 +23,7 @@ import ProfileSummaryTab from "./components/ProfileSummaryTab";
 import { Card, CardBody } from "@/components/ui/card";
 import DispensingLogsTab from "./components/DispensingLogsTab";
 import { useToast } from "@/hooks/useToast";
+import PrintPatientRecord from "@/components/reports/PrintPatientRecord";
 
 
 
@@ -132,12 +133,15 @@ export default function PatientProfile() {
           <ArrowLeft size={18} weight="bold" />
           Directory
         </button>
-        <div className="flex items-center gap-2">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
-            Registered: {formatDate(patient.date_of_registration)}
-          </div>
-          <div className="text-[10px] font-black text-teal-700 uppercase tracking-widest px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl">
-            FSN: {patient.family_serial_number}
+        <div className="flex items-center gap-4">
+          <PrintPatientRecord patient={patient} />
+          <div className="hidden sm:flex items-center gap-2">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
+              Registered: {formatDate(patient.date_of_registration)}
+            </div>
+            <div className="text-[10px] font-black text-teal-700 uppercase tracking-widest px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl">
+              FSN: {patient.family_serial_number}
+            </div>
           </div>
         </div>
       </div>

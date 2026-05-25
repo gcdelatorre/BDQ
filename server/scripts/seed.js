@@ -52,10 +52,10 @@ const seed = async () => {
         dobNewborn.setDate(today.getDate() - 4);
 
         const dobOneMonth = new Date(today);
-        dobOneMonth.setDate(today.getDate() - 40);
+        dobOneMonth.setDate(today.getDate() - 41);
 
         const dobThreeMonths = new Date(today);
-        dobThreeMonths.setDate(today.getDate() - 96);
+        dobThreeMonths.setDate(today.getDate() - 97);
 
         const dobEightMonths = new Date(today);
         dobEightMonths.setDate(today.getDate() - 267);

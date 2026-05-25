@@ -8,6 +8,7 @@ import MedicineCatalog from "./components/MedicineCatalog";
 import DispensingCart from "./components/DispensingCart";
 import DispensingHistoryModal from "./components/DispensingHistoryModal";
 import { ClockCounterClockwise } from "@phosphor-icons/react";
+import PrintInventoryReport from "@/components/reports/PrintInventoryReport";
 
 export default function PharmacyPage() {
   const { toast } = useToast();
@@ -204,14 +205,16 @@ export default function PharmacyPage() {
             Select the patient, add medicines, then confirm. Stock updates automatically.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={openHistory}
-          className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
-        >
-          <ClockCounterClockwise size={18} weight="bold" />
-          View History
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={openHistory}
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-100 text-slate-600 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all text-[11px] uppercase tracking-widest"
+          >
+            <ClockCounterClockwise size={18} weight="bold" />
+            View History
+          </button>
+        </div>
       </div>
 
       <section className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-4">

@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/useToast";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Clock } from "lucide-react";
 import InventoryHistoryModal from "../PharmacyPage/components/InventoryHistoryModal";
+import PrintInventoryReport from "@/components/reports/PrintInventoryReport";
 
 export default function InventoryPage() {
   const { toast } = useToast();
@@ -154,6 +155,7 @@ export default function InventoryPage() {
           <p className="page-description">Monitor medication stock levels and batch distribution records.</p>
         </div>
         <div className="flex items-center gap-3">
+          <PrintInventoryReport />
           <button
             onClick={() => setShowAddMedicineModal(true)}
             className="flex items-center justify-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold shadow-md hover:bg-teal-700 hover:-translate-y-0.5 transition-all active:translate-y-0"
