@@ -11,6 +11,7 @@ import patientService from "@/services/patientService";
 import auditService from "@/services/auditService";
 import clinicalService from "@/services/clinicalService";
 import { useAuth } from "@/contexts/AuthContext";
+import PrintPatientSummary from "@/components/reports/PrintPatientSummary";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -99,6 +100,7 @@ export default function Dashboard() {
           <h2 className="page-title">Welcome back, {displayName}</h2>
           <p className="page-description">Today&apos;s snapshot for the barangay health center.</p>
         </motion.div>
+        <PrintPatientSummary />
       </motion.div>
 
       <StatCards stats={stats} loading={loading} />
