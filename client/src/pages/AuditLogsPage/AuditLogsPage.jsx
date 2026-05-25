@@ -96,7 +96,7 @@ export default function AuditLogsPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="page-title text-3xl font-bold text-slate-900 tracking-tight">Security Audit Logs</h1>
+          <h2 className="page-title">Security Audit Logs</h2>
           <p className="page-description text-slate-500 font-medium text-sm mt-1">Immutable record of all system activity and data mutations.</p>
         </div>
         <div className="flex items-center gap-3">

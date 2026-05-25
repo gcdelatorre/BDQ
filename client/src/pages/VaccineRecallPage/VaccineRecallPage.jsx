@@ -131,7 +131,7 @@ export default function VaccineRecallPage() {
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-6 pb-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="page-title text-3xl font-bold text-slate-900 tracking-tight">Vaccine Recall Registry</h1>
+          <h2 className="page-title">Vaccine Recall Registry</h2>
           <p className="page-description text-slate-500 font-medium text-sm mt-1">Monitor due vaccines and access contact information for patient follow-ups.</p>
         </div>
         <div className="flex items-center gap-3">
