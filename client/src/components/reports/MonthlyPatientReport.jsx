@@ -25,7 +25,7 @@ const MonthlyPatientReport = ({ stats, patients = [], month, year }) => (
       <View style={styles.summaryGrid}>
         <View style={styles.summaryCard}><Text style={styles.summaryLabel}>Total Patients</Text><Text style={styles.summaryValue}>{stats.totalPatients || 0}</Text></View>
         <View style={styles.summaryCard}><Text style={styles.summaryLabel}>FIC Rate</Text><Text style={styles.summaryValue}>{stats.ficCount || 0}</Text></View>
-        <View style={styles.summaryCard}><Text style={styles.summaryLabel}>Normal Nutrition</Text><Text style={styles.summaryValue}>{stats.normalNutrition || 0}</Text></View>
+        <View style={styles.summaryCard}><Text style={styles.summaryLabel}>Normal Birth Wt</Text><Text style={styles.summaryValue}>{stats.normalStatus || 0}</Text></View>
         <View style={styles.summaryCard}><Text style={styles.summaryLabel}>Excl. Breastfeeding</Text><Text style={styles.summaryValue}>{stats.exclusiveBFCount || 0}</Text></View>
       </View>
 

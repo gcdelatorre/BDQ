@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 /**
  * Get monthly summary report for all patients
- * Summarizes immunization status (FIC), nutritional status, and breastfeeding practices.
+ * Summarizes immunization status (FIC) and displays birth weight status.
  */
 export const getMonthlyPatientSummary = async (month, year) => {
     const monthFormatted = String(month).padStart(2, '0');
@@ -10,9 +10,6 @@ export const getMonthlyPatientSummary = async (month, year) => {
 
     const [patients] = await db.execute(`
         SELECT cp.*, 
-            (SELECT weight_kg FROM nutritional_assessment na WHERE na.child_id = cp.child_id ORDER BY na.weight_date_taken DESC LIMIT 1) as latest_weight,
-            (SELECT length_cm FROM nutritional_assessment na WHERE na.child_id = cp.child_id ORDER BY na.weight_date_taken DESC LIMIT 1) as latest_height,
-            (SELECT nutritional_status FROM nutritional_assessment na WHERE na.child_id = cp.child_id ORDER BY na.weight_date_taken DESC LIMIT 1) as latest_status,
             (SELECT MAX(check_date) FROM breastfeeding_checkpoint bc WHERE bc.child_id = cp.child_id AND bc.is_exclusively_breastfed = 'Yes') as last_exclusive_bf_date
         FROM child_patient cp
         WHERE cp.date_of_registration LIKE ? OR cp.updated_at LIKE ?
@@ -23,7 +20,7 @@ export const getMonthlyPatientSummary = async (month, year) => {
 
     // Get immunization records for FIC/CIC
     const [immunizations] = await db.execute(`
-        SELECT child_id, vaccine_type, date_administered 
+        SELECT child_id, vaccine_type 
         FROM child_immunization_record 
         WHERE child_id IN (${patientIds.join(',')})
     `);
@@ -39,9 +36,10 @@ export const getMonthlyPatientSummary = async (month, year) => {
             ...p,
             age_months: ageInMonths,
             is_fic: isFIC,
-            latest_status: p.latest_status || '---',
-            latest_weight: p.latest_weight || '---',
-            latest_height: p.latest_height || '---',
+            // Display birth_weight_status as requested
+            latest_status: p.birth_weight_status || '---',
+            latest_weight: p.weight_at_birth_kg || '---',
+            latest_height: p.length_at_birth_cm || '---',
             exclusive_bf: p.last_exclusive_bf_date ? 'Yes' : 'No'
         };
     });
@@ -49,7 +47,8 @@ export const getMonthlyPatientSummary = async (month, year) => {
     const stats = {
         totalPatients: enrichedPatients.length,
         ficCount: enrichedPatients.filter(p => p.is_fic).length,
-        normalNutrition: enrichedPatients.filter(p => p.latest_status === 'Normal').length,
+        // Calculate based on birth weight status
+        normalStatus: enrichedPatients.filter(p => p.birth_weight_status === 'Normal').length,
         exclusiveBFCount: enrichedPatients.filter(p => p.exclusive_bf === 'Yes').length
     };
 
